@@ -10,50 +10,61 @@ SRC = json.load(open("sources.json"))
 log = []
 
 
-def collect():
-    raw = []
-
-    def take(name, gen, sector):
-        n0 = len(raw)
-        try:
-            for j in gen:
-                j["sector"] = sector
-                raw.append(j)
-            log.append(f"ok   {name}: {len(raw)-n0} candidates")
-        except Exception as e:
-            log.append(f"FAIL {name}: {type(e).__name__} {str(e)[:120]}")
-        time.sleep(C.DELAY)
-
+def tasks():
+    """Every source as (name, sector, a function that yields its jobs)."""
+    t = []
     for tok, emp, sec in SRC.get("greenhouse", []):
-        take(f"greenhouse/{tok}", C.greenhouse(tok, emp), sec)
+        t.append((f"greenhouse/{tok}", sec, lambda tok=tok, emp=emp: C.greenhouse(tok, emp)))
     for tok, emp, sec in SRC.get("lever", []):
-        take(f"lever/{tok}", C.lever(tok, emp), sec)
+        t.append((f"lever/{tok}", sec, lambda tok=tok, emp=emp: C.lever(tok, emp)))
     for tok, emp, sec in SRC.get("ashby", []):
-        take(f"ashby/{tok}", C.ashby(tok, emp), sec)
+        t.append((f"ashby/{tok}", sec, lambda tok=tok, emp=emp: C.ashby(tok, emp)))
     for tok, emp, sec in SRC.get("smartrecruiters", []):
-        take(f"smartrecruiters/{tok}", C.smartrecruiters(tok, emp), sec)
+        t.append((f"smartrecruiters/{tok}", sec, lambda tok=tok, emp=emp: C.smartrecruiters(tok, emp)))
     for pid, brand, emp, sec in SRC.get("pageup", []):
-        take(f"pageup/{pid}", C.pageup(pid, brand, emp), sec)
+        t.append((f"pageup/{pid}", sec, lambda pid=pid, brand=brand, emp=emp: C.pageup(pid, brand, emp)))
     for host, tenant, site, emp, sec in SRC.get("workday", []):
-        C.DELAY, d0 = 1.5, C.DELAY
-        take(f"workday/{tenant}", C.workday(host, tenant, site, emp), sec)
-        C.DELAY = d0
+        t.append((f"workday/{tenant}", sec, lambda h=host, te=tenant, si=site, emp=emp: C.workday(h, te, si, emp)))
+    for host, site, emp, sec in SRC.get("oracle", []):
+        t.append((f"oracle/{host.split('.')[0]}/{emp}", sec, lambda h=host, si=site, emp=emp: C.oracle(h, si, emp)))
     for host, emp, sec, loc in SRC.get("successfactors", []):
-        take(f"successfactors/{host}", C.sf_rss(host, emp, loc), sec)
+        t.append((f"successfactors/{host}", sec, lambda h=host, emp=emp, loc=loc: C.sf_rss(h, emp, loc)))
     for host, emp, sec in SRC.get("radancy", []):
-        take(f"radancy/{host}", C.radancy(host, emp), sec)
+        t.append((f"radancy/{host}", sec, lambda h=host, emp=emp: C.radancy(h, emp)))
     for base, emp, sec in SRC.get("avature", []):
-        take(f"avature/{base.split('/')[2]}", C.avature(base, emp), sec)
-    if SRC.get("vic_gov"):
-        take("vic-gov", C.vic_gov(), "Government")
-    if SRC.get("aps_gazette"):
-        take("aps-gazette", C.aps_gazette(), "Government")
-    if SRC.get("qld_gov"):
-        take("qld-gov", C.qld_gov(), "Government")
-    if SRC.get("wa_gov"):
-        take("wa-gov", C.wa_gov(), "Government")
+        t.append((f"avature/{base.split('/')[2]}", sec, lambda b=base, emp=emp: C.avature(b, emp)))
+    for home, emp, sec in SRC.get("phenom", []):
+        t.append((f"phenom/{home.split('/')[2]}", sec, lambda h=home, emp=emp: C.phenom(h, emp)))
+    for host, emp, sec in SRC.get("pageup_site", []):
+        t.append((f"pageup-site/{host}", sec, lambda h=host, emp=emp: C.pageup_site(h, emp)))
+    for key, fn in (("vic_gov", C.vic_gov), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
+        if SRC.get(key):
+            t.append((key.replace("_", "-"), "Government", fn))
     if SRC.get("remotive"):
-        take("remotive", C.remotive(), "Remote")
+        t.append(("remotive", "Remote", C.remotive))
+    return t
+
+
+def collect():
+    """Run sources side by side (8 at a time). Each source still pauses between its own requests."""
+    import concurrent.futures as cf
+
+    def run_one(task):
+        name, sector, fn = task
+        got = []
+        try:
+            for j in fn():
+                j["sector"] = sector
+                got.append(j)
+            return got, f"ok   {name}: {len(got)} candidates"
+        except Exception as e:
+            return got, f"FAIL {name}: {type(e).__name__} {str(e)[:120]}"
+
+    raw = []
+    with cf.ThreadPoolExecutor(8) as ex:
+        for got, line in ex.map(run_one, tasks()):
+            raw += got
+            log.append(line)
     return raw
 
 
@@ -64,6 +75,9 @@ def build(raw):
         disc = T.discipline(title, j.get("description", ""))
         if not disc:
             continue
+        # An Australian employer's own careers site with no location on the ad: assume Australia.
+        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom"):
+            j["location"] = "Australia"
         if j["source"] not in ("wa-gov", "vic-gov", "qld-gov") and not T.in_scope_location(j["location"], j.get("workplace", ""), j.get("description", "")):
             continue
         if j.pop("_needs_detail", False):
@@ -73,14 +87,17 @@ def build(raw):
             except Exception:
                 pass
         desc = j.get("description", "")
-        if j.get("sector") in ("Construction", "Mining") and not T.OVERRIDE.search(title):
+        if j.get("sector") in ("Construction", "Mining") and re.search(r"design (manager|coordinator|engineer)|design lead\b(?!.*(experience|service|human|digital))", title, re.I) \
+                and not T.OVERRIDE.search(title):
             continue  # "design manager" etc. means engineering design in these industries
         # De-duplicate the same role found in two places (e.g. an agency site and the APS Gazette).
         norm = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())
-        key = (norm(j["employer"])[:12], norm(title)[:24])
-        if key in seen:
+        emp_key, t_key = norm(j["employer"])[:12], norm(title)
+        # Same title, or the same role listed by two different sources with one title extending the other.
+        if any(e == emp_key and (t == t_key or (src != j["source"] and (t.startswith(t_key[:20]) or t_key.startswith(t[:20]))))
+               for e, t, src in seen):
             continue
-        seen.add(key)
+        seen.add((emp_key, t_key, j["source"]))
         url, link_type = C.resolve_link(j)
         if re.search(r"internalcareers|internaljobs|/internal", url, re.I):
             continue  # staff-only job boards: not open to the public

@@ -4,10 +4,12 @@ What's next for DesignRoles AU. Tick items off as they ship; add new ones at the
 
 ## More sources
 - [ ] Connector for the shared "Careers Site" platform (WA Gov, National Archives, Compass, Are Media, ASC, Michael Hill all use it), plus a scan for every Australian employer on it
-- [ ] APS Jobs (Australian Public Service)
-- [ ] Queensland Government SmartJobs
+- [x] APS Jobs (via the Public Service Gazette)
+- [x] Queensland Government SmartJobs
 - [ ] IAG — allow `careers.iag.com.au`
-- [ ] Westpac, Telstra, Suncorp (insurance) — find each careers site's address
+- [x] Large corporates: 205 checked, 100+ added (banks, insurers, telcos, retail, energy, consultancies)
+- [ ] Ask the ~25 employers that block automated tools for access (Canva's site, AGL, AustralianSuper, Bunnings, Monash and others)
+- [ ] Connectors for Taleo, Cornerstone, LiveHire, Dayforce, Teamtailor, NGA (RACQ, Healthscope, Mirvac, Rio Tinto, Hostplus, Sydney Water, ECU)
 - [ ] Ask CommBank and NSW Government for access (both block automated tools)
 
 ## Board
