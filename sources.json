@@ -1,0 +1,385 @@
+{
+ "greenhouse": [
+  [
+   "eucalyptus",
+   "Eucalyptus",
+   "Health tech"
+  ],
+  [
+   "buildkite",
+   "Buildkite",
+   "Tech"
+  ],
+  [
+   "octopusdeploy",
+   "Octopus Deploy",
+   "Tech"
+  ],
+  [
+   "cultureamp",
+   "Culture Amp",
+   "Tech"
+  ],
+  [
+   "prospa",
+   "Prospa",
+   "Fintech"
+  ],
+  [
+   "athena",
+   "Athena Home Loans",
+   "Fintech"
+  ],
+  [
+   "thoughtworks",
+   "Thoughtworks",
+   "Consultancy"
+  ],
+  [
+   "akqa",
+   "AKQA",
+   "Agency"
+  ],
+  [
+   "enboarder",
+   "Enboarder",
+   "Tech"
+  ],
+  [
+   "portable",
+   "Portable",
+   "Agency"
+  ],
+  [
+   "mx51",
+   "mx51",
+   "Fintech"
+  ],
+  [
+   "fleet",
+   "Fleet",
+   "Tech"
+  ],
+  [
+   "latitude",
+   "Latitude Financial",
+   "Fintech"
+  ],
+  [
+   "theiconic",
+   "THE ICONIC",
+   "Retail"
+  ],
+  [
+   "abc",
+   "ABC",
+   "Media"
+  ]
+ ],
+ "lever": [
+  [
+   "deputy",
+   "Deputy",
+   "Tech"
+  ],
+  [
+   "immutable",
+   "Immutable",
+   "Tech"
+  ],
+  [
+   "mable",
+   "Mable",
+   "Health tech"
+  ],
+  [
+   "kogan",
+   "Kogan.com",
+   "Retail"
+  ],
+  [
+   "pexa",
+   "PEXA",
+   "Property tech"
+  ],
+  [
+   "brighte",
+   "Brighte",
+   "Fintech"
+  ],
+  [
+   "blinq",
+   "Blinq",
+   "Tech"
+  ],
+  [
+   "atomi",
+   "Atomi",
+   "Edtech"
+  ],
+  [
+   "plenti",
+   "Plenti",
+   "Fintech"
+  ],
+  [
+   "culturekings",
+   "Culture Kings",
+   "Retail"
+  ],
+  [
+   "cartrawler",
+   "CarTrawler",
+   "Tech"
+  ]
+ ],
+ "ashby": [
+  [
+   "airwallex",
+   "Airwallex",
+   "Fintech"
+  ],
+  [
+   "zip",
+   "Zip Co",
+   "Fintech"
+  ],
+  [
+   "xero",
+   "Xero",
+   "Tech"
+  ],
+  [
+   "airtasker",
+   "Airtasker",
+   "Tech"
+  ],
+  [
+   "relevanceai",
+   "Relevance AI",
+   "Tech"
+  ],
+  [
+   "siteminder",
+   "SiteMinder",
+   "Tech"
+  ],
+  [
+   "amber",
+   "Amber",
+   "Energy"
+  ],
+  [
+   "neara",
+   "Neara",
+   "Tech"
+  ],
+  [
+   "up",
+   "Up",
+   "Fintech"
+  ],
+  [
+   "secureframe",
+   "Secureframe",
+   "Tech"
+  ]
+ ],
+ "smartrecruiters": [
+  [
+   "Canva",
+   "Canva",
+   "Tech"
+  ],
+  [
+   "SEEK",
+   "SEEK",
+   "Tech"
+  ],
+  [
+   "Carsales",
+   "carsales",
+   "Tech"
+  ],
+  [
+   "ResMed",
+   "ResMed",
+   "Health"
+  ],
+  [
+   "coinjar",
+   "CoinJar",
+   "Fintech"
+  ],
+  [
+   "cottonon",
+   "Cotton On",
+   "Retail"
+  ],
+  [
+   "newscorp",
+   "News Corp Australia",
+   "Media"
+  ]
+ ],
+ "pageup": [
+  [
+   589,
+   "cw",
+   "The University of Western Australia",
+   "University"
+  ],
+  [
+   533,
+   "caw",
+   "La Trobe University",
+   "University"
+  ],
+  [
+   1220,
+   "cw",
+   "Adelaide University",
+   "University"
+  ],
+  [
+   949,
+   "cw",
+   "Deakin University",
+   "University"
+  ],
+  [
+   737,
+   "cw",
+   "University of Canberra",
+   "University"
+  ],
+  [
+   923,
+   "ci",
+   "University of Tasmania",
+   "University"
+  ],
+  [
+   410,
+   "fb",
+   "NAB",
+   "Banking"
+  ],
+  [
+   391,
+   "cw",
+   "Melbourne Water",
+   "Utilities"
+  ],
+  [
+   759,
+   "cw",
+   "Tasmanian Government",
+   "Government"
+  ],
+  [
+   783,
+   "cw",
+   "Swisse",
+   "Health"
+  ],
+  [
+   772,
+   "cw",
+   "Forever New",
+   "Retail"
+  ],
+  [
+   434,
+   "ci",
+   "CPB Contractors",
+   "Construction"
+  ],
+  [
+   436,
+   "cw",
+   "ASC",
+   "Defence"
+  ],
+  [
+   541,
+   "cw",
+   "Compass Group",
+   "Hospitality"
+  ],
+  [
+   590,
+   "cw",
+   "Michael Hill",
+   "Retail"
+  ],
+  [
+   655,
+   "cw",
+   "National Archives of Australia",
+   "Government"
+  ],
+  [
+   720,
+   "cw",
+   "Are Media",
+   "Media"
+  ],
+  [
+   841,
+   "cw",
+   "UNSW",
+   "University"
+  ],
+  [
+   889,
+   "cw",
+   "Flight Centre",
+   "Travel"
+  ],
+  [
+   948,
+   "cw",
+   "Scope Australia",
+   "Not-for-profit"
+  ],
+  [
+   1121,
+   "cw",
+   "Lagard\u00e8re Travel Retail",
+   "Retail"
+  ]
+ ],
+ "wa_gov": true,
+ "remotive": true,
+ "workday": [],
+ "successfactors": [
+  [
+   "careers.anz.com",
+   "ANZ",
+   "Banking",
+   "en_US"
+  ],
+  [
+   "jobs.medibank.com.au",
+   "Medibank",
+   "Health insurance",
+   "en_GB"
+  ]
+ ],
+ "radancy": [
+  [
+   "careers.bupa.com.au",
+   "Bupa",
+   "Health insurance"
+  ]
+ ],
+ "vic_gov": true,
+ "avature": [
+  [
+   "https://careers.woolworthsgroup.com.au/en_GB/apply",
+   "Woolworths Group",
+   "Retail"
+  ]
+ ]
+}
