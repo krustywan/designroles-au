@@ -873,6 +873,7 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
     const w = Math.min(500, (vw - right - 32) / 0.65);
     coil.classList.toggle('off', w < 240);
     coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(-0.35 * w) + 'px';
+    coil.style.top = Math.round(64 - 0.2 * w * 1400 / 1100) + 'px';   // the render has empty space above the coil; start it just under the nav
   };
   new ResizeObserver(fit).observe(hero); addEventListener('resize', fit);
   new MutationObserver(fit).observe($('frow'), {childList: true});
