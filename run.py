@@ -41,6 +41,8 @@ def tasks():
         t.append((f"elmo/{host}", sec, lambda h=host, po=portal, emp=emp: C.elmo(h, po, emp)))
     for site, emp, sec in SRC.get("wordpress", []):
         t.append((f"wordpress/{site.split('/')[2]}", sec, lambda si=site, emp=emp: C.wp_jobs(si, emp)))
+    for listing, link_re, emp, sec, src in SRC.get("careers_site", []):
+        t.append((f"{src}/{emp}", sec, lambda l=listing, r=link_re, emp=emp, src=src: C.listing_site(l, r, emp, src)))
     for tenant, site, emp, sec in SRC.get("cornerstone", []):
         t.append((f"cornerstone/{tenant}", sec, lambda te=tenant, si=site, emp=emp: C.cornerstone(te, si, emp)))
     for key, fn in (("vic_gov", C.vic_gov), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
@@ -82,7 +84,7 @@ def build(raw):
         if not disc:
             continue
         # An Australian employer's own careers site with no location on the ad: assume Australia.
-        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom"):
+        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire"):
             j["location"] = "Australia"
         if j["source"] not in ("wa-gov", "vic-gov", "qld-gov") and not T.in_scope_location(j["location"], j.get("workplace", ""), j.get("description", "")):
             continue
