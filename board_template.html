@@ -802,8 +802,8 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
   void main(){
     float h=texture2D(rip,uv).r;
     vec2 n=vec2(texture2D(rip,uv+vec2(texel.x,0.)).r-texture2D(rip,uv-vec2(texel.x,0.)).r,texture2D(rip,uv+vec2(0.,texel.y)).r-texture2D(rip,uv-vec2(0.,texel.y)).r);
-    vec3 col=field(uv-n*.09);
-    col+=vec3(.75,.7,1.)*clamp(dot(n,vec2(-.7,.7))*1.6,0.,1.)*.35;   // a soft sheen on the ripple's lit side
+    vec3 col=field(uv-n*.06);
+    col+=vec3(.75,.7,1.)*clamp(dot(n,vec2(-.7,.7))*1.6,0.,1.)*.18;   // a soft sheen on the ripple's lit side
     gl_FragColor=vec4(col,1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
   const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
@@ -828,7 +828,7 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
     rx.globalCompositeOperation = 'lighter';
     ripples = ripples.filter(r => (r.age += dt) < r.life);
     for (const r of ripples) {
-      const k = r.age / r.life, rad = (6 + r.age * 70) * rc.width / 600, a = (1 - k) * (1 - k) * r.power;
+      const k = r.age / r.life, rad = (6 + r.age * 38) * rc.width / 600, a = (1 - k) * (1 - k) * r.power;
       const g = rx.createRadialGradient(r.x * rc.width, r.y * rc.height, rad * 0.25, r.x * rc.width, r.y * rc.height, rad);
       g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.55, `rgba(255,255,255,${a})`); g.addColorStop(1, 'rgba(0,0,0,0)');
       rx.fillStyle = g; rx.beginPath(); rx.arc(r.x * rc.width, r.y * rc.height, rad, 0, 7); rx.fill();
@@ -850,9 +850,9 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
     const x = (e.clientX - r.left) / r.width, y = 1 - (e.clientY - r.top) / r.height;
     if (x < 0 || x > 1 || y < 0 || y > 1) { last = null; return; }
     if (last && Math.hypot((x - last.x) * r.width, (y - last.y) * r.height) < 24) return;   // a new ring every few pixels of travel
-    last = {x, y}; ripples.push({x, y, age: 0, life: 1.5, power: 0.45}); if (ripples.length > 80) ripples.shift();
+    last = {x, y}; ripples.push({x, y, age: 0, life: 2.6, power: 0.26}); if (ripples.length > 80) ripples.shift();
   }, {passive: true});
-  hero.addEventListener('pointerdown', e => { const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 2.2, power: 1}); });
+  hero.addEventListener('pointerdown', e => { const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 3.2, power: 0.55}); });
 })();
 
 // ---------- Start: filters from the link, else from this device ----------
