@@ -822,7 +822,7 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
     cv.width = W; cv.height = H; rc.width = Math.round(W / 2); rc.height = Math.round(H / 2); gl.viewport(0, 0, W, H);
     gl.uniform2f(U('res'), W, H); gl.uniform2f(U('texel'), 1.5 / rc.width, 1.5 / rc.height);
   };
-  const frame = now => {
+  const draw = now => {
     const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
     rx.globalCompositeOperation = 'source-over'; rx.fillStyle = '#000'; rx.fillRect(0, 0, rc.width, rc.height);
     rx.globalCompositeOperation = 'lighter';
@@ -836,23 +836,27 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
     gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, rc);
     gl.uniform1f(U('t'), still ? 4 : (now - t0) / 1000);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    if (!still && visible) requestAnimationFrame(frame); else running = false;
   };
+  const frame = now => { draw(now); if (!still && visible) requestAnimationFrame(frame); else running = false; };
+  // Resizing a canvas wipes it, so redraw straight away (before the browser paints) to avoid a black flash.
+  const redraw = () => { size(); prev = performance.now(); draw(prev); };
   const start = () => { if (!running) { running = true; prev = performance.now(); requestAnimationFrame(frame); } };
-  size(); frame(performance.now()); hero.classList.add('has-gl');
-  addEventListener('resize', () => { size(); if (still) frame(performance.now()); });
-  new ResizeObserver(() => { size(); if (still) frame(performance.now()); }).observe(hero);
+  size(); draw(performance.now()); hero.classList.add('has-gl');
+  addEventListener('resize', redraw);
+  new ResizeObserver(redraw).observe(hero);
   new IntersectionObserver(e => { visible = e[0].isIntersecting; if (visible && !still) start(); }).observe(hero);
   if (still) return;
   start();
+  const calm = e => e.target.closest?.('.find, .top, .pop, .sug');   // no ripples while using the search, filters or nav
   addEventListener('pointermove', e => {
+    if (calm(e)) { last = null; return; }
     const r = hero.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width, y = 1 - (e.clientY - r.top) / r.height;
     if (x < 0 || x > 1 || y < 0 || y > 1) { last = null; return; }
     if (last && Math.hypot((x - last.x) * r.width, (y - last.y) * r.height) < 24) return;   // a new ring every few pixels of travel
     last = {x, y}; ripples.push({x, y, age: 0, life: 2.6, power: 0.26}); if (ripples.length > 80) ripples.shift();
   }, {passive: true});
-  hero.addEventListener('pointerdown', e => { const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 3.2, power: 0.55}); });
+  hero.addEventListener('pointerdown', e => { if (calm(e)) return; const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 3.2, power: 0.55}); });
 })();
 
 // ---------- Start: filters from the link, else from this device ----------
