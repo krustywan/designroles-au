@@ -892,3 +892,32 @@ def elmo(host, portal, employer):
             posted=ld.get("posted", ""), employment_type=ld.get("employment_type") or (strip_html(wt.group(1)) if wt else ""),
             workplace="", salary_text=ld.get("salary_text", ""), remote_flag=None,
         )
+
+
+# ---------------- WordPress job boards (public /wp-json/wp/v2/job route, e.g. Beacham Group) ----------------
+def wp_jobs(site, employer):
+    places = {}
+    try:
+        for t in get_json(f"{site}/wp-json/wp/v2/job_location?per_page=100"):
+            places[t["id"]] = html.unescape(t.get("name", ""))
+    except Exception:
+        pass
+    for page in range(1, 11):
+        try:
+            items = get_json(f"{site}/wp-json/wp/v2/job?per_page=100&page={page}")
+        except urllib.error.HTTPError:
+            break
+        if not items:
+            break
+        for j in items:
+            title = html.unescape(strip_html((j.get("title") or {}).get("rendered", "")))
+            if not candidate(title):
+                continue
+            locs = [places.get(i, "") for i in (j.get("job_location") or [])]
+            yield dict(
+                source="wordpress", source_id=f"wp-{site.split('/')[2]}-{j['id']}", employer=employer, title=title,
+                url=j.get("link", ""), location=", ".join(l for l in locs if l) or "Perth, WA",
+                description=strip_html((j.get("content") or {}).get("rendered", "")), posted=(j.get("date") or "")[:10],
+                employment_type="", workplace="", salary_text="", remote_flag=None,
+            )
+        time.sleep(DELAY)
