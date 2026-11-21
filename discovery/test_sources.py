@@ -17,22 +17,27 @@ CALL = {
     "phenom": lambda x: C.phenom(x[0], x[1]),
 }
 os.makedirs("discovery/out", exist_ok=True)
+import concurrent.futures as cf
 out = []
-for plat, rows in S.items():
-    if plat not in CALL:
-        continue
-    for x in rows:
-        t0, n, keep, err, titles = time.time(), 0, 0, "", []
+CALL["greenhouse"] = lambda x: C.greenhouse(x[0], x[1])
+def one(job):
+        plat, x = job
+        t0, n, keep, err, titles, got = time.time(), 0, 0, "", [], []
         try:
             for j in CALL[plat](x):
                 n += 1
                 if T.discipline(j["title"], j["description"]) and T.in_scope_location(j["location"], j.get("workplace", ""), j["description"]):
                     keep += 1
                     titles.append(j["title"][:50])
-                    out.append(dict(j, sector=x[-1] if plat != "successfactors" else x[2]))
+                    got.append(dict(j, sector=x[-1] if plat != "successfactors" else x[2]))
         except Exception as e:
             err = f"{type(e).__name__}: {str(e)[:100]}"
         name = x[3] if plat == "workday" else x[2] if plat in ("oracle", "eightfold", "pageup") else x[1]
         print(f"TEST {plat:15} {str(name)[:28]:28} cand={n:3} kept={keep:2} {int(time.time()-t0):4}s {err} {titles[:3]}", flush=True)
+        return got
+jobs = [(p, x) for p, rows in S.items() if p in CALL for x in rows]
+with cf.ThreadPoolExecutor(8) as ex:
+    for got in ex.map(one, jobs):
+        out.extend(got)
 json.dump(out, open("discovery/out/test_raw.json", "w"))
 print("TOTAL kept", len(out))

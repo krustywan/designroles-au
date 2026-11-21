@@ -174,6 +174,41 @@
    "uqcareers",
    "University of Queensland",
    "University"
+  ],
+  [
+   "cochlear.wd3.myworkdayjobs.com",
+   "cochlear",
+   "Cochlear_Careers",
+   "Cochlear",
+   "Health"
+  ],
+  [
+   "csl.wd1.myworkdayjobs.com",
+   "csl",
+   "CSL_External",
+   "CSL",
+   "Health"
+  ],
+  [
+   "lendlease.wd3.myworkdayjobs.com",
+   "lendlease",
+   "lendleasecareers",
+   "Lendlease",
+   "Property"
+  ],
+  [
+   "reagroup.wd3.myworkdayjobs.com",
+   "reagroup",
+   "techdata",
+   "REA Group",
+   "Tech"
+  ],
+  [
+   "murdoch.wd3.myworkdayjobs.com",
+   "murdoch",
+   "MurdochCareers",
+   "Murdoch University",
+   "University"
   ]
  ],
  "oracle": [
@@ -230,6 +265,12 @@
    "CX_1",
    "Treasury Wine Estates",
    "Manufacturing"
+  ],
+  [
+   "fa-evew-saasfaprod1.fa.ocs.oraclecloud.com",
+   "CX",
+   "Suncorp",
+   "Insurance"
   ]
  ],
  "successfactors": [
@@ -403,7 +444,7 @@
   ],
   [
    "groupcareers.singtel.com",
-   "Amaysim",
+   "Optus (Singtel Group)",
    "Telco",
    "en_US"
   ],
@@ -423,6 +464,12 @@
    "jobs.ororagroup.com",
    "Orora",
    "Manufacturing",
+   "en_US"
+  ],
+  [
+   "careers.wesfarmershealth.com.au",
+   "Wesfarmers Health (Priceline)",
+   "Health",
    "en_US"
   ]
  ],
@@ -456,6 +503,11 @@
    "careers.sportsbet.com.au",
    "Sportsbet",
    "Gaming"
+  ],
+  [
+   "careers.alintaenergy.com.au",
+   "Alinta Energy",
+   "Energy"
   ]
  ],
  "pageup": [
@@ -509,6 +561,11 @@
    "https://careers.fonterra.com",
    "Fonterra Australia",
    "Manufacturing"
+  ],
+  [
+   "https://recruitment.santos.com/careers",
+   "Santos",
+   "Energy"
   ]
  ],
  "radancy": [
@@ -643,6 +700,13 @@
    "nga",
    "ecu.nga.net.au",
    "https://www.ecu.edu.au/employment-opportunities/overview"
+  ]
+ ],
+ "greenhouse": [
+  [
+   "zipcolimited",
+   "Zip Co",
+   "Fintech"
   ]
  ]
 }
