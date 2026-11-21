@@ -84,6 +84,16 @@
    "block",
    "Block (Afterpay, Square)",
    "Fintech"
+  ],
+  [
+   "atariinc",
+   "Atari",
+   "Gaming"
+  ],
+  [
+   "riotgames",
+   "Riot Games",
+   "Gaming"
   ]
  ],
  "lever": [
@@ -141,6 +151,11 @@
    "cartrawler",
    "CarTrawler",
    "Tech"
+  ],
+  [
+   "coatesgroup",
+   "Coates",
+   "Equipment hire"
   ]
  ],
  "ashby": [
@@ -1269,6 +1284,12 @@
    "Wesfarmers Health (Priceline)",
    "Health",
    "en_US"
+  ],
+  [
+   "careers.acer.org",
+   "ACER",
+   "Education & research",
+   "en_US"
   ]
  ],
  "radancy": [
@@ -1304,6 +1325,11 @@
    "https://careers.fonterra.com/en_GB/careers",
    "Fonterra",
    "Manufacturing"
+  ],
+  [
+   "https://recruitment.macquarie.com/en_US/careers",
+   "Macquarie Group",
+   "Banking"
   ]
  ],
  "qld_gov": true,
@@ -1362,6 +1388,12 @@
    "CX",
    "Suncorp",
    "Insurance"
+  ],
+  [
+   "ejjl.fa.ap1.oraclecloud.com",
+   "CX_1",
+   "AustralianSuper",
+   "Super"
   ]
  ],
  "pageup_site": [
@@ -1421,6 +1453,11 @@
    "https://jobs.newmont.com/us/en",
    "Newmont",
    "Mining"
+  ],
+  [
+   "https://careers.marsh.com/global/en",
+   "Marsh McLennan",
+   "Professional services"
   ]
  ],
  "cornerstone": [
@@ -1447,6 +1484,12 @@
    1,
    "Yarra Valley Water",
    "Utilities"
+  ],
+  [
+   "brevillesage",
+   1,
+   "Breville",
+   "Consumer goods"
   ]
  ],
  "elmo": [
@@ -1467,6 +1510,43 @@
    "https://talentnation.com.au",
    "Talent Nation (recruiter)",
    "Recruitment"
+  ]
+ ],
+ "careers_site": [
+  [
+   "https://www.livehire.com/careers/bcf/jobs",
+   "(?:https://www\\.livehire\\.com)?/careers/bcf/job/[\\w/-]+",
+   "Super Retail Group (BCF)",
+   "Retail",
+   "livehire"
+  ],
+  [
+   "https://www.livehire.com/careers/supercheapauto/jobs",
+   "(?:https://www\\.livehire\\.com)?/careers/supercheapauto/job/[\\w/-]+",
+   "Super Retail Group (Supercheap Auto)",
+   "Retail",
+   "livehire"
+  ],
+  [
+   "https://www.livehire.com/careers/rebel/jobs",
+   "(?:https://www\\.livehire\\.com)?/careers/rebel/job/[\\w/-]+",
+   "Super Retail Group (rebel)",
+   "Retail",
+   "livehire"
+  ],
+  [
+   "https://www.livehire.com/careers/macpac/jobs",
+   "(?:https://www\\.livehire\\.com)?/careers/macpac/job/[\\w/-]+",
+   "Super Retail Group (Macpac)",
+   "Retail",
+   "livehire"
+  ],
+  [
+   "https://www.livehire.com/careers/superretailgroup/jobs",
+   "(?:https://www\\.livehire\\.com)?/careers/superretailgroup/job/[\\w/-]+",
+   "Super Retail Group",
+   "Retail",
+   "livehire"
   ]
  ]
 }
