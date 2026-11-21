@@ -457,7 +457,8 @@ def avature(base, employer):
             brand = field("Brand")
             loc = ld.get("location") or field("Location").rstrip(", ")
             if not loc:  # newer Avature layout: label and value in separate field divs
-                m = re.search(r"field__label[^>]*>\s*(?:Location|City|Work location)s?\s*<.*?field__value[^>]*>\s*([^<]+)", d, re.S | re.I)
+                m = (re.search(r"field--location.*?field__value[^>]*>\s*([^<]+)", d, re.S)
+                     or re.search(r"field__label[^>]*>\s*(?:Location|City|Work location)s?\s*<.*?field__value[^>]*>\s*([^<]+)", d, re.S | re.I))
                 loc = html.unescape(m.group(1)).strip() if m else ""
             yield dict(
                 source="avature", source_id="av-" + link.rstrip("/").rsplit("/", 1)[-1],
