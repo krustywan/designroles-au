@@ -348,6 +348,480 @@
    "cw",
    "Lagard\u00e8re Travel Retail",
    "Retail"
+  ],
+  [
+   375,
+   "ci",
+   "Matilda Bay",
+   "Hospitality"
+  ],
+  [
+   399,
+   "ci",
+   "Thiess",
+   "Mining"
+  ],
+  [
+   496,
+   "cw",
+   "Visy",
+   "Manufacturing"
+  ],
+  [
+   511,
+   "cw",
+   "SA Power Networks",
+   "Utilities"
+  ],
+  [
+   527,
+   "cw",
+   "Manufacturing employer (PageUp 527)",
+   "Manufacturing"
+  ],
+  [
+   535,
+   "ci",
+   "Sussan Group",
+   "Retail"
+  ],
+  [
+   547,
+   "cw",
+   "Tabcorp",
+   "Gaming"
+  ],
+  [
+   569,
+   "cw",
+   "Boral",
+   "Construction"
+  ],
+  [
+   615,
+   "cw",
+   "Utility employer (PageUp 615)",
+   "Utilities"
+  ],
+  [
+   621,
+   "cw",
+   "Cleanaway",
+   "Utilities"
+  ],
+  [
+   644,
+   "ci",
+   "Employer (PageUp 644)",
+   "Other"
+  ],
+  [
+   658,
+   "cw",
+   "University employer (PageUp 658)",
+   "University"
+  ],
+  [
+   659,
+   "cw",
+   "Seqwater",
+   "Utilities"
+  ],
+  [
+   679,
+   "cw",
+   "Youi",
+   "Insurance"
+  ],
+  [
+   724,
+   "cw",
+   "Life Without Barriers",
+   "Not-for-profit"
+  ],
+  [
+   739,
+   "ci",
+   "Retailer (PageUp 739)",
+   "Retail"
+  ],
+  [
+   741,
+   "cw",
+   "Mineral Resources",
+   "Mining"
+  ],
+  [
+   744,
+   "cw",
+   "Facilities employer (PageUp 744)",
+   "Facilities"
+  ],
+  [
+   765,
+   "cw",
+   "RPG (Nike stores)",
+   "Retail"
+  ],
+  [
+   784,
+   "cw",
+   "Armaguard",
+   "Logistics"
+  ],
+  [
+   795,
+   "cw",
+   "NSW National Parks and Wildlife Service",
+   "Government"
+  ],
+  [
+   825,
+   "cw",
+   "Ahpra",
+   "Health"
+  ],
+  [
+   829,
+   "cw",
+   "Credit Corp",
+   "Finance"
+  ],
+  [
+   833,
+   "cw",
+   "Foodservice distributor (PageUp 833)",
+   "Logistics"
+  ],
+  [
+   834,
+   "cw",
+   "Anglicare Victoria",
+   "Not-for-profit"
+  ],
+  [
+   837,
+   "cw",
+   "Uniting Vic.Tas",
+   "Not-for-profit"
+  ],
+  [
+   844,
+   "cw",
+   "Scentre Group (Westfield)",
+   "Property"
+  ],
+  [
+   887,
+   "cw",
+   "City of Greater Geelong",
+   "Government"
+  ],
+  [
+   895,
+   "cw",
+   "Simonds Homes",
+   "Construction"
+  ],
+  [
+   901,
+   "ci",
+   "Hydro Tasmania",
+   "Energy"
+  ],
+  [
+   902,
+   "cw",
+   "Arts Centre Melbourne",
+   "Arts"
+  ],
+  [
+   907,
+   "ci",
+   "Spotlight Group",
+   "Retail"
+  ],
+  [
+   910,
+   "cw",
+   "Aqua Corp",
+   "Other"
+  ],
+  [
+   914,
+   "cw",
+   "Insurance and Care NSW (CTP Care)",
+   "Insurance"
+  ],
+  [
+   915,
+   "cw",
+   "BMD Group",
+   "Construction"
+  ],
+  [
+   936,
+   "cw",
+   "Mastermyne",
+   "Mining"
+  ],
+  [
+   938,
+   "cw",
+   "Brotherhood of St Laurence",
+   "Not-for-profit"
+  ],
+  [
+   939,
+   "cw",
+   "Guild Group",
+   "Insurance"
+  ],
+  [
+   957,
+   "cw",
+   "Qube",
+   "Logistics"
+  ],
+  [
+   959,
+   "cw",
+   "Active Tree Services",
+   "Other"
+  ],
+  [
+   960,
+   "cw",
+   "Northline",
+   "Logistics"
+  ],
+  [
+   963,
+   "cw",
+   "Milestones Early Learning",
+   "Education"
+  ],
+  [
+   973,
+   "ci",
+   "Bunzl Asia Pacific",
+   "Logistics"
+  ],
+  [
+   976,
+   "cw",
+   "SeymourWhyte",
+   "Construction"
+  ],
+  [
+   987,
+   "cw",
+   "Yooralla",
+   "Not-for-profit"
+  ],
+  [
+   988,
+   "cw",
+   "Duratec",
+   "Construction"
+  ],
+  [
+   992,
+   "cw",
+   "WIN Network",
+   "Media"
+  ],
+  [
+   998,
+   "cw",
+   "Mater",
+   "Health"
+  ],
+  [
+   1032,
+   "cw",
+   "G8 Education",
+   "Education"
+  ],
+  [
+   1033,
+   "ci",
+   "Afford",
+   "Not-for-profit"
+  ],
+  [
+   1034,
+   "cw",
+   "State agriculture department (PageUp 1034)",
+   "Government"
+  ],
+  [
+   1039,
+   "cw",
+   "The Reject Shop",
+   "Retail"
+  ],
+  [
+   1041,
+   "cw",
+   "Defence Housing Australia",
+   "Government"
+  ],
+  [
+   1061,
+   "cw",
+   "Journey Early Learning",
+   "Education"
+  ],
+  [
+   1064,
+   "cw",
+   "Rocky Bay",
+   "Not-for-profit"
+  ],
+  [
+   1066,
+   "cw",
+   "Child and family services provider (PageUp 1066)",
+   "Not-for-profit"
+  ],
+  [
+   1072,
+   "cw",
+   "Whiddon",
+   "Health"
+  ],
+  [
+   1081,
+   "cw",
+   "Savills",
+   "Property"
+  ],
+  [
+   1083,
+   "cw",
+   "Kinetic IT",
+   "Tech"
+  ],
+  [
+   1097,
+   "cw",
+   "Ertech",
+   "Construction"
+  ],
+  [
+   1098,
+   "cw",
+   "Device Technologies",
+   "Health"
+  ],
+  [
+   1106,
+   "cw",
+   "Calvary Healthcare",
+   "Health"
+  ],
+  [
+   1108,
+   "cw",
+   "Savers",
+   "Retail"
+  ],
+  [
+   1111,
+   "cw",
+   "Pilbara Minerals",
+   "Mining"
+  ],
+  [
+   1117,
+   "ci",
+   "Mind Australia",
+   "Not-for-profit"
+  ],
+  [
+   1123,
+   "cw",
+   "NHVR",
+   "Government"
+  ],
+  [
+   1138,
+   "cw",
+   "NSW Government agency (PageUp 1138)",
+   "Government"
+  ],
+  [
+   1155,
+   "cw",
+   "TAFE NSW",
+   "Education"
+  ],
+  [
+   1165,
+   "cw",
+   "Story House Early Learning",
+   "Education"
+  ],
+  [
+   1166,
+   "cw",
+   "Built",
+   "Construction"
+  ],
+  [
+   1167,
+   "cw",
+   "UniSC",
+   "University"
+  ],
+  [
+   1169,
+   "cw",
+   "Piper Alderman",
+   "Legal"
+  ],
+  [
+   1189,
+   "cw",
+   "Benetas",
+   "Health"
+  ],
+  [
+   1192,
+   "cw",
+   "NSW ICAC",
+   "Government"
+  ],
+  [
+   1197,
+   "cw",
+   "NSW SES",
+   "Government"
+  ],
+  [
+   1199,
+   "cw",
+   "NSW Government agency (PageUp 1199)",
+   "Government"
+  ],
+  [
+   1200,
+   "cw",
+   "NSW ICAC",
+   "Government"
+  ],
+  [
+   1202,
+   "cw",
+   "Integrated Living",
+   "Health"
+  ],
+  [
+   1205,
+   "cw",
+   "Centurion Transport",
+   "Logistics"
   ]
  ],
  "wa_gov": true,
@@ -381,5 +855,7 @@
    "Woolworths Group",
    "Retail"
   ]
- ]
+ ],
+ "qld_gov": true,
+ "aps_gazette": true
 }

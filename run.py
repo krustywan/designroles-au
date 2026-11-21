@@ -46,6 +46,10 @@ def collect():
         take(f"avature/{base.split('/')[2]}", C.avature(base, emp), sec)
     if SRC.get("vic_gov"):
         take("vic-gov", C.vic_gov(), "Government")
+    if SRC.get("aps_gazette"):
+        take("aps-gazette", C.aps_gazette(), "Government")
+    if SRC.get("qld_gov"):
+        take("qld-gov", C.qld_gov(), "Government")
     if SRC.get("wa_gov"):
         take("wa-gov", C.wa_gov(), "Government")
     if SRC.get("remotive"):
@@ -60,7 +64,7 @@ def build(raw):
         disc = T.discipline(title, j.get("description", ""))
         if not disc:
             continue
-        if j["source"] not in ("wa-gov", "vic-gov") and not T.in_scope_location(j["location"], j.get("workplace", ""), j.get("description", "")):
+        if j["source"] not in ("wa-gov", "vic-gov", "qld-gov") and not T.in_scope_location(j["location"], j.get("workplace", ""), j.get("description", "")):
             continue
         if j.pop("_needs_detail", False):
             try:
@@ -69,7 +73,11 @@ def build(raw):
             except Exception:
                 pass
         desc = j.get("description", "")
-        key = (j["employer"].lower(), title.lower(), (j["location"] or "").lower()[:20])
+        if j.get("sector") in ("Construction", "Mining") and not T.OVERRIDE.search(title):
+            continue  # "design manager" etc. means engineering design in these industries
+        # De-duplicate the same role found in two places (e.g. an agency site and the APS Gazette).
+        norm = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())
+        key = (norm(j["employer"])[:12], norm(title)[:24])
         if key in seen:
             continue
         seen.add(key)
@@ -78,7 +86,7 @@ def build(raw):
             continue  # staff-only job boards: not open to the public
         time.sleep(0.3)
         p = T.pay(j.get("salary_text", ""), desc)
-        st = T.states_of(j["location"]) or (["WA"] if j["source"] == "wa-gov" else ["VIC"] if j["source"] == "vic-gov" else [])
+        st = T.states_of(j["location"]) or (["WA"] if j["source"] == "wa-gov" else ["VIC"] if j["source"] == "vic-gov" else ["QLD"] if j["source"] == "qld-gov" else [])
         mode = T.work_mode(j["location"], j.get("workplace", ""), desc)
         out.append(dict(
             id=hashlib.md5(j["source_id"].encode()).hexdigest()[:10],

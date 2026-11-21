@@ -16,11 +16,11 @@ Python 3.10+, standard library only. One run takes about 10 minutes, because of 
 | File | What it does |
 | --- | --- |
 | `sources.json` | Employers and portals to crawl, grouped by hiring platform |
-| `connectors.py` | One connector per platform: Greenhouse, Lever, Ashby, SmartRecruiters, PageUp (RSS), Workday, SuccessFactors (RSS), Radancy, Avature, WA and Victorian government boards, Remotive |
+| `connectors.py` | One connector per platform: Greenhouse, Lever, Ashby, SmartRecruiters, PageUp (RSS), Workday, SuccessFactors (RSS), Radancy, Avature, WA, Victorian and Queensland government boards, the APS Public Service Gazette, Remotive. Also the link checker |
 | `tagger.py` | Rule-based tagging: discipline, seniority, people leader, state, work mode, employment type, advertised pay, recruiter flag |
 | `run.py` | Runs the connectors, filters to Australian/APAC-remote design roles, de-duplicates, tags, writes `jobs.json` |
 | `board_template.html` / `build_board.py` | The board page; data is embedded at build time |
-| `pageup_scan.py` / `pageup_batch.py` | One-off discovery: finds PageUp-hosted employers with Australian design roles |
+| `pageup_scan.py` / `pageup_au.py` / `pageup_names.py` | One-off discovery: finds PageUp-hosted employers, keeps the Australian ones and names them |
 
 ## Adding an employer
 
@@ -40,4 +40,8 @@ Python 3.10+, standard library only. One run takes about 10 minutes, because of 
 
 - Swap rule-based tagging for an AI pass (API key needed), keeping the rules as a fallback.
 - Schedule `run.py` daily (GitHub Actions or a small server) and publish `board.html`.
-- Add sources: APS Jobs (Salesforce site, needs its own connector), Queensland SmartJobs, NSW (blocks bots), IAG, Telstra, Westpac, more Workday tenants.
+- Add sources: NSW (blocks bots), IAG, Telstra, Westpac, more Workday tenants.
+
+## Licences
+
+APS vacancies come from the Australian Public Service Gazette, licensed CC BY 4.0. The licence excludes contact persons' names, phone numbers and emails, so the Gazette connector strips them.

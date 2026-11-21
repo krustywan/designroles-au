@@ -503,7 +503,7 @@ def find_on_careers_site(host, title):
     """PageUp employers that moved to their own 'Careers Site' (same platform as WA Gov):
     search the site for the title and return the matching job's own page."""
     try:
-        h = get(f"https://{host}/jobs/search?" + urllib.parse.urlencode({"query": title})).decode("utf8", "ignore")
+        h = get(f"https://{host}/jobs/search?" + urllib.parse.urlencode({"query": title}), tries=1, timeout=15).decode("utf8", "ignore")
     except Exception:
         return None
     want = _norm(title)
@@ -513,3 +513,146 @@ def find_on_careers_site(host, title):
             return link
     loose = {link for link, text in cards if _norm(text).startswith(want) or want.startswith(_norm(text))}
     return loose.pop() if len(loose) == 1 else None
+
+
+# ---------------- Queensland Government (smartjobs.qld.gov.au) ----------------
+QLD = "https://smartjobs.qld.gov.au/jobtools/"
+
+
+def qld_gov():
+    seen = set()
+    for kw in KEYWORDS:
+        data = urllib.parse.urlencode({"in_organid": "14904", "in_skills": kw, "in_jobDate": "All", "in_sessionid": "",
+                                       "in_version": "", "in_exact_phrase_match": "Y"}).encode()
+        h = get(QLD + "jncustomsearch.searchResults", data=data).decode("utf8", "ignore")
+        for li in h.split('<!--Summary Body')[1:]:
+            m = re.search(r'HREF="(jncustomsearch\.viewFullSingle\?[^"]*in_jnCounter=(\d+)[^"]*)".*?<strong>(.*?)</strong>,?\s*([^<]*)</span>', li, re.S)
+            if not m:
+                continue
+            counter, title, agency = m.group(2), strip_html(m.group(3)), strip_html(m.group(4))
+            if counter in seen or not candidate(title):
+                continue
+            seen.add(counter)
+            etype = re.search(r'<span class="type">(.*?)</span>', li, re.S)
+            loc = re.search(r'class="locality">(.*?)</strong>', li, re.S)
+            snippet = re.search(r'class="search-description">(.*?)</div>', li, re.S)
+            url = f"{QLD}jncustomsearch.viewFullSingle?in_organid=14904&in_jnCounter={counter}"
+            desc, sal = strip_html(snippet.group(1)) if snippet else "", ""
+            time.sleep(DELAY)
+            try:
+                d = get(url).decode("utf8", "ignore")
+                body = re.search(r'<div id="content">(.*?)<!-- End Content', d, re.S)
+                desc = strip_html(body.group(1))[:12000] if body else desc
+                s = re.search(r"Salary[^$]{0,80}(\$[\d,]+[^<]{0,60})", d)
+                sal = strip_html(s.group(1)) if s else ""
+            except Exception:
+                pass
+            yield dict(
+                source="qld-gov", source_id="qld-" + counter, employer=agency or "Queensland Government",
+                title=title, url=url, location=(strip_html(loc.group(1)) + ", QLD") if loc else "QLD",
+                description=desc, posted="", employment_type=strip_html(etype.group(1)) if etype else "",
+                workplace="", salary_text=sal, remote_flag=None,
+            )
+        time.sleep(DELAY)
+
+
+# ---------------- Australian Public Service Gazette (APS Jobs vacancies, CC BY 4.0) ----------------
+# Daily PDF published by the APS Commission. Licence: CC BY 4.0, EXCEPT contact persons' names,
+# phone numbers and emails, which must not be reproduced, so we strip them.
+import datetime, subprocess, tempfile, os
+
+GAZETTE = "https://s3-ap-southeast-2.amazonaws.com/apsc.gazette/"
+PERSONAL = re.compile(r"(?im)^.*(contact\s*(name|officer|person)|position contact|phone|telephone|mobile|e-?mail).*$|"
+                      r"[\w.+-]+@[\w-]+\.[\w.]+|(?:\+?61|0)[2-478](?:[ -]?\d){8}")
+
+
+def _gazette_pdf(day):
+    """Fetch one day's Daily Gazette PDF. The issue number is the ISO week minus one; try neighbours too."""
+    wk = day.isocalendar()[1]
+    label = day.strftime("%A - ") + f"{day.day:02d} " + day.strftime("%B %Y")
+    for n in (wk - 1, wk, wk - 2):
+        name = f"PS{n} Daily Gazette {label}.pdf"
+        try:
+            return name, get(GAZETTE + urllib.parse.quote(name), tries=1)
+        except Exception:
+            continue
+    return None, None
+
+
+def _pdf_text(blob):
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+        f.write(blob)
+        path = f.name
+    try:
+        return subprocess.run(["pdftotext", path, "-"], capture_output=True, text=True, timeout=120).stdout
+    finally:
+        os.unlink(path)
+
+
+LABELS = ["Job Title", "Job Type", "Location", "Salary", "Future Merit\nLocations", "Office\nArrangement\nDetails",
+          "Office\nArrangement", "Classification", "Position Number", "Agency Website", "Job Description"]
+
+
+def aps_gazette(days=21):
+    today = datetime.date.today()
+    seen = set()
+    for back in range(days):
+        day = today - datetime.timedelta(days=back)
+        if day.weekday() >= 5:
+            continue
+        name, blob = _gazette_pdf(day)
+        if not blob:
+            continue
+        for v in parse_gazette(_pdf_text(blob)):
+            if v["vn"] in seen or not v["title"] or not candidate(v["title"]):
+                continue
+            try:
+                if datetime.datetime.strptime(v["closing"].split(" ", 1)[1], "%d %B %Y").date() < today:
+                    continue
+            except Exception:
+                pass
+            seen.add(v["vn"])
+            f = v["fields"]
+            url = f["Job Description"] if f["Job Description"].startswith("http") else f["Agency Website"]
+            yield dict(
+                source="aps-gazette", source_id="aps-" + v["vn"], employer=v["agency"], title=v["title"],
+                url=url or "https://www.apsjobs.gov.au/s/job-search", location=f["Location"],
+                description=v["description"], posted=day.isoformat(),
+                employment_type=f["Job Type"], workplace=f["Office\nArrangement"], salary_text=f["Salary"],
+                remote_flag=None, apply_url="https://www.apsjobs.gov.au/s/job-search",
+            )
+        time.sleep(DELAY)
+
+
+def parse_gazette(text):
+    """Split a Daily Gazette's text into vacancies."""
+    text = text.replace("\x0c", "\n")
+    text = re.sub(r"(?m)^(Australian Public Service Gazette|PS\d+ Daily Gazette .*\.pdf|Page \d+ of \d+)[ \t]*$\n?", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    parts = re.split(r"\nVacancy (VN-\d+)\n", text)
+    for k in range(1, len(parts) - 1, 2):
+        vn, block, before = parts[k], parts[k + 1], parts[k - 1]
+        # The closing date sits before or after the agency name, depending on page layout.
+        header = block.split("\nJob Title\n", 1)[0]
+        cm = re.search(r"Closing Date:([^\n]*)", header)
+        head = re.sub(r"Closing Date:[^\n]*", "", header).strip().split("\n\n")[0]
+        lines = [l.strip() for l in head.split("\n") if l.strip()]
+        if not lines:
+            # Other layout: "Portfolio / Agency / Division" sits just above the "Vacancy VN-" line.
+            prev = [l.strip() for l in before.rstrip().rsplit("\n\n", 1)[-1].split("\n") if l.strip()]
+            lines = prev
+        AGENCY_WORDS = re.compile(r"Department|Agency|Authority|Commission|Office|Service|Bureau|Australian|National|Tribunal|"
+                                  r"Court|Limited|Council|Institute|Museum|Gallery|Library|Archives|Centre|Board|Organisation|Corporation|Regulator")
+        named = [i for i, l in enumerate(lines) if AGENCY_WORDS.search(l)]
+        lines = lines[named[0]:] if named else lines
+        agency = lines[0] if lines else ""
+        if len(lines) > 1 and (len(agency) > 38 or lines[1][:1].islower() or agency.endswith((" and", " of", " for", " the"))):
+            agency += " " + lines[1]  # the name wrapped onto a second line
+        f = {}
+        for lab in LABELS:
+            m = re.search(r"\n%s\n\n(.*?)\n\n" % re.escape(lab), block, re.S)
+            f[lab] = " ".join(m.group(1).split()) if m else ""
+        m = re.search(r"\nJob Description\n\n\S+\n\n(.*)", block, re.S)
+        desc = PERSONAL.sub("", m.group(1) if m else "")
+        yield dict(vn=vn, agency=agency, closing=cm.group(1).strip() if cm else "", title=f["Job Title"],
+                   fields=f, description=strip_html(desc)[:12000])

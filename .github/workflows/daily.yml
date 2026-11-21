@@ -30,6 +30,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install the PDF reader (for the APS Gazette)
+        run: sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+
       - name: Scrape the job sites
         run: python run.py
 
