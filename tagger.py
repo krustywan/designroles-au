@@ -34,7 +34,7 @@ EXCLUDE = re.compile(
     re.I,
 )
 # A few strong design terms override the exclusion (e.g. "UX Engineer" is a design-adjacent role we keep).
-OVERRIDE = re.compile(r"(cx|customer experience)\s*(&|and)\s*insights?|cx analyst|customer experience analyst|survey insights|research enablement|behaviou?ral scien|experience architect|\bux\b|user experience|service design|product design|content design|design system|ux research|user research", re.I)
+OVERRIDE = re.compile(r"(cx|customer experience)\s*(&|and)\s*insights?|cx analyst|customer experience analyst|survey insights|research enablement|research op|behaviou?ral scien|experience architect|\bux\b|user experience|service design|product design|content design|design system|ux research|user research", re.I)
 
 
 HARD_EXCLUDE = re.compile(r"cyber ?cx|supervisor|integrity|ethics|grants?\b|teacher|classroom|lecturer|tutor|venue|\(wood\)|\(metal\)|school|kindergarten|early childhood|csa \||design manager - |design coordinator - |civil|drainage|\brail\b|\broad\b|\bbridge\b|tunnel", re.I)

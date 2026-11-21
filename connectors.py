@@ -949,7 +949,8 @@ def listing_site(listing, link_re, employer, source="careers-site", max_pages=15
             seen.add(l)
             full = l if l.startswith("http") else base + l
             slug = re.sub(r"[-_/]+", " ", l.split("?")[0])
-            if not candidate(slug):
+            # Links that carry the job title can be pre-filtered; bare numeric links must be opened.
+            if re.search(r"[a-z]{4,}", l.rstrip("/").rsplit("/", 1)[-1], re.I) and not candidate(slug):
                 continue
             time.sleep(DELAY)
             try:
