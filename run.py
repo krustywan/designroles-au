@@ -87,14 +87,15 @@ def build(raw):
             except Exception:
                 pass
         desc = j.get("description", "")
-        if j.get("sector") in ("Construction", "Mining") and not T.OVERRIDE.search(title):
+        if j.get("sector") in ("Construction", "Mining") and re.search(r"design (manager|coordinator|engineer)|design lead\b(?!.*(experience|service|human|digital))", title, re.I) \
+                and not T.OVERRIDE.search(title):
             continue  # "design manager" etc. means engineering design in these industries
         # De-duplicate the same role found in two places (e.g. an agency site and the APS Gazette).
         norm = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())
-        key = (norm(j["employer"])[:12], norm(title)[:24])
-        if key in seen:
+        emp_key, t_key = norm(j["employer"])[:12], norm(title)
+        if any(e == emp_key and (t.startswith(t_key[:20]) or t_key.startswith(t[:20])) for e, t in seen):
             continue
-        seen.add(key)
+        seen.add((emp_key, t_key))
         url, link_type = C.resolve_link(j)
         if re.search(r"internalcareers|internaljobs|/internal", url, re.I):
             continue  # staff-only job boards: not open to the public
