@@ -1,10 +1,15 @@
-import sys; sys.path.insert(0, ".")
+import sys, json, re; sys.path.insert(0, ".")
 import fetch_logos as F
-for d in ["bhp.com", "canva.com", "hcf.com.au", "macquarie.com", "bupa.com.au"]:
-    try: icons = F.page_icons(d)
-    except Exception as e: icons = str(e)
-    print("ICONS", d, icons[:5] if isinstance(icons, list) else icons)
-    for u in ([f"https://www.google.com/s2/favicons?domain={d}&sz=128", f"https://icons.duckduckgo.com/ip3/{d}.ico"] + (icons[:3] if isinstance(icons, list) else [])):
+for d in ["hcf.com.au", "bupa.com.au", "wesfarmers.com.au", "atari.com", "anglicarewa.org.au", "lagardere-tr.com", "naa.gov.au", "nhvr.gov.au", "niaa.gov.au", "ramint.gov.au", "acer.org"]:
+    for u in [f"https://unavatar.io/{d}?fallback=false", f"https://www.google.com/s2/favicons?domain_url=https://www.{d}/&sz=256",
+              f"https://{d}/favicon.ico", f"https://www.{d}/favicon.ico", f"https://www.{d}/manifest.json", f"https://www.{d}/site.webmanifest",
+              f"https://en.wikipedia.org/w/api.php?action=query&titles={d}&format=json"]:
         try:
-            b = F.fetch(u); print("  ", u[:80], len(b), b[:8], F.size(b))
-        except Exception as e: print("  ", u[:80], "ERR", str(e)[:80])
+            b = F.fetch(u); k = F.kind_and_size(b)
+            extra = ""
+            if "manifest" in u or "webmanifest" in u:
+                try: extra = str([i.get("src") + " " + i.get("sizes", "") for i in json.loads(b).get("icons", [])][:4])
+                except Exception: extra = "notjson"
+            print("L", d, u[:70], len(b), k, extra[:150])
+        except Exception as e:
+            print("L", d, u[:70], "ERR", str(e)[:60])
