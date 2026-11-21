@@ -37,6 +37,12 @@ def tasks():
         t.append((f"phenom/{home.split('/')[2]}", sec, lambda h=home, emp=emp: C.phenom(h, emp)))
     for host, emp, sec in SRC.get("pageup_site", []):
         t.append((f"pageup-site/{host}", sec, lambda h=host, emp=emp: C.pageup_site(h, emp)))
+    for host, portal, emp, sec in SRC.get("elmo", []):
+        t.append((f"elmo/{host}", sec, lambda h=host, po=portal, emp=emp: C.elmo(h, po, emp)))
+    for site, emp, sec in SRC.get("wordpress", []):
+        t.append((f"wordpress/{site.split('/')[2]}", sec, lambda si=site, emp=emp: C.wp_jobs(si, emp)))
+    for tenant, site, emp, sec in SRC.get("cornerstone", []):
+        t.append((f"cornerstone/{tenant}", sec, lambda te=tenant, si=site, emp=emp: C.cornerstone(te, si, emp)))
     for key, fn in (("vic_gov", C.vic_gov), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
         if SRC.get(key):
             t.append((key.replace("_", "-"), "Government", fn))
@@ -93,9 +99,11 @@ def build(raw):
         # De-duplicate the same role found in two places (e.g. an agency site and the APS Gazette).
         norm = lambda s: re.sub(r"[^a-z0-9]", "", (s or "").lower())
         emp_key, t_key = norm(j["employer"])[:12], norm(title)
-        if any(e == emp_key and (t.startswith(t_key[:20]) or t_key.startswith(t[:20])) for e, t in seen):
+        # Same title, or the same role listed by two different sources with one title extending the other.
+        if any(e == emp_key and (t == t_key or (src != j["source"] and (t.startswith(t_key[:20]) or t_key.startswith(t[:20]))))
+               for e, t, src in seen):
             continue
-        seen.add((emp_key, t_key))
+        seen.add((emp_key, t_key, j["source"]))
         url, link_type = C.resolve_link(j)
         if re.search(r"internalcareers|internaljobs|/internal", url, re.I):
             continue  # staff-only job boards: not open to the public

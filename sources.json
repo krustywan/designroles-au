@@ -1080,6 +1080,13 @@
    "MurdochCareers",
    "Murdoch University",
    "University"
+  ],
+  [
+   "perthairport.wd105.myworkdayjobs.com",
+   "perthairport",
+   "PerthAirport",
+   "Perth Airport",
+   "Aviation"
   ]
  ],
  "successfactors": [
@@ -1414,6 +1421,52 @@
    "https://jobs.newmont.com/us/en",
    "Newmont",
    "Mining"
+  ]
+ ],
+ "cornerstone": [
+  [
+   "nswconnect",
+   2,
+   "NSW Government",
+   "Government"
+  ],
+  [
+   "mirvac",
+   1,
+   "Mirvac",
+   "Property"
+  ],
+  [
+   "riotinto",
+   1,
+   "Rio Tinto",
+   "Mining"
+  ],
+  [
+   "yvw",
+   1,
+   "Yarra Valley Water",
+   "Utilities"
+  ]
+ ],
+ "elmo": [
+  [
+   "anglicarewa.elmotalent.com.au",
+   "default",
+   "Anglicare WA",
+   "Not-for-profit"
+  ]
+ ],
+ "wordpress": [
+  [
+   "https://beachamgroup.com",
+   "Beacham Group (recruiter)",
+   "Recruitment"
+  ],
+  [
+   "https://talentnation.com.au",
+   "Talent Nation (recruiter)",
+   "Recruitment"
   ]
  ]
 }

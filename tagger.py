@@ -34,7 +34,7 @@ EXCLUDE = re.compile(
     re.I,
 )
 # A few strong design terms override the exclusion (e.g. "UX Engineer" is a design-adjacent role we keep).
-OVERRIDE = re.compile(r"experience architect|\bux\b|user experience|service design|product design|content design|design system|ux research|user research", re.I)
+OVERRIDE = re.compile(r"(cx|customer experience)\s*(&|and)\s*insights?|experience architect|\bux\b|user experience|service design|product design|content design|design system|ux research|user research", re.I)
 
 
 HARD_EXCLUDE = re.compile(r"cyber ?cx|supervisor|integrity|ethics|grants?\b|teacher|classroom|lecturer|tutor|venue|\(wood\)|\(metal\)|school|kindergarten|early childhood|csa \||design manager - |design coordinator - |civil|drainage|\brail\b|\broad\b|\bbridge\b|tunnel", re.I)
@@ -211,7 +211,7 @@ def pay(salary_text, desc=""):
 
 # ---------- Recruiter ----------
 RECRUITERS = re.compile(
-    r"beacham|hays|michael page|page personnel|robert walters|randstad|hudson|talent international|aurec|"
+    r"beacham|talent nation|hays|michael page|page personnel|robert walters|randstad|hudson|talent international|aurec|"
     r"paxus|peoplebank|chandler macleod|people2people|davidson|bluefin|talentweb|halcyon knights|"
     r"recruitment|recruiting|staffing|talent solutions|search partners|bespoke careers|experis|"
     r"jobgether|launch recruitment|the onset|digital talent|f5 recruitment|clicks it|greythorn|"
