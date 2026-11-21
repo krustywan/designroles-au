@@ -211,7 +211,7 @@ def pay(salary_text, desc=""):
 
 # ---------- Recruiter ----------
 RECRUITERS = re.compile(
-    r"hays|michael page|page personnel|robert walters|randstad|hudson|talent international|aurec|"
+    r"beacham|hays|michael page|page personnel|robert walters|randstad|hudson|talent international|aurec|"
     r"paxus|peoplebank|chandler macleod|people2people|davidson|bluefin|talentweb|halcyon knights|"
     r"recruitment|recruiting|staffing|talent solutions|search partners|bespoke careers|experis|"
     r"jobgether|launch recruitment|the onset|digital talent|f5 recruitment|clicks it|greythorn|"
