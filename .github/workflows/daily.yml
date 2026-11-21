@@ -1,0 +1,53 @@
+name: Daily scrape
+
+on:
+  schedule:
+    - cron: "17 22 * * *"   # every day at 6:17am Perth time (GitHub uses UTC)
+  workflow_dispatch:         # adds a "Run workflow" button so you can run it any time
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  scrape-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scrape the job sites
+        run: python run.py
+
+      - name: Build the board
+        run: |
+          python build_board.py
+          mkdir -p site
+          cp board.html site/index.html
+          cp jobs.json site/jobs.json
+
+      - name: Prepare the website
+        uses: actions/configure-pages@v5
+
+      - name: Upload the website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publish the website
+        id: deployment
+        uses: actions/deploy-pages@v4
