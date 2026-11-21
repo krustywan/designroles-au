@@ -69,7 +69,9 @@ def jsonld_job(page):
                 if isinstance(v, dict) and (v.get("minValue") or v.get("value")):
                     sal = f"${v.get('minValue') or v.get('value')} - ${v.get('maxValue') or v.get('value')} per {str(v.get('unitText','year')).lower()}"
                 et = x.get("employmentType") or ""
-                return dict(title=html.unescape(x.get("title", "")), description=strip_html(html.unescape(x.get("description", ""))),
+                org = x.get("hiringOrganization") or {}
+                return dict(employer=html.unescape(org.get("name", "")) if isinstance(org, dict) else "",
+                            title=html.unescape(x.get("title", "")), description=strip_html(html.unescape(x.get("description", ""))),
                             posted=(x.get("datePosted") or "")[:10], location="; ".join(p for p in place if p),
                             employment_type=", ".join(et) if isinstance(et, list) else et, salary_text=sal,
                             workplace="Remote" if x.get("jobLocationType") == "TELECOMMUTE" else "")
@@ -453,11 +455,15 @@ def avature(base, employer):
                 m = re.search(label + r"\s*</[^>]+>\s*(?:<[^>]+>\s*)*([^<]+)", d)
                 return html.unescape(m.group(1)).strip() if m else ""
             brand = field("Brand")
+            loc = ld.get("location") or field("Location").rstrip(", ")
+            if not loc:  # newer Avature layout: label and value in separate field divs
+                m = re.search(r"field__label[^>]*>\s*(?:Location|City|Work location)s?\s*<.*?field__value[^>]*>\s*([^<]+)", d, re.S | re.I)
+                loc = html.unescape(m.group(1)).strip() if m else ""
             yield dict(
                 source="avature", source_id="av-" + link.rstrip("/").rsplit("/", 1)[-1],
                 employer=f"{employer} ({brand})" if brand and brand.lower() not in employer.lower() else employer,
                 title=ld.get("title") or title, url=link,
-                location=ld.get("location") or field("Location").rstrip(", "),
+                location=loc,
                 description=ld.get("description", ""), posted=ld.get("posted", ""),
                 employment_type=ld.get("employment_type") or field("Employment type"), workplace="",
                 salary_text=ld.get("salary_text", ""), remote_flag=None,
@@ -920,4 +926,41 @@ def wp_jobs(site, employer):
                 description=strip_html((j.get("content") or {}).get("rendered", "")), posted=(j.get("date") or "")[:10],
                 employment_type="", workplace="", salary_text="", remote_flag=None,
             )
+        time.sleep(DELAY)
+
+
+def listing_site(listing, link_re, employer, source="careers-site", max_pages=15):
+    """Generic connector for careers sites that list jobs as plain links and put
+    a JSON-LD JobPosting on each job page. listing may contain {page}."""
+    seen, base = set(), re.match(r"https?://[^/]+", listing).group(0)
+    for page in range(1, max_pages + 1):
+        url = listing.format(page=page) if "{page}" in listing else listing
+        try:
+            b = get(url, tries=2).decode("utf8", "ignore")
+        except Exception:
+            break
+        links = [l for l in dict.fromkeys(re.findall(link_re, b)) if l not in seen]
+        if not links:
+            break
+        for l in links:
+            seen.add(l)
+            full = l if l.startswith("http") else base + l
+            slug = re.sub(r"[-_/]+", " ", l.split("?")[0])
+            if not candidate(slug):
+                continue
+            time.sleep(DELAY)
+            try:
+                d = get(full, tries=2).decode("utf8", "ignore")
+            except Exception:
+                continue
+            ld = jsonld_job(d)
+            if not ld or not candidate(ld.get("title", "")):
+                continue
+            yield dict(source=source, source_id=source + "-" + l.rstrip("/").rsplit("/", 1)[-1][:60],
+                       employer=ld.get("employer") or employer, title=ld["title"], url=full,
+                       location=ld.get("location", ""), description=ld.get("description", ""),
+                       posted=ld.get("posted", ""), employment_type=ld.get("employment_type", ""),
+                       workplace="", salary_text=ld.get("salary_text", ""), remote_flag=None)
+        if "{page}" not in listing:
+            break
         time.sleep(DELAY)
