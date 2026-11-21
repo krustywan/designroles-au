@@ -46,6 +46,7 @@ jobs:
           cp board.html site/index.html
           cp jobs.json site/jobs.json
           cp -r logos site/logos
+          cp -r assets site/assets
 
       - name: Prepare the website
         uses: actions/configure-pages@v5
