@@ -351,7 +351,7 @@ def sf_rss(host, employer, locale="en_US"):
             except Exception:
                 posted = ""
             yield dict(
-                source="successfactors", source_id="sf-" + host + "-" + link.rstrip("/").rsplit("/", 1)[-1],
+                source="successfactors", source_id="sf-" + host + "-" + link.split("?")[0].rstrip("/").rsplit("/", 1)[-1],
                 employer=employer, title=title, url=link, location=loc,
                 description=strip_html(it.findtext("description") or ""), posted=posted,
                 employment_type="", workplace="", salary_text="", remote_flag=None,
