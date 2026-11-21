@@ -228,11 +228,20 @@ def via_recruiter(employer, desc=""):
     return False
 
 
-def summary(desc, n=260):
+def summary(desc, n=420):
+    """A short, rule-based summary: prefer sentences about the role over the company intro."""
     d = re.sub(r"\s+", " ", desc or "").strip()
-    # Skip boilerplate openers when we can.
-    d = re.sub(r"^(about (us|the company)|who we are)[:\s]*", "", d, flags=re.I)
+    d = re.sub(r"^(about (us|the company|the role)|who we are|the opportunity|the role)[:\s]*", "", d, flags=re.I)
     if len(d) <= n:
         return d
-    cut = d[:n]
-    return cut[: cut.rfind(" ")] + "…"
+    sents = re.split(r"(?<=[.!?])\s+(?=[A-Z])", d)[:25]
+    role = re.compile(r"\b(you will|you'll|you’ll|this role|the role|as (a|an|our)|we('re| are) (looking|seeking)|reporting to|responsible for|in this (role|position)|your role|join (our|the) [\w ]{0,30}team)\b", re.I)
+    start = next((k for k, x in enumerate(sents) if role.search(x)), 0)
+    out = ""
+    for x in sents[start:]:
+        if len(out) + len(x) > n and out:
+            break
+        out = (out + " " + x).strip()
+    if len(out) > n:
+        out = out[:n][: out[:n].rfind(" ")] + "…"
+    return out

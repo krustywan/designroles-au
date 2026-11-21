@@ -3,6 +3,7 @@
 Usage: python3 run.py            (all sources in sources.json)
 """
 import json, time, re, sys, traceback, hashlib
+import summarise
 import connectors as C
 import tagger as T
 
@@ -131,7 +132,33 @@ def build(raw):
             posted=j.get("posted", ""), url=url, link_type=link_type, source=j["source"],
             summary=T.summary(desc),
         ))
+        DESCS[out[-1]["id"]] = desc
     return out
+
+
+DESCS = {}   # full ad text by role id, used for AI summaries and not published
+
+PREVIOUS = "https://krustywan.github.io/designroles-au/jobs.json"
+
+
+PREV_AI = {}   # AI summaries already on the published board
+
+
+def remember_first_seen(jobs, today):
+    """Give every role the date we first saw it, by reading yesterday's published board.
+    Roles that were already on the board before we tracked this get their posted date (or none)."""
+    prev, by_url = {}, {}
+    try:
+        old = json.loads(C.get(PREVIOUS, tries=2))
+        for j in old.get("jobs", []):
+            prev[j["id"]] = by_url[j["url"]] = j["first_seen"] if "first_seen" in j else (j.get("posted") or "")
+            if j.get("ai"):
+                PREV_AI[j["id"]] = j["ai"]
+        log.append(f"first-seen dates: read {len(prev)} roles from the published board")
+    except Exception as e:
+        log.append(f"first-seen dates: could not read the published board ({e}); new roles dated today")
+    for j in jobs:
+        j["first_seen"] = prev.get(j["id"], by_url.get(j["url"], today))
 
 
 if __name__ == "__main__":
@@ -139,8 +166,11 @@ if __name__ == "__main__":
     raw = collect()
     json.dump(raw, open("raw.json", "w"))
     jobs = build(raw)
-    jobs.sort(key=lambda x: x["posted"] or "", reverse=True)
-    json.dump(dict(generated=time.strftime("%Y-%m-%d %H:%M"), count=len(jobs), jobs=jobs),
+    perth = time.gmtime(time.time() + 8 * 3600)  # GitHub's computers run on UTC; the board shows Perth time
+    remember_first_seen(jobs, time.strftime("%Y-%m-%d", perth))
+    summarise.add_summaries(jobs, DESCS, PREV_AI, log)
+    jobs.sort(key=lambda x: x["posted"] or x["first_seen"] or "", reverse=True)
+    json.dump(dict(generated=time.strftime("%Y-%m-%d %H:%M", perth), count=len(jobs), jobs=jobs),
               open("jobs.json", "w"), indent=1)
     print("\n".join(log))
     print(f"raw candidates: {len(raw)}  kept: {len(jobs)}  in {time.time()-t0:.0f}s")

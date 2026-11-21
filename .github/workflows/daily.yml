@@ -34,7 +34,12 @@ jobs:
         run: sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
 
       - name: Scrape the job sites
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional: turns on AI summaries
         run: python run.py
+
+      - name: Get employer logos
+        run: python fetch_logos.py
 
       - name: Build the board
         run: |
@@ -42,6 +47,8 @@ jobs:
           mkdir -p site
           cp board.html site/index.html
           cp jobs.json site/jobs.json
+          cp -r logos site/logos
+          cp -r assets site/assets
 
       - name: Prepare the website
         uses: actions/configure-pages@v5
