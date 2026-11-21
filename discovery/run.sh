@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -e
-python discovery/probe2.py discovery/companies2.csv
+python discovery/probe3.py discovery/guesses.json

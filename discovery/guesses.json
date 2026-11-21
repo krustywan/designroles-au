@@ -1,0 +1,298 @@
+{
+ "Bendigo and Adelaide Bank": [
+  "bendigoadelaide",
+  "bendigobank",
+  "bab"
+ ],
+ "ING Australia": [
+  "ing",
+  "ingaustralia"
+ ],
+ "HSBC Australia": [
+  "hsbc"
+ ],
+ "Afterpay": [
+  "afterpay",
+  "block",
+  "squareup"
+ ],
+ "Humm Group": [
+  "humm",
+  "hummgroup"
+ ],
+ "AIA Australia": [
+  "aia",
+  "aiaaustralia"
+ ],
+ "MLC Life": [
+  "mlc",
+  "mlclife",
+  "nipponlife"
+ ],
+ "Hollard": [
+  "hollard"
+ ],
+ "Auto & General": [
+  "autogeneral",
+  "autoandgeneral",
+  "budgetdirect"
+ ],
+ "HCF": [
+  "hcf"
+ ],
+ "GMHBA": [
+  "gmhba"
+ ],
+ "UniSuper": [
+  "unisuper"
+ ],
+ "Aware Super": [
+  "aware",
+  "awaresuper"
+ ],
+ "Cbus": [
+  "cbus",
+  "cbussuper"
+ ],
+ "Rest": [
+  "rest",
+  "restsuper"
+ ],
+ "Vanguard Australia": [
+  "vanguard"
+ ],
+ "Optus": [
+  "optus",
+  "singtel"
+ ],
+ "Superloop": [
+  "superloop"
+ ],
+ "Officeworks": [
+  "officeworks"
+ ],
+ "JB Hi-Fi": [
+  "jbhifi",
+  "jbhifigroup"
+ ],
+ "Harvey Norman": [
+  "harveynorman"
+ ],
+ "David Jones": [
+  "davidjones"
+ ],
+ "Super Retail Group": [
+  "superretailgroup",
+  "srg"
+ ],
+ "Premier Retail": [
+  "premierretail",
+  "premierinvestments"
+ ],
+ "Endeavour Group": [
+  "endeavourgroup",
+  "edg"
+ ],
+ "ALDI Australia": [
+  "aldi",
+  "aldisouthgroup"
+ ],
+ "Universal Store": [
+  "universalstore"
+ ],
+ "Qantas": [
+  "qantas",
+  "qantasgroup"
+ ],
+ "Jetstar": [
+  "jetstar"
+ ],
+ "Sonic Healthcare": [
+  "sonichealthcare",
+  "sonic"
+ ],
+ "Healthdirect Australia": [
+  "healthdirect"
+ ],
+ "HealthEngine": [
+  "healthengine"
+ ],
+ "SEEK": [
+  "seek",
+  "seekau"
+ ],
+ "Atlassian": [
+  "atlassian"
+ ],
+ "MYOB": [
+  "myob"
+ ],
+ "WiseTech Global": [
+  "wisetechglobal",
+  "wisetech"
+ ],
+ "ABC": [
+  "abc",
+  "abcaustralia"
+ ],
+ "SBS": [
+  "sbs"
+ ],
+ "Foxtel": [
+  "foxtel",
+  "foxtelgroup"
+ ],
+ "Stan": [
+  "stan",
+  "stanaustralia"
+ ],
+ "The Star Entertainment": [
+  "star",
+  "starentertainment",
+  "thestar"
+ ],
+ "Lottery Corporation": [
+  "thelotterycorporation",
+  "tlc",
+  "lotterycorp"
+ ],
+ "KPMG Australia": [
+  "kpmg",
+  "kpmgaustralia",
+  "kpmgau"
+ ],
+ "DXC Technology": [
+  "dxctechnology",
+  "dxc"
+ ],
+ "Flybuys": [
+  "flybuys"
+ ],
+ "Belong": [
+  "belong"
+ ],
+ "Amcor": [
+  "amcor"
+ ],
+ "Canva": [
+  "canva"
+ ],
+ "Domain": [
+  "domain",
+  "domaingroup"
+ ],
+ "AGL": [
+  "agl",
+  "aglenergy"
+ ],
+ "Monash University": [
+  "monash"
+ ],
+ "University of Melbourne": [
+  "unimelb"
+ ],
+ "QUT": [
+  "qut"
+ ],
+ "Swinburne University": [
+  "swinburne"
+ ],
+ "Curtin University": [
+  "curtin"
+ ],
+ "Bunnings": [
+  "bunnings"
+ ],
+ "Chemist Warehouse": [
+  "chemistwarehouse",
+  "sigmahealthcare"
+ ],
+ "Allianz Australia": [
+  "allianz",
+  "allianzaustralia"
+ ],
+ "AustralianSuper": [
+  "australiansuper"
+ ],
+ "ResMed": [
+  "resmed"
+ ],
+ "Vicinity Centres": [
+  "vicinity",
+  "vicinitycentres"
+ ],
+ "TechnologyOne": [
+  "technologyone",
+  "technologyonecorp"
+ ],
+ "News Corp Australia": [
+  "newscorp",
+  "newscorpaustralia"
+ ],
+ "Teachers Mutual Bank": [
+  "tmbank"
+ ],
+ "Beyond Bank": [
+  "beyondbank"
+ ],
+ "Judo Bank": [
+  "judo",
+  "judobank"
+ ],
+ "Great Southern Bank": [
+  "greatsouthernbank",
+  "cua"
+ ],
+ "Macquarie Group": [
+  "macquarie",
+  "mqgroup"
+ ],
+ "Services Australia": [
+  "servicesaustralia"
+ ],
+ "Service NSW": [
+  "servicensw"
+ ],
+ "City of Melbourne": [
+  "cityofmelbourne"
+ ],
+ "City of Perth": [
+  "cityofperth"
+ ],
+ "Energy Queensland": [
+  "energyq",
+  "energyqueensland"
+ ],
+ "Perth Airport": [
+  "perthairport"
+ ],
+ "Coca-Cola Europacific Partners": [
+  "cocacolaep",
+  "ccep"
+ ],
+ "Nestle Australia": [
+  "nestle"
+ ],
+ "Unilever Australia": [
+  "unilever"
+ ],
+ "Ramsay Health Care": [
+  "ramsay",
+  "ramsayhealth"
+ ],
+ "Rabobank Australia": [
+  "rabobank"
+ ],
+ "NRMA": [
+  "nrma",
+  "mynrma"
+ ],
+ "Newcastle Permanent": [
+  "newcastlepermanent",
+  "npbs"
+ ],
+ "Heritage and People's Choice": [
+  "peopleschoice",
+  "heritage"
+ ]
+}
