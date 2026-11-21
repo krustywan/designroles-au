@@ -855,3 +855,40 @@ def _agency(desc, default):
                   r"Fair Trading|Digital\.NSW|Data\.NSW)", strip_html(desc))
     name = m.group(1).rstrip(" ,") if m else default
     return name if "NSW" in name or name == default else f"{name} (NSW)"
+
+
+# ---------------- ELMO Talent career portals (e.g. Anglicare WA) ----------------
+def elmo(host, portal, employer):
+    base = f"https://{host}/careers/{portal}"
+    seen, page = {}, 1
+    while page <= 20:
+        h = get(f"{base}/jobs" + (f"?page={page}" if page > 1 else "")).decode("utf8", "ignore")
+        new = 0
+        for jid, title in re.findall(r'/job/view/(\d+)[^>]*>\s*([^<]{3,150})<', h):
+            if jid not in seen:
+                seen[jid] = html.unescape(title).strip()
+                new += 1
+        if not new or "page=%d" % (page + 1) not in h:
+            break
+        page += 1
+        time.sleep(DELAY)
+    for jid, title in seen.items():
+        if not candidate(title):
+            continue
+        time.sleep(DELAY)
+        url = f"{base}/job/view/{jid}"
+        try:
+            d = get(url).decode("utf8", "ignore")
+        except Exception:
+            d = ""
+        ld = jsonld_job(d) or {}
+        body = re.search(r'<div[^>]+class="[^"]*(?:job-description|jobDescription|description)[^"]*"[^>]*>(.*?)</div>\s*</div>', d, re.S)
+        loc = re.search(r"Location[^<]*</[^>]+>\s*(?:<[^>]+>\s*)*([^<]{2,80})<", d)
+        wt = re.search(r"(?:Work Type|Employment Type)[^<]*</[^>]+>\s*(?:<[^>]+>\s*)*([^<]{2,60})<", d)
+        yield dict(
+            source="elmo", source_id=f"elmo-{host.split('.')[0]}-{jid}", employer=employer, title=title, url=url,
+            location=ld.get("location") or (strip_html(loc.group(1)) if loc else ""),
+            description=ld.get("description") or (strip_html(body.group(1)) if body else strip_html(d)[:6000]),
+            posted=ld.get("posted", ""), employment_type=ld.get("employment_type") or (strip_html(wt.group(1)) if wt else ""),
+            workplace="", salary_text=ld.get("salary_text", ""), remote_flag=None,
+        )
