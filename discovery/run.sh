@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -e
-python discovery/debug8.py
+python discovery/probe_rec.py discovery/recruiters.csv
