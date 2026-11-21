@@ -656,3 +656,132 @@ def parse_gazette(text):
         desc = PERSONAL.sub("", m.group(1) if m else "")
         yield dict(vn=vn, agency=agency, closing=cm.group(1).strip() if cm else "", title=f["Job Title"],
                    fields=f, description=strip_html(desc)[:12000])
+
+
+# ---------------- Oracle Recruiting Cloud (public candidate-experience API) ----------------
+def oracle(host, site, employer):
+    seen = set()
+    base = f"https://{host}/hcmRestApi/resources/latest/"
+    for kw in KEYWORDS:
+        finder = f'findReqs;siteNumber={site},limit=50,keyword="{kw}",sortBy=POSTING_DATES_DESC'
+        url = base + "recruitingCEJobRequisitions?onlyData=true&expand=requisitionList.secondaryLocations&finder=" + urllib.parse.quote(finder, safe=";=,")
+        d = get_json(url, headers={"Accept": "application/json"})
+        for it in d.get("items", []):
+            for r in it.get("requisitionList", []):
+                rid = str(r.get("Id"))
+                if rid in seen or not candidate(r.get("Title")):
+                    continue
+                seen.add(rid)
+                time.sleep(DELAY)
+                desc = r.get("ShortDescriptionStr") or ""
+                try:
+                    det = get_json(base + "recruitingCEJobRequisitionDetails?expand=all&onlyData=true&finder=" +
+                                   urllib.parse.quote(f'ById;Id="{rid}",siteNumber={site}', safe=";=,"), headers={"Accept": "application/json"})
+                    di = (det.get("items") or [{}])[0]
+                    desc = " ".join(strip_html(di.get(k) or "") for k in ("ExternalDescriptionStr", "ExternalResponsibilitiesStr", "ExternalQualificationsStr"))
+                except Exception:
+                    di = {}
+                locs = [r.get("PrimaryLocation", "")] + [l.get("Name", "") for l in (r.get("secondaryLocations") or [])]
+                yield dict(
+                    source="oracle", source_id=f"or-{host.split('.')[0]}-{rid}", employer=employer,
+                    title=r.get("Title", ""), url=f"https://{host}/hcmUI/CandidateExperience/en/sites/{site}/job/{rid}",
+                    location="; ".join(l for l in locs if l), description=desc, posted=(r.get("PostedDate") or "")[:10],
+                    employment_type=di.get("JobSchedule", "") or r.get("JobSchedule", "") or "",
+                    workplace=r.get("WorkplaceType", "") or "", salary_text="", remote_flag=None,
+                )
+        time.sleep(DELAY)
+
+
+# ---------------- Eightfold career sites ----------------
+def eightfold(host, domain, employer):
+    seen = set()
+    for kw in KEYWORDS:
+        d = get_json(f"https://{host}/api/apply/v2/jobs?" + urllib.parse.urlencode({"domain": domain, "query": kw, "num": 50, "location": "Australia"}))
+        for p in d.get("positions", []):
+            pid = str(p.get("id"))
+            if pid in seen or not candidate(p.get("name")):
+                continue
+            seen.add(pid)
+            time.sleep(DELAY)
+            try:
+                det = get_json(f"https://{host}/api/apply/v2/jobs/{pid}?" + urllib.parse.urlencode({"domain": domain}))
+            except Exception:
+                det = {}
+            yield dict(
+                source="eightfold", source_id=f"ef-{domain}-{pid}", employer=employer, title=p.get("name", ""),
+                url=p.get("canonicalPositionUrl") or f"https://{host}/careers/job/{pid}",
+                location="; ".join(p.get("locations") or [p.get("location", "")]),
+                description=strip_html(det.get("job_description", "")),
+                posted=time.strftime("%Y-%m-%d", time.gmtime(p.get("t_create") or 0)) if p.get("t_create") else "",
+                employment_type=p.get("type", "") or "", workplace=p.get("work_location_option", "") or "", salary_text="", remote_flag=None,
+            )
+        time.sleep(DELAY)
+
+
+# ---------------- Phenom career sites (e.g. IAG, QBE, PwC) ----------------
+def phenom(home, employer):
+    """home: the site's home page, e.g. https://careers.iag.com.au/global/en"""
+    u = urllib.parse.urlparse(home)
+    host, parts = u.netloc, [p for p in u.path.split("/") if p]
+    country, lang = (parts + ["global", "en"])[:2]
+    page = get(home).decode("utf8", "ignore")
+    ref = re.search(r'"refNum"\s*:\s*"([^"]+)"', page)
+    seen = set()
+    for kw in KEYWORDS:
+        body = {"lang": f"{lang}_{country}", "deviceType": "desktop", "country": country, "pageName": "search-results",
+                "ddoKey": "refineSearch", "sortBy": "", "subsearch": "", "from": 0, "jobs": True, "counts": True,
+                "all_fields": ["category", "country", "state", "city", "type"], "size": 50, "clearAll": False,
+                "jdsource": "facets", "isSliderEnable": False, "pageId": "page20", "siteType": "external",
+                "keywords": kw, "global": True, "selected_fields": {}, "locationData": {}}
+        if ref:
+            body["refNum"] = ref.group(1)
+        d = json.loads(get(f"https://{host}/widgets", data=json.dumps(body).encode(),
+                           headers={"Content-Type": "application/json", "Accept": "application/json"}))
+        for j in ((d.get("refineSearch") or {}).get("data") or {}).get("jobs", []):
+            jid = str(j.get("jobSeqNo") or j.get("jobId"))
+            if jid in seen or not candidate(j.get("title")):
+                continue
+            seen.add(jid)
+            loc = j.get("location") or ", ".join(x for x in [j.get("city"), j.get("state"), j.get("country")] if x)
+            yield dict(
+                source="phenom", source_id=f"ph-{host}-{jid}", employer=employer, title=j.get("title", ""),
+                url=f"https://{host}/{country}/{lang}/job/{j.get('jobId') or jid}",
+                location=loc, description=strip_html(j.get("descriptionTeaser", "")),
+                posted=(j.get("postedDate") or "")[:10], employment_type=j.get("type", "") or "",
+                workplace=j.get("remote", "") if isinstance(j.get("remote"), str) else "", salary_text="", remote_flag=None,
+            )
+        time.sleep(DELAY)
+
+
+# ---------------- PageUp "Careers Site" platform (same as WA Gov; e.g. Virgin Australia, Nine) ----------------
+def pageup_site(host, employer):
+    seen = set()
+    for kw in KEYWORDS:
+        h = get(f"https://{host}/jobs/search?" + urllib.parse.urlencode({"query": kw})).decode("utf8", "ignore")
+        for c in h.split('job-search-results-card')[1:]:
+            m = re.search(r'href="(https://%s/jobs/(?!search)[^"]+)"[^>]*>([^<]+)</a>' % re.escape(host), c)
+            if not m:
+                continue
+            link, title = m.group(1), html.unescape(m.group(2)).strip()
+            if link in seen or not candidate(title):
+                continue
+            seen.add(link)
+            def span(cls):
+                mm = re.search(r'job-component-%s".*?<span[^>]*>\s*(.*?)\s*</span>' % cls, c, re.S)
+                return html.unescape(re.sub(r"<[^>]+>", "", mm.group(1))).strip() if mm else ""
+            time.sleep(DELAY)
+            desc, ld = "", {}
+            try:
+                d = get(link).decode("utf8", "ignore")
+                ld = jsonld_job(d) or {}
+                main = re.search(r'<div class="[^"]*job-description[^"]*"[^>]*>(.*?)</section>', d, re.S) or re.search(r"<main[^>]*>(.*?)</main>", d, re.S)
+                desc = ld.get("description") or (strip_html(main.group(1))[:12000] if main else "")
+            except Exception:
+                pass
+            yield dict(
+                source="pageup-site", source_id="ps-" + link.rsplit("/", 1)[-1], employer=employer, title=title, url=link,
+                location=ld.get("location") or span("location"), description=desc, posted=ld.get("posted", ""),
+                employment_type=ld.get("employment_type") or span("employment-type"), workplace=ld.get("workplace", ""),
+                salary_text=ld.get("salary_text") or span("salary"), remote_flag=None,
+            )
+        time.sleep(DELAY)

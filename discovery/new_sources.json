@@ -1,0 +1,648 @@
+{
+ "workday": [
+  [
+   "cba.wd3.myworkdayjobs.com",
+   "cba",
+   "CommBank_Careers",
+   "Commonwealth Bank",
+   "Banking"
+  ],
+  [
+   "cba.wd3.myworkdayjobs.com",
+   "cba",
+   "Bankwest_Careers",
+   "Bankwest",
+   "Banking"
+  ],
+  [
+   "boq.wd3.myworkdayjobs.com",
+   "boq",
+   "Careers-at-BOQGroup",
+   "Bank of Queensland",
+   "Banking"
+  ],
+  [
+   "citi.wd5.myworkdayjobs.com",
+   "citi",
+   "2",
+   "Citi Australia",
+   "Banking"
+  ],
+  [
+   "latitudefinancial.wd3.myworkdayjobs.com",
+   "latitudefinancial",
+   "careers",
+   "Latitude Financial",
+   "Fintech"
+  ],
+  [
+   "tal.wd3.myworkdayjobs.com",
+   "tal",
+   "TAL-current-opportunities",
+   "TAL",
+   "Insurance"
+  ],
+  [
+   "racwa.wd3.myworkdayjobs.com",
+   "racwa",
+   "RAC-WA",
+   "RAC WA",
+   "Insurance"
+  ],
+  [
+   "nib.wd105.myworkdayjobs.com",
+   "nib",
+   "careers",
+   "nib",
+   "Health insurance"
+  ],
+  [
+   "hbf.wd105.myworkdayjobs.com",
+   "hbf",
+   "HBF_External",
+   "HBF",
+   "Health insurance"
+  ],
+  [
+   "telstra.wd3.myworkdayjobs.com",
+   "telstra",
+   "Telstra_Careers",
+   "Telstra",
+   "Telco"
+  ],
+  [
+   "nbn.wd3.myworkdayjobs.com",
+   "nbn",
+   "nbncareers",
+   "NBN Co",
+   "Telco"
+  ],
+  [
+   "aussiebroadband.wd3.myworkdayjobs.com",
+   "aussiebroadband",
+   "External",
+   "Aussie Broadband",
+   "Telco"
+  ],
+  [
+   "tollgroup.wd5.myworkdayjobs.com",
+   "tollgroup",
+   "TollGroup",
+   "Toll Group",
+   "Logistics"
+  ],
+  [
+   "shellenergy.wd105.myworkdayjobs.com",
+   "shellenergy",
+   "shellenergy-aus",
+   "Powershop",
+   "Energy"
+  ],
+  [
+   "svha.wd3.myworkdayjobs.com",
+   "svha",
+   "SVHA_SVHA",
+   "St Vincent's Health Australia",
+   "Health"
+  ],
+  [
+   "dexus.wd3.myworkdayjobs.com",
+   "dexus",
+   "DexusCareers",
+   "Dexus",
+   "Property"
+  ],
+  [
+   "sevenwestmedia.wd105.myworkdayjobs.com",
+   "sevenwestmedia",
+   "SWM",
+   "Seven West Media",
+   "Media"
+  ],
+  [
+   "crownresorts.wd3.myworkdayjobs.com",
+   "crownresorts",
+   "crown_careers",
+   "Crown Resorts",
+   "Gaming"
+  ],
+  [
+   "aristocrat.wd3.myworkdayjobs.com",
+   "aristocrat",
+   "AristocratExternalCareersSite",
+   "Aristocrat",
+   "Gaming"
+  ],
+  [
+   "accenture.wd103.myworkdayjobs.com",
+   "accenture",
+   "AccentureCareers",
+   "Accenture Australia",
+   "Consultancy"
+  ],
+  [
+   "aett.wd3.myworkdayjobs.com",
+   "aett",
+   "Versent",
+   "Versent",
+   "Consultancy"
+  ],
+  [
+   "transurban.wd3.myworkdayjobs.com",
+   "transurban",
+   "TU_AU",
+   "Transurban",
+   "Transport"
+  ],
+  [
+   "usyd.wd105.myworkdayjobs.com",
+   "usyd",
+   "USYD_EXTERNAL_CAREER_SITE",
+   "University of Sydney",
+   "University"
+  ],
+  [
+   "rmit.wd3.myworkdayjobs.com",
+   "rmit",
+   "RMIT_Careers",
+   "RMIT University",
+   "University"
+  ],
+  [
+   "uq.wd3.myworkdayjobs.com",
+   "uq",
+   "uqcareers",
+   "University of Queensland",
+   "University"
+  ]
+ ],
+ "oracle": [
+  [
+   "ebuu.fa.ap1.oraclecloud.com",
+   "CX",
+   "Westpac",
+   "Banking"
+  ],
+  [
+   "ebuu.fa.ap1.oraclecloud.com",
+   "CX",
+   "St.George Bank",
+   "Banking"
+  ],
+  [
+   "fa-esow-saasfaprod1.fa.ocs.oraclecloud.com",
+   "CX_1",
+   "AMP",
+   "Banking"
+  ],
+  [
+   "edss.fa.ap1.oraclecloud.com",
+   "CX_1001",
+   "Pepper Money",
+   "Fintech"
+  ],
+  [
+   "hcgh.fa.ap1.oraclecloud.com",
+   "CX_3001",
+   "Australian Retirement Trust",
+   "Super"
+  ],
+  [
+   "fa-eran-saasfaprod1.fa.ocs.oraclecloud.com",
+   "CX_1",
+   "Colonial First State",
+   "Super"
+  ],
+  [
+   "fa-ewlx-saasfaprod1.fa.ocs.oraclecloud.com",
+   "CX_1",
+   "TPG Telecom",
+   "Telco"
+  ],
+  [
+   "ekxm.fa.ap1.oraclecloud.com",
+   "CX",
+   "Cotton On",
+   "Retail"
+  ],
+  [
+   "ebpm.fa.us2.oraclecloud.com",
+   "CX_1",
+   "Treasury Wine Estates",
+   "Manufacturing"
+  ]
+ ],
+ "successfactors": [
+  [
+   "www.zurich.com.au",
+   "Zurich Australia",
+   "Insurance",
+   "en_US"
+  ],
+  [
+   "careers.racv.com.au",
+   "RACV",
+   "Insurance",
+   "en_US"
+  ],
+  [
+   "careers.australianunity.com.au",
+   "Australian Unity",
+   "Health insurance",
+   "en_US"
+  ],
+  [
+   "peopleconnect.hesta.com.au",
+   "HESTA",
+   "Super",
+   "en_US"
+  ],
+  [
+   "careers.insigniafinancial.com.au",
+   "Insignia Financial",
+   "Super",
+   "en_US"
+  ],
+  [
+   "careers.colesgroup.com.au",
+   "Coles",
+   "Retail",
+   "en_US"
+  ],
+  [
+   "jobs.kmart.com.au",
+   "Kmart Group",
+   "Retail",
+   "en_US"
+  ],
+  [
+   "jobs.target.com.au",
+   "Target Australia",
+   "Retail",
+   "en_US"
+  ],
+  [
+   "careers.metcash.com",
+   "Metcash",
+   "Retail",
+   "en_US"
+  ],
+  [
+   "careers.originenergy.com.au",
+   "Origin Energy",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "jobs.energyaustralia.com.au",
+   "EnergyAustralia",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "careers.synergy.net.au",
+   "Synergy",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "careers.westernpower.com.au",
+   "Western Power",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "jobs.ausgrid.com.au",
+   "Ausgrid",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "careers.endeavourenergy.com.au",
+   "Endeavour Energy",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "watercorporation.jobs.hr.cloud.sap",
+   "Water Corporation",
+   "Utilities",
+   "en_US"
+  ],
+  [
+   "www.stockland.com.au",
+   "Stockland",
+   "Property",
+   "en_US"
+  ],
+  [
+   "careers.gpt.com.au",
+   "GPT Group",
+   "Property",
+   "en_US"
+  ],
+  [
+   "careers.ey.com",
+   "EY Australia",
+   "Consultancy",
+   "en_US"
+  ],
+  [
+   "careers.capgemini.com",
+   "Capgemini Australia",
+   "Consultancy",
+   "en_US"
+  ],
+  [
+   "careers.bhp.com",
+   "BHP",
+   "Mining",
+   "en_US"
+  ],
+  [
+   "careers.fortescue.com",
+   "Fortescue",
+   "Mining",
+   "en_US"
+  ],
+  [
+   "careers.woodside.com.au",
+   "Woodside Energy",
+   "Energy",
+   "en_US"
+  ],
+  [
+   "careers.south32.net",
+   "South32",
+   "Mining",
+   "en_US"
+  ],
+  [
+   "jobs.transport.nsw.gov.au",
+   "Sydney Trains",
+   "Transport",
+   "en_US"
+  ],
+  [
+   "careers.cityofsydney.nsw.gov.au",
+   "City of Sydney",
+   "Government",
+   "en_US"
+  ],
+  [
+   "jobs.medibank.com.au",
+   "Medibank",
+   "Health insurance",
+   "en_US"
+  ],
+  [
+   "careers.anz.com",
+   "ANZ",
+   "Banking",
+   "en_US"
+  ],
+  [
+   "groupcareers.singtel.com",
+   "Amaysim",
+   "Telco",
+   "en_US"
+  ],
+  [
+   "jobs.lionco.com",
+   "Lion",
+   "Manufacturing",
+   "en_US"
+  ],
+  [
+   "careers.arnotts.com",
+   "Arnott's",
+   "Manufacturing",
+   "en_US"
+  ],
+  [
+   "jobs.ororagroup.com",
+   "Orora",
+   "Manufacturing",
+   "en_US"
+  ]
+ ],
+ "pageup_site": [
+  [
+   "careers.icare.nsw.gov.au",
+   "icare NSW",
+   "Insurance"
+  ],
+  [
+   "careers.adairs.com.au",
+   "Adairs",
+   "Retail"
+  ],
+  [
+   "careers.linfox.com",
+   "Linfox",
+   "Logistics"
+  ],
+  [
+   "careers.virginaustralia.com",
+   "Virgin Australia",
+   "Aviation"
+  ],
+  [
+   "ninecareers.com.au",
+   "Nine Entertainment",
+   "Media"
+  ],
+  [
+   "careers.sportsbet.com.au",
+   "Sportsbet",
+   "Gaming"
+  ]
+ ],
+ "pageup": [
+  [
+   438,
+   "caw",
+   "Myer",
+   "Retail"
+  ],
+  [
+   547,
+   "cw",
+   "Tabcorp",
+   "Gaming"
+  ]
+ ],
+ "smartrecruiters": [
+  [
+   "NickScali",
+   "Nick Scali",
+   "Retail"
+  ],
+  [
+   "Epworth",
+   "Epworth",
+   "Health"
+  ],
+  [
+   "carsales",
+   "carsales",
+   "Tech"
+  ],
+  [
+   "BoschGroup",
+   "Bosch Australia",
+   "Manufacturing"
+  ]
+ ],
+ "avature": [
+  [
+   "https://jobs.auspost.com.au/en_GB/careers/HowWeHire",
+   "Australia Post",
+   "Logistics"
+  ],
+  [
+   "https://apply.deloitte.com/en_US/careers/SearchJobs?sort=relevancy",
+   "Deloitte Australia",
+   "Consultancy"
+  ],
+  [
+   "https://careers.fonterra.com",
+   "Fonterra Australia",
+   "Manufacturing"
+  ]
+ ],
+ "radancy": [
+  [
+   "jobs.ikea.com",
+   "IKEA Australia",
+   "Retail"
+  ],
+  [
+   "careers.bupa.com.au",
+   "Bupa Australia",
+   "Health insurance"
+  ]
+ ],
+ "eightfold": [
+  [
+   "www.nab.com.au",
+   "nab.com.au",
+   "NAB",
+   "Banking"
+  ]
+ ],
+ "phenom": [
+  [
+   "https://careers.iag.com.au/global/en",
+   "IAG",
+   "Insurance"
+  ],
+  [
+   "https://careers.qbe.com/gb/en",
+   "QBE",
+   "Insurance"
+  ],
+  [
+   "https://jobs-au.pwc.com/au/en/home",
+   "PwC Australia",
+   "Consultancy"
+  ],
+  [
+   "https://jobs.newmont.com/us/en",
+   "Newmont",
+   "Mining"
+  ]
+ ],
+ "other": [
+  [
+   "RACQ",
+   "taleo",
+   "racq.taleo.net",
+   "https://www.racq.com.au/careers"
+  ],
+  [
+   "Hostplus",
+   "livehire",
+   "livehire.com/careers/hostplus",
+   "https://hostplus.com.au/careers"
+  ],
+  [
+   "Lovisa",
+   "teamtailor",
+   "app.teamtailor.com",
+   "https://careers.lovisa.com"
+  ],
+  [
+   "Accent Group",
+   "dayforce",
+   "jobs.dayforcehcm.com/en-AU/accentdayforce",
+   "https://www.accentgr.com.au/careers"
+  ],
+  [
+   "Red Energy",
+   "workable",
+   "apply.workable.com/red-energy",
+   "https://careers.redenergy.com.au"
+  ],
+  [
+   "Sydney Water",
+   "dayforce",
+   "jobs.dayforcehcm.com/en-AU/sydneywater",
+   "https://www.sydneywater.com.au/about/careers.html"
+  ],
+  [
+   "Yarra Valley Water",
+   "cornerstone",
+   "yvw.csod.com",
+   "https://www.yvw.com.au/about-us/careers"
+  ],
+  [
+   "Healthscope",
+   "taleo",
+   "tas-healthscope.taleo.net",
+   "https://careers.healthscope.com.au"
+  ],
+  [
+   "Mirvac",
+   "cornerstone",
+   "mirvac.csod.com",
+   "https://mirvac.csod.com/ux/ats/careersite/1/home?c=mirvac"
+  ],
+  [
+   "Mantel Group",
+   "teamtailor",
+   "www.teamtailor.com",
+   "https://careers.mantelgroup.com.au"
+  ],
+  [
+   "Rio Tinto",
+   "cornerstone",
+   "riotinto.csod.com",
+   "https://www.riotinto.com/en/careers/faqs"
+  ],
+  [
+   "Brisbane City Council",
+   "livehire",
+   "livehire.com/careers/brisbanecitycouncil",
+   "https://www.brisbane.qld.gov.au/about-council/careers-at-council"
+  ],
+  [
+   "UTS",
+   "cornerstone",
+   "facebook.csod.com",
+   "https://www.facebook.com/login/?next=https%3A%2F%2Fwww.facebook.com%2FUTSCareers%2F"
+  ],
+  [
+   "Curtin University",
+   "jobadder",
+   "jobadder.com",
+   "https://staff.curtin.edu.au/job-vacancies/"
+  ],
+  [
+   "Edith Cowan University",
+   "nga",
+   "ecu.nga.net.au",
+   "https://www.ecu.edu.au/employment-opportunities/overview"
+  ]
+ ]
+}
