@@ -51,8 +51,9 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 @keyframes drift3{50%{border-radius:45% 55% 58% 42%/52% 46% 54% 48%}100%{transform:translate(-20%,26%) scale(1.25) rotate(12deg);border-radius:62% 38% 44% 56%/40% 60% 40% 60%}}
 @keyframes drift4{100%{transform:translate(-30%,-8%) scale(1.3);border-radius:55% 45% 60% 40%/45% 60% 40% 55%}}
 @keyframes hue{to{filter:hue-rotate(-28deg) saturate(1.15)}}
+.coil.off{display:none}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.16;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.coil{position:fixed;right:clamp(-160px,-6vw,-20px);top:-40px;width:clamp(300px,36vw,500px);height:auto;filter:drop-shadow(0 40px 60px #12004a99)}
+.coil{position:fixed;right:-160px;top:58px;width:460px;height:auto;filter:drop-shadow(0 40px 60px #12004a99)}
 .top{display:flex;align-items:center;gap:10px;height:64px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .brand svg{width:24px;height:24px}
@@ -256,7 +257,6 @@ footer .wrap{display:grid;gap:6px}
   .dacts{position:sticky;bottom:0;order:9;background:var(--s-lowest);padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -1px 0 var(--ov)}
   .dacts .primary{flex:1 1 auto}
   .dbody{flex:1}
-  .coil{display:none}
   .intro{max-width:none}
   .frow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * max(16px,2.5vw));padding-left:max(16px,2.5vw);padding-right:max(16px,2.5vw)}
   .frow::-webkit-scrollbar{display:none}
@@ -857,6 +857,27 @@ $('sdrawer').addEventListener('close', () => {
 $('mpill').addEventListener('click', openSearch);
 $('sdclose').addEventListener('click', closeSearch);
 $('recent').addEventListener('click', e => { const b = e.target.closest('[data-recent]'); if (!b) return; const r = recentList()[+b.dataset.recent]; if (!r) return; fromQuery(r.qs); $('q').value = st.q; changed(); closeSearch(); toResults(); });
+
+
+// ---------- Keep the coil clear of the header text and controls ----------
+// It sits in whatever space is left to the right of the heading, search and filters (up to 35% may run off-screen),
+// shrinks to fit, and is hidden when there isn't room for it to read well.
+(() => {
+  const coil = document.querySelector('.coil'), hero = document.querySelector('.hero');
+  const fit = () => {
+    const vw = document.documentElement.clientWidth;
+    let right = 0;
+    for (const el of hero.querySelectorAll('.intro h1 span, .srow > *, .frow > *, .mpill')) {
+      const r = el.getBoundingClientRect(); if (r.width) right = Math.max(right, r.right);
+    }
+    const w = Math.min(500, (vw - right - 32) / 0.65);
+    coil.classList.toggle('off', w < 240);
+    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(-0.35 * w) + 'px';
+  };
+  new ResizeObserver(fit).observe(hero); addEventListener('resize', fit);
+  new MutationObserver(fit).observe($('frow'), {childList: true});
+  fit(); setTimeout(fit, 1200);   // again after the arrival animation and fonts settle
+})();
 
 // ---------- Header background: a slowly morphing gradient drawn with WebGL, with ripples where the pointer moves ----------
 // Ripples are drawn as fading rings on a small offscreen canvas; the shader reads that as a height map and bends the
