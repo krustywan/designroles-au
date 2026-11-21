@@ -26,7 +26,11 @@ def one(job):
         try:
             for j in CALL[plat](x):
                 n += 1
-                if T.discipline(j["title"], j["description"]) and T.in_scope_location(j["location"], j.get("workplace", ""), j["description"]):
+                d_ok = T.discipline(j["title"], j["description"])
+                l_ok = T.in_scope_location(j["location"], j.get("workplace", ""), j["description"])
+                if not (d_ok and l_ok):
+                    print(f"  REJECT {plat} {j['employer'][:20]} | {j['title'][:50]} | {'' if d_ok else 'not-design'} {'' if l_ok else 'not-AU:' + j['location'][:30]}", flush=True)
+                if d_ok and l_ok:
                     keep += 1
                     titles.append(j["title"][:50])
                     got.append(dict(j, sector=x[-1] if plat != "successfactors" else x[2]))

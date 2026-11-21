@@ -283,12 +283,22 @@ def workday(host, tenant, site, employer):
     """Workday's keyword search is loose, so list every posting (titles only) and filter titles ourselves."""
     base = f"https://{host}/wday/cxs/{tenant}/{site}"
     hdr = {"Content-Type": "application/json", "Accept": "application/json"}
-    offset, total, posts = 0, None, []
+    offset, total, posts, facets = 0, None, [], {}
     while total is None or offset < min(total, 2000):
-        body = json.dumps({"appliedFacets": {}, "limit": 20, "offset": offset, "searchText": ""}).encode()
+        body = json.dumps({"appliedFacets": facets, "limit": 20, "offset": offset, "searchText": ""}).encode()
         d = json.loads(get(base + "/jobs", data=body, headers=hdr))
         if total is None:
             total = d.get("total", 0)
+            if total > 1000 and not facets:
+                # Big global employer: narrow to Australia using the site's own country filter, then start again.
+                for f in d.get("facets", []):
+                    for g in [f] + [x for x in f.get("values", []) if "values" in x]:
+                        for v in g.get("values", []):
+                            if (v.get("descriptor") or "").strip().lower() == "australia":
+                                facets = {g.get("facetParameter") or f.get("facetParameter"): [v.get("id")]}
+                if facets:
+                    total = None
+                    continue
         page = d.get("jobPostings", [])
         if not page:
             break
