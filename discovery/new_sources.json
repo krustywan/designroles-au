@@ -275,12 +275,6 @@
  ],
  "successfactors": [
   [
-   "www.zurich.com.au",
-   "Zurich Australia",
-   "Insurance",
-   "en_US"
-  ],
-  [
    "careers.racv.com.au",
    "RACV",
    "Insurance",
@@ -371,12 +365,6 @@
    "en_US"
   ],
   [
-   "www.stockland.com.au",
-   "Stockland",
-   "Property",
-   "en_US"
-  ],
-  [
    "careers.gpt.com.au",
    "GPT Group",
    "Property",
@@ -397,12 +385,6 @@
   [
    "careers.bhp.com",
    "BHP",
-   "Mining",
-   "en_US"
-  ],
-  [
-   "careers.fortescue.com",
-   "Fortescue",
    "Mining",
    "en_US"
   ],
@@ -544,28 +526,48 @@
    "BoschGroup",
    "Bosch Australia",
    "Manufacturing"
+  ],
+  [
+   "qantasgroup",
+   "Qantas Group",
+   "Aviation"
+  ],
+  [
+   "kpmgaustralia",
+   "KPMG Australia",
+   "Consultancy"
+  ],
+  [
+   "judobank",
+   "Judo Bank",
+   "Banking"
+  ],
+  [
+   "mynrma",
+   "NRMA",
+   "Insurance"
   ]
  ],
  "avature": [
   [
-   "https://jobs.auspost.com.au/en_GB/careers/HowWeHire",
+   "https://jobs.auspost.com.au/en_GB/careers",
    "Australia Post",
    "Logistics"
   ],
   [
-   "https://apply.deloitte.com/en_US/careers/SearchJobs?sort=relevancy",
+   "https://apply.deloitte.com/en_US/careers",
    "Deloitte Australia",
    "Consultancy"
-  ],
-  [
-   "https://careers.fonterra.com",
-   "Fonterra Australia",
-   "Manufacturing"
   ],
   [
    "https://recruitment.santos.com/careers",
    "Santos",
    "Energy"
+  ],
+  [
+   "https://careers.fonterra.com/en_GB/careers",
+   "Fonterra",
+   "Manufacturing"
   ]
  ],
  "radancy": [
@@ -582,7 +584,7 @@
  ],
  "eightfold": [
   [
-   "www.nab.com.au",
+   "nab.eightfold.ai",
    "nab.com.au",
    "NAB",
    "Banking"
@@ -706,6 +708,11 @@
   [
    "zipcolimited",
    "Zip Co",
+   "Fintech"
+  ],
+  [
+   "block",
+   "Block (Afterpay, Square)",
    "Fintech"
   ]
  ]

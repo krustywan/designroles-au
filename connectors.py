@@ -280,37 +280,40 @@ KEYWORDS = ["designer", "design", "user experience", "UX", "researcher", "servic
 
 # ---------------- Workday (public cxs API) ----------------
 def workday(host, tenant, site, employer):
-    seen = set()
+    """Workday's keyword search is loose, so list every posting (titles only) and filter titles ourselves."""
     base = f"https://{host}/wday/cxs/{tenant}/{site}"
-    for kw in KEYWORDS:
-        offset = 0
-        while offset < 100:
-            body = json.dumps({"appliedFacets": {}, "limit": 20, "offset": offset, "searchText": kw}).encode()
-            d = json.loads(get(base + "/jobs", data=body, headers={"Content-Type": "application/json", "Accept": "application/json"}))
-            posts = d.get("jobPostings", [])
-            for p in posts:
-                path = p.get("externalPath", "")
-                if path in seen or not candidate(p.get("title")):
-                    continue
-                seen.add(path)
-                time.sleep(DELAY)
-                try:
-                    info = json.loads(get(base + path, headers={"Accept": "application/json"})).get("jobPostingInfo", {})
-                except Exception:
-                    info = {}
-                locs = [info.get("location", "")] + (info.get("additionalLocations") or [])
-                yield dict(
-                    source="workday", source_id=f"wd-{tenant}-{path.rsplit('_', 1)[-1]}", employer=employer,
-                    title=p.get("title", ""), url=info.get("externalUrl") or f"https://{host}/en-US/{site}{path}",
-                    location="; ".join(l for l in locs if l) or p.get("locationsText", ""),
-                    description=strip_html(info.get("jobDescription", "")), posted=info.get("startDate", "")[:10],
-                    employment_type=info.get("timeType", ""), workplace="", salary_text="", remote_flag=None,
-                )
-            offset += 20
-            if offset >= d.get("total", 0):
-                break
-            time.sleep(DELAY)
+    hdr = {"Content-Type": "application/json", "Accept": "application/json"}
+    offset, total, posts = 0, None, []
+    while total is None or offset < min(total, 2000):
+        body = json.dumps({"appliedFacets": {}, "limit": 20, "offset": offset, "searchText": ""}).encode()
+        d = json.loads(get(base + "/jobs", data=body, headers=hdr))
+        if total is None:
+            total = d.get("total", 0)
+        page = d.get("jobPostings", [])
+        if not page:
+            break
+        posts += page
+        offset += 20
         time.sleep(DELAY)
+    seen = set()
+    for p in posts:
+        path = p.get("externalPath", "")
+        if path in seen or not candidate(p.get("title")):
+            continue
+        seen.add(path)
+        time.sleep(DELAY)
+        try:
+            info = json.loads(get(base + path, headers={"Accept": "application/json"})).get("jobPostingInfo", {})
+        except Exception:
+            info = {}
+        locs = [info.get("location", "")] + (info.get("additionalLocations") or [])
+        yield dict(
+            source="workday", source_id=f"wd-{tenant}-{path.rsplit('_', 1)[-1]}", employer=employer,
+            title=p.get("title", ""), url=info.get("externalUrl") or f"https://{host}/en-US/{site}{path}",
+            location="; ".join(l for l in locs if l) or p.get("locationsText", ""),
+            description=strip_html(info.get("jobDescription", "")), posted=(info.get("startDate") or "")[:10],
+            employment_type=info.get("timeType", ""), workplace="", salary_text="", remote_flag=None,
+        )
 
 
 # ---------------- SAP SuccessFactors career sites (RSS search) ----------------
@@ -413,7 +416,17 @@ def avature(base, employer):
     """base like https://careers.woolworthsgroup.com.au/en_GB/apply"""
     seen = set()
     for kw in KEYWORDS:
-        root = ET.fromstring(get(f"{base}/search-jobs/feed/?" + urllib.parse.urlencode({"jobRecordsPerPage": 100, "search": kw})))
+        raw = b""
+        for path in ("search-jobs/feed/", "SearchJobs/feed/"):
+            try:
+                raw = get(f"{base}/{path}?" + urllib.parse.urlencode({"jobRecordsPerPage": 100, "search": kw}))
+                if b"<item>" in raw:
+                    break
+            except Exception:
+                continue
+        if b"<rss" not in raw:
+            continue
+        root = ET.fromstring(raw)
         for it in root.iter("item"):
             link = (it.findtext("link") or "").strip()
             title = (it.findtext("title") or "").strip()
