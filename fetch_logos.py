@@ -43,6 +43,24 @@ def fetch(url):
         return r.read()
 
 
+def header_logos(domain):
+    """Images on the home page that are marked as the logo (usually the site header wordmark)."""
+    for home in (f"https://www.{domain}/", f"https://{domain}/"):
+        try:
+            page = fetch(home).decode("utf8", "ignore")[:400000]
+        except Exception:
+            continue
+        out = []
+        for tag in re.findall(r"<img[^>]+>", page, re.I):
+            if "logo" not in tag.lower():
+                continue
+            src = re.search(r'\ssrc=["\']([^"\']+)', tag, re.I)
+            if src and not src.group(1).startswith("data:"):
+                out.append(urllib.parse.urljoin(home, src.group(1).replace("&amp;", "&")))
+        return out[:3]
+    return []
+
+
 def page_icons(domain):
     """Icon links declared on the employer's home page, biggest first."""
     for home in (f"https://www.{domain}/", f"https://{domain}/"):
@@ -87,10 +105,11 @@ def one(item):
         urls += [f"https://www.google.com/s2/favicons?domain={domain}&sz=128", f"https://www.google.com/s2/favicons?domain_url=https://www.{domain}/&sz=256",
                  f"https://icons.duckduckgo.com/ip3/{domain}.ico", f"https://unavatar.io/{domain}?fallback=false"]
     best = (0, "", b"")
-    for stage in (urls, "page", "wikidata"):
+    for stage in (urls, "page", "wikidata", "header"):
         if stage == "page" and domain in SKIP_ICONS:
             continue
-        for url in stage if isinstance(stage, list) else page_icons(domain) if stage == "page" else wikidata_logo(name, domain):
+        found = stage if isinstance(stage, list) else page_icons(domain) if stage == "page" else wikidata_logo(name, domain) if stage == "wikidata" else header_logos(domain)
+        for url in found:
             try:
                 b = fetch(url)
             except Exception:
