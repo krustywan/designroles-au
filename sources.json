@@ -1415,5 +1415,31 @@
    "Newmont",
    "Mining"
   ]
+ ],
+ "cornerstone": [
+  [
+   "nswconnect",
+   2,
+   "NSW Government",
+   "Government"
+  ],
+  [
+   "mirvac",
+   1,
+   "Mirvac",
+   "Property"
+  ],
+  [
+   "riotinto",
+   1,
+   "Rio Tinto",
+   "Mining"
+  ],
+  [
+   "yvw",
+   1,
+   "Yarra Valley Water",
+   "Utilities"
+  ]
  ]
 }

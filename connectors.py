@@ -808,3 +808,50 @@ def pageup_site(host, employer):
                 salary_text=ld.get("salary_text") or span("salary"), remote_flag=None,
             )
         time.sleep(DELAY)
+
+
+# ---------------- Cornerstone OnDemand career sites (e.g. NSW Government "nswconnect") ----------------
+def cornerstone(tenant, site_id, employer, host=None):
+    """Uses the same public search the career site's own page calls, with the page's anonymous token."""
+    host = host or f"{tenant}.csod.com"
+    home = f"https://{host}/ux/ats/careersite/{site_id}/home?c={tenant}"
+    page = get(home).decode("utf8", "ignore")
+    tok = re.search(r'"token"\s*:\s*"([^"]+)"', page)
+    api = re.search(r'"endpoints"\s*:\s*\{[^}]*?"([a-z0-9-]*\.?api\.csod\.com)', page) or re.search(r'https://([a-z0-9-]+\.api\.csod\.com)', page)
+    if not tok:
+        raise RuntimeError("no public token on career site page")
+    api_host = api.group(1) if api else "us.api.csod.com"
+    culture = re.search(r'"cultureID"\s*:\s*(\d+)', page)
+    seen = set()
+    for kw in KEYWORDS:
+        body = {"careerSiteId": int(site_id), "careerSitePageId": int(site_id), "pageNumber": 1, "pageSize": 100,
+                "cultureId": int(culture.group(1)) if culture else 1, "searchText": kw, "cultureName": "en-US",
+                "states": [], "countryCodes": [], "cities": [], "placeID": "", "radius": None, "postingsWithinDays": None,
+                "customFieldCheckboxKeys": [], "customFieldDropdowns": [], "customFieldRadios": []}
+        d = json.loads(get(f"https://{api_host}/rec-job-search/external/jobs", data=json.dumps(body).encode(),
+                           headers={"Content-Type": "application/json", "Accept": "application/json",
+                                    "Authorization": "Bearer " + tok.group(1)}))
+        for r in (d.get("data") or {}).get("requisitions", []):
+            rid = str(r.get("requisitionId"))
+            if rid in seen or not candidate(r.get("displayJobTitle")):
+                continue
+            seen.add(rid)
+            locs = r.get("locations") or []
+            loc = "; ".join(", ".join(x for x in [l.get("city"), l.get("state"), l.get("country")] if x) for l in locs)
+            yield dict(
+                source="cornerstone", source_id=f"cs-{tenant}-{rid}", employer=_agency(r.get("externalDescription") or "", employer),
+                title=r.get("displayJobTitle", ""),
+                url=f"https://{host}/ux/ats/careersite/{site_id}/home/requisition/{rid}?c={tenant}",
+                location=loc or "NSW", description=strip_html(r.get("externalDescription", "") or ""),
+                posted=(r.get("postingEffectiveDate") or "")[:10], employment_type="", workplace="", salary_text="", remote_flag=None,
+            )
+        time.sleep(DELAY)
+
+
+def _agency(desc, default):
+    """NSW Government's shared careers site covers many agencies: name the one in the ad when we can."""
+    m = re.search(r"\b(Department of (?:[A-Z][A-Za-z]+|and|&|the|of)(?: (?:[A-Z][A-Za-z]+|and|&|the|of))*|Service NSW|Revenue NSW|"
+                  r"Transport for NSW|NSW Health|Treasury|Premier's Department|Cabinet Office|Spatial Services|SafeWork NSW|"
+                  r"Fair Trading|Digital\.NSW|Data\.NSW)", strip_html(desc))
+    name = m.group(1).rstrip(" ,") if m else default
+    return name if "NSW" in name or name == default else f"{name} (NSW)"
