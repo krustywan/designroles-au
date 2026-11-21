@@ -140,16 +140,16 @@ PREVIOUS = "https://krustywan.github.io/designroles-au/jobs.json"
 def remember_first_seen(jobs, today):
     """Give every role the date we first saw it, by reading yesterday's published board.
     Roles that were already on the board before we tracked this get their posted date (or none)."""
-    prev = {}
+    prev, by_url = {}, {}
     try:
         old = json.loads(C.get(PREVIOUS, tries=2))
         for j in old.get("jobs", []):
-            prev[j["id"]] = j.get("first_seen", j.get("posted", "")) if "first_seen" in j else (j.get("posted") or "")
+            prev[j["id"]] = by_url[j["url"]] = j["first_seen"] if "first_seen" in j else (j.get("posted") or "")
         log.append(f"first-seen dates: read {len(prev)} roles from the published board")
     except Exception as e:
         log.append(f"first-seen dates: could not read the published board ({e}); new roles dated today")
     for j in jobs:
-        j["first_seen"] = prev[j["id"]] if j["id"] in prev else today
+        j["first_seen"] = prev.get(j["id"], by_url.get(j["url"], today))
 
 
 if __name__ == "__main__":
