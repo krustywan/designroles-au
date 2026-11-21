@@ -156,6 +156,16 @@
    "coatesgroup",
    "Coates",
    "Equipment hire"
+  ],
+  [
+   "myob-2",
+   "MYOB",
+   "Tech"
+  ],
+  [
+   "envato-2",
+   "Envato",
+   "Tech"
   ]
  ],
  "ashby": [
@@ -1102,6 +1112,34 @@
    "PerthAirport",
    "Perth Airport",
    "Aviation"
+  ],
+  [
+   "hcf.wd105.myworkdayjobs.com",
+   "hcf",
+   "HCF_External_Career_Site",
+   "HCF",
+   "Insurance"
+  ],
+  [
+   "simpro.wd3.myworkdayjobs.com",
+   "simpro",
+   "simPRO_External_Careers",
+   "Simpro",
+   "Tech"
+  ],
+  [
+   "iress.wd3.myworkdayjobs.com",
+   "iress",
+   "IRESS_EXTERNAL",
+   "Iress",
+   "Fintech"
+  ],
+  [
+   "resmed.wd3.myworkdayjobs.com",
+   "resmed",
+   "ResMed_External_Careers",
+   "ResMed",
+   "Health"
   ]
  ],
  "successfactors": [
@@ -1290,6 +1328,18 @@
    "ACER",
    "Education & research",
    "en_US"
+  ],
+  [
+   "www.careers.zurich.com",
+   "Zurich",
+   "Insurance",
+   "en_US"
+  ],
+  [
+   "www.jobs.global.fujitsu.com",
+   "Fujitsu",
+   "Tech",
+   "en_US"
   ]
  ],
  "radancy": [
@@ -1458,6 +1508,11 @@
    "https://careers.marsh.com/global/en",
    "Marsh McLennan",
    "Professional services"
+  ],
+  [
+   "https://join.disneycareers.com/global/en",
+   "Disney",
+   "Media"
   ]
  ],
  "cornerstone": [
@@ -1490,6 +1545,12 @@
    1,
    "Breville",
    "Consumer goods"
+  ],
+  [
+   "slaterandgordon",
+   4,
+   "Slater and Gordon",
+   "Legal"
   ]
  ],
  "elmo": [
@@ -1547,6 +1608,36 @@
    "Super Retail Group",
    "Retail",
    "livehire"
+  ],
+  [
+   "https://www.livehire.com/careers/universityofnewcastle/jobs",
+   "(?:https://www\\.livehire\\.com)?/careers/universityofnewcastle/job/[\\w/-]+",
+   "University of Newcastle",
+   "University",
+   "livehire"
+  ],
+  [
+   "https://jobs.silkroad.com/RAA/RAACareers?page={page}",
+   "(?:https://jobs\\.silkroad\\.com)?/RAA/RAACareers/jobs/\\d+",
+   "RAA",
+   "Insurance",
+   "silkroad"
+  ],
+  [
+   "https://www.dfp.com.au/jobs?page={page}",
+   "(?:https://www\\.dfp\\.com\\.au)?/job/[a-z0-9-]+-\\d+",
+   "DFP Recruitment",
+   "Recruitment",
+   "dfp",
+   40
+  ]
+ ],
+ "sf_classic": [
+  [
+   "career10.successfactors.com",
+   "cpaaustral",
+   "CPA Australia",
+   "Professional services"
   ]
  ]
 }
