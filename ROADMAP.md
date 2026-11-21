@@ -43,6 +43,11 @@ The likely revenue approach. Recruiters pay to reach a focused design and resear
 - [ ] Pitch design-specialist recruiters with the traffic and subscriber numbers
 - [ ] Decide pricing (e.g. per post, monthly plan, or featured roles) and keep employer-sourced roles free
 
+## Later: AI job summaries (consider once the board takes off)
+- [ ] Turn on AI summaries of each ad: about the role, what you'll do, what they're looking for, perks. The code is already built (`summarise.py`) and switched off; it starts working as soon as an `ANTHROPIC_API_KEY` repository secret is added.
+- Cost: about US$0.15–0.20 a month at today's volume (Claude Haiku 5.5, each role summarised once and reused). Set a monthly spend limit in the Anthropic Console before turning it on.
+- Revisit alongside revenue: e.g. as part of a paid tier, sponsored listings, or covered by recruiter-feed income once the growth targets are met.
+
 ## Done
 - [x] Prototype scraper and board
 - [x] Every role links to its original ad
