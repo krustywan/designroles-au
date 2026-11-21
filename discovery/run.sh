@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -e
-python discovery/debug14.py
+python discovery/debug15.py
