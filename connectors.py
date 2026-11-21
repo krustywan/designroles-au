@@ -84,7 +84,7 @@ CANDIDATE = re.compile(
     r"content strateg|ux writ|experience architect|human[- ]centred|human[- ]centered|"
     r"service design|insight|usability|interaction|creative|visual|brand|motion|illustrat|"
     r"accessibility|journey|inclusive|improvement|behavioural|behavioral|human factors|proposition|"
-    r"product discovery|engagement strateg|customer strateg|customer listening|voice of (the )?customer|venture",
+    r"product discovery|content ?op|engagement strateg|customer strateg|customer listening|voice of (the )?customer|venture",
     re.I,
 )
 
@@ -279,7 +279,7 @@ def remotive():
 
 KEYWORDS = ["designer", "design", "user experience", "UX", "researcher", "service design",
             "customer experience", "content design", "CX", "human centred", "experience architect",
-            "insights", "improvement", "behavioural"]
+            "insights", "improvement", "behavioural", "content operations"]
 
 
 # ---------------- Workday (public cxs API) ----------------

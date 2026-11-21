@@ -3,6 +3,8 @@
 What's next for DesignRoles AU. Tick items off as they ship; add new ones at the bottom of their section.
 
 ## More sources
+- [ ] Connectors still needed: WA Health jobs, Dayforce (QLD Country Bank), SBS, ReadyTech (currentjobs), UKG/Workforce Ready, Airswift
+- [ ] Victorian Government jobs: blocked from GitHub's computers, needs an access request
 - [ ] Employment Hero job board (Betashares, Merchantwise and other small employers post here). Its listing page can't be searched by keyword, so it needs a smarter connector
 - [ ] Optus's own careers site (careers.optus.com.au) only shows 10 jobs per page with no search. Singtel's feed already gives us most Optus roles
 - [ ] Salient Group and other recruiters whose sites don't publish a job feed

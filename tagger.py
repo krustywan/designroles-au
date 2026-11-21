@@ -9,7 +9,7 @@ import re
 DISCIPLINES = [
     ("Research", r"\b(ux|user|design|customer|experience|product|usability|qualitative|mixed[- ]methods)\s+research(er)?\b|research\s*ops|research operations|researchops|\buxr\b|research (lead|manager|designer)|research enablement|survey insights|behaviou?ral scien|human factors|customer listening|voice of (the )?customer"),
     ("Service, strategy & CX", r"service design|business design|design strateg|strategic design|\bcx\b|customer experience|human[- ]cent(red|ered)|\bhcd\b|innovation design|experience strateg|journey (design|manager|lead|specialist)|co-?design|design thinking|cx analyst|customer experience analyst|experience improvement|service improvement|customer strateg|proposition (design|lead|manager)|product discovery|engagement strateg|venture (lead|design)|inclusive (products?|design)"),
-    ("Content", r"content design|ux writ|content strateg|conversation(al)? design|copywriter.*(ux|product)|ux copy"),
+    ("Content", r"content design|content op(eration)?s\b|contentops|ux writ|content strateg|conversation(al)? design|copywriter.*(ux|product)|ux copy"),
     ("Systems & DesignOps", r"design system|designops|design ops|design operations|design technologist|design engineer|ui engineer.*design"),
     ("Leadership", r"head of (design|ux|user research|design research|ux research|experience|cx|product design|service design)|design (director|manager)|director.*(design|experience)|(ux|cx|research|experience design|product design|service design|content design) (manager|director)|chief design|vp.*design"),
     ("UX, UI & product", r"\bux\b|\bui\b|experience architect|user experience|user interface|product design|interaction design|experience design|digital design|web design|app design|\bixd\b|\bdx\b|usability|accessibility (designer|specialist|lead)"),
@@ -34,7 +34,7 @@ EXCLUDE = re.compile(
     re.I,
 )
 # A few strong design terms override the exclusion (e.g. "UX Engineer" is a design-adjacent role we keep).
-OVERRIDE = re.compile(r"(cx|customer experience)\s*(&|and)\s*insights?|cx analyst|customer experience analyst|survey insights|research enablement|research op|behaviou?ral scien|experience architect|\bux\b|user experience|service design|product design|content design|design system|ux research|user research", re.I)
+OVERRIDE = re.compile(r"(cx|customer experience)\s*(&|and)\s*insights?|cx analyst|customer experience analyst|survey insights|research enablement|research op|behaviou?ral scien|experience architect|\bux\b|user experience|service design|product design|content design|content op(eration)?s\b|contentops|design system|ux research|user research", re.I)
 
 
 HARD_EXCLUDE = re.compile(r"cyber ?cx|supervisor|integrity|ethics|grants?\b|teacher|classroom|lecturer|tutor|venue|\(wood\)|\(metal\)|school|kindergarten|early childhood|csa \||design manager - |design coordinator - |civil|drainage|\brail\b|\broad\b|\bbridge\b|tunnel", re.I)
@@ -228,11 +228,20 @@ def via_recruiter(employer, desc=""):
     return False
 
 
-def summary(desc, n=260):
+def summary(desc, n=420):
+    """A short, rule-based summary: prefer sentences about the role over the company intro."""
     d = re.sub(r"\s+", " ", desc or "").strip()
-    # Skip boilerplate openers when we can.
-    d = re.sub(r"^(about (us|the company)|who we are)[:\s]*", "", d, flags=re.I)
+    d = re.sub(r"^(about (us|the company|the role)|who we are|the opportunity|the role)[:\s]*", "", d, flags=re.I)
     if len(d) <= n:
         return d
-    cut = d[:n]
-    return cut[: cut.rfind(" ")] + "…"
+    sents = re.split(r"(?<=[.!?])\s+(?=[A-Z])", d)[:25]
+    role = re.compile(r"\b(you will|you'll|you’ll|this role|the role|as (a|an|our)|we('re| are) (looking|seeking)|reporting to|responsible for|in this (role|position)|your role|join (our|the) [\w ]{0,30}team)\b", re.I)
+    start = next((k for k, x in enumerate(sents) if role.search(x)), 0)
+    out = ""
+    for x in sents[start:]:
+        if len(out) + len(x) > n and out:
+            break
+        out = (out + " " + x).strip()
+    if len(out) > n:
+        out = out[:n][: out[:n].rfind(" ")] + "…"
+    return out
