@@ -37,7 +37,7 @@ EXCLUDE = re.compile(
 OVERRIDE = re.compile(r"experience architect|\bux\b|user experience|service design|product design|content design|design system|ux research|user research", re.I)
 
 
-HARD_EXCLUDE = re.compile(r"supervisor|integrity|ethics|grants?\b|teacher|classroom|lecturer|tutor|venue|\(wood\)|\(metal\)|school|kindergarten|early childhood|csa \||design manager - |design coordinator - |civil|drainage|\brail\b|\broad\b|\bbridge\b|tunnel", re.I)
+HARD_EXCLUDE = re.compile(r"cyber ?cx|supervisor|integrity|ethics|grants?\b|teacher|classroom|lecturer|tutor|venue|\(wood\)|\(metal\)|school|kindergarten|early childhood|csa \||design manager - |design coordinator - |civil|drainage|\brail\b|\broad\b|\bbridge\b|tunnel", re.I)
 NON_DIGITAL = re.compile(r"garment|apparel|fashion|homewares|soft home|hard home|interior design|architectural (design|drafting|documentation)|building design|cad draft|technical cad|furniture|kitchen|landscape|joinery|packaging design|textile|footwear|jewell?ery|print designer|millinery|tech pack", re.I)
 
 
