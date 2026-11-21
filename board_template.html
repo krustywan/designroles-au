@@ -224,6 +224,11 @@ select{appearance:none;-webkit-appearance:none;font:inherit;font-size:14px;font-
 .dbody{padding:20px 28px 28px}
 .dbody h3{font-size:18px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
 .dbody p{margin:0 0 12px;max-width:66ch}
+.dbody h4{font-size:15px;font-weight:600;margin:18px 0 6px}
+.dbody ul{margin:0 0 6px;padding-left:20px;max-width:64ch}
+.dbody li{margin:4px 0}
+.dbody li::marker{color:var(--on-sv)}
+.aitag{display:inline-block;vertical-align:middle;margin-left:8px;font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 40%,transparent);border-radius:999px;padding:1px 8px}
 .fine{font-size:13px;color:var(--on-sv)}
 .warn{font-size:14px;background:var(--s-low);border-radius:12px;padding:12px 14px;margin:0 0 16px}
 .alert{margin-top:20px;background:var(--s-low);border-radius:18px;padding:20px}
@@ -511,6 +516,11 @@ const card = j => {
 </div></article>`;
 };
 const LINK = {ad: 'View full ad', unverified: 'View full ad', apply: 'Apply on employer site', search: 'Find it on employer site'};
+const aiHTML = j => {
+  if (!j.ai) return `<h3>Summary</h3><p>${j.summary ? esc(j.summary) : 'No summary available for this ad.'}</p>`;
+  const list = (h, xs) => xs && xs.length ? `<h4>${h}</h4><ul>${xs.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '';
+  return `<h3>About the role <span class="aitag">AI summary</span></h3><p>${esc(j.ai.overview)}</p>${list('What you’ll do', j.ai.do)}${list('What they’re looking for', j.ai.need)}${list('Perks and ways of working', j.ai.perks)}`;
+};
 const detail = j => {
   const d = $('detail');
   if (!j) { d.innerHTML = `<div class="dbody"><p class="fine">Choose a role to see its summary.</p></div>`; return; }
@@ -540,9 +550,8 @@ const detail = j => {
   </dl>
   <div class="dbody">
    ${j.via_recruiter ? `<p class="warn">This ad is placed by a recruitment agency, so the hiring company may not be named.</p>` : ''}
-   <h3>Summary</h3>
-   <p>${j.summary ? esc(j.summary) : 'No summary available for this ad.'}</p>
-   <p class="fine">This summary is taken from the ad automatically. Read the full description, requirements and how to apply in the original ad on ${esc(j.employer.replace(/ \(recruiter\)$/, ''))}'s site.</p>
+   ${aiHTML(j)}
+   <p class="fine">${j.ai ? 'AI summary of the ad. It can miss or misread details, so check' : 'This summary is taken from the ad automatically. Read'} the full description, requirements and how to apply in the original ad on ${esc(j.employer.replace(/ \(recruiter\)$/, ''))}'s site.</p>
    <div class="alert">
     <h3>Get roles like this by email</h3>
     <p class="fine" style="margin:0">Alerts will use your current filters.</p>

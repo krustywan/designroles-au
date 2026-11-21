@@ -34,6 +34,8 @@ jobs:
         run: sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
 
       - name: Scrape the job sites
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional: turns on AI summaries
         run: python run.py
 
       - name: Get employer logos
