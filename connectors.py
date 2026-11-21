@@ -839,9 +839,19 @@ def cornerstone(tenant, site_id, employer, host=None):
             locs = r.get("locations") or []
             loc = "; ".join(", ".join(x for x in [l.get("city"), l.get("state"), l.get("country")] if x) for l in locs)
             yield dict(
-                source="cornerstone", source_id=f"cs-{tenant}-{rid}", employer=employer, title=r.get("displayJobTitle", ""),
+                source="cornerstone", source_id=f"cs-{tenant}-{rid}", employer=_agency(r.get("externalDescription") or "", employer),
+                title=r.get("displayJobTitle", ""),
                 url=f"https://{host}/ux/ats/careersite/{site_id}/home/requisition/{rid}?c={tenant}",
                 location=loc or "NSW", description=strip_html(r.get("externalDescription", "") or ""),
                 posted=(r.get("postingEffectiveDate") or "")[:10], employment_type="", workplace="", salary_text="", remote_flag=None,
             )
         time.sleep(DELAY)
+
+
+def _agency(desc, default):
+    """NSW Government's shared careers site covers many agencies: name the one in the ad when we can."""
+    m = re.search(r"\b(Department of (?:[A-Z][A-Za-z]+|and|&|the|of)(?: (?:[A-Z][A-Za-z]+|and|&|the|of))*|Service NSW|Revenue NSW|"
+                  r"Transport for NSW|NSW Health|Treasury|Premier's Department|Cabinet Office|Spatial Services|SafeWork NSW|"
+                  r"Fair Trading|Digital\.NSW|Data\.NSW)", strip_html(desc))
+    name = m.group(1).rstrip(" ,") if m else default
+    return name if "NSW" in name or name == default else f"{name} (NSW)"
