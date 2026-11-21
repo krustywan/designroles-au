@@ -1617,25 +1617,27 @@
    "livehire"
   ],
   [
-   "https://jobs.silkroad.com/RAA/RAACareers",
+   "https://jobs.silkroad.com/RAA/RAACareers?page={page}",
    "(?:https://jobs\\.silkroad\\.com)?/RAA/RAACareers/jobs/\\d+",
    "RAA",
    "Insurance",
    "silkroad"
   ],
   [
-   "https://careers.scopeaust.org.au/jobs",
-   "(?:https://careers\\.scopeaust\\.org\\.au)?/jobs/[a-z0-9]+(?:-[a-z0-9]+)+",
-   "Scope Australia",
-   "Not-for-profit",
-   "scope"
-  ],
-  [
    "https://www.dfp.com.au/jobs?page={page}",
    "(?:https://www\\.dfp\\.com\\.au)?/job/[a-z0-9-]+-\\d+",
    "DFP Recruitment",
    "Recruitment",
-   "dfp"
+   "dfp",
+   40
+  ]
+ ],
+ "sf_classic": [
+  [
+   "career10.successfactors.com",
+   "cpaaustral",
+   "CPA Australia",
+   "Professional services"
   ]
  ]
 }

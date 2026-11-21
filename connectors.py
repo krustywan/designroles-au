@@ -967,3 +967,23 @@ def listing_site(listing, link_re, employer, source="careers-site", max_pages=15
         if "{page}" not in listing:
             break
         time.sleep(DELAY)
+
+
+def sf_classic(host, company, employer):
+    """Older SuccessFactors career sites (careerN.successfactors.com) publish an XML list of every job."""
+    raw = get(f"https://{host}/career?" + urllib.parse.urlencode({"company": company, "career_ns": "job_listing_summary", "resultType": "XML"}))
+    root = ET.fromstring(raw)
+    for j in root.iter("Job"):
+        title = (j.findtext("JobTitle") or "").strip()
+        if not candidate(title):
+            continue
+        rid = (j.findtext("ReqId") or "").strip()
+        etype = ""
+        for f in j:
+            if (f.findtext("label") or "").lower() == "employment type":
+                etype = f.findtext("value") or ""
+        loc = re.sub(r"\s*\(AU-\d+\)", ", Australia", (j.findtext("Location") or "").strip())
+        yield dict(source="sf-classic", source_id=f"sfc-{company}-{rid}", employer=employer, title=title,
+                   url=f"https://{host}/career?" + urllib.parse.urlencode({"company": company, "career_ns": "job_listing", "career_job_req_id": rid}),
+                   location=loc, description=strip_html(j.findtext("Job-Description") or ""), posted="",
+                   employment_type=etype, workplace="", salary_text="", remote_flag=None)

@@ -7,7 +7,7 @@ import re
 # ---------- Discipline ----------
 # Order matters: first match on the TITLE wins. Description is only used to break ties.
 DISCIPLINES = [
-    ("Research", r"\b(ux|user|design|customer|experience|product|usability|qualitative|mixed[- ]methods)\s+research(er)?\b|research\s*ops|researchops|\buxr\b|research (lead|manager|designer)|research enablement|survey insights|behaviou?ral scien|human factors|customer listening|voice of (the )?customer"),
+    ("Research", r"\b(ux|user|design|customer|experience|product|usability|qualitative|mixed[- ]methods)\s+research(er)?\b|research\s*ops|research operations|researchops|\buxr\b|research (lead|manager|designer)|research enablement|survey insights|behaviou?ral scien|human factors|customer listening|voice of (the )?customer"),
     ("Service, strategy & CX", r"service design|business design|design strateg|strategic design|\bcx\b|customer experience|human[- ]cent(red|ered)|\bhcd\b|innovation design|experience strateg|journey (design|manager|lead|specialist)|co-?design|design thinking|cx analyst|customer experience analyst|experience improvement|service improvement|customer strateg|proposition (design|lead|manager)|product discovery|engagement strateg|venture (lead|design)|inclusive (products?|design)"),
     ("Content", r"content design|ux writ|content strateg|conversation(al)? design|copywriter.*(ux|product)|ux copy"),
     ("Systems & DesignOps", r"design system|designops|design ops|design operations|design technologist|design engineer|ui engineer.*design"),
