@@ -36,12 +36,16 @@ jobs:
       - name: Scrape the job sites
         run: python run.py
 
+      - name: Get employer logos
+        run: python fetch_logos.py
+
       - name: Build the board
         run: |
           python build_board.py
           mkdir -p site
           cp board.html site/index.html
           cp jobs.json site/jobs.json
+          cp -r logos site/logos
 
       - name: Prepare the website
         uses: actions/configure-pages@v5
