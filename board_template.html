@@ -224,19 +224,100 @@ dialog.sheet::backdrop{background:rgba(0,20,20,.38)}
 footer{padding:28px 0 48px;color:var(--on-sv);font-size:13px}
 footer .wrap{display:grid;gap:6px}
 
-@media(max-width:1100px){.tools select.opt{display:none}}
-@media(max-width:900px){
-  .split{grid-template-columns:minmax(0,1fr)}
-  .detail{position:fixed;inset:0;max-height:none;border-radius:0;z-index:50;translate:0 100%;opacity:.4;transition:translate .5s var(--emph),opacity .3s,visibility .5s;visibility:hidden}
-  .detail.open{translate:0 0;opacity:1;visibility:visible}
-  .back{display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:3;background:var(--dc);color:var(--doc);border:0;padding:8px 14px;width:100%;min-height:56px;cursor:pointer;font-size:16px;font-weight:700}
+
+/* Filter rail and facet sheets */
+.layout{display:grid;grid-template-columns:272px minmax(0,1fr) minmax(0,1.12fr);gap:16px;padding-top:14px;padding-bottom:64px;align-items:start}
+.rail{position:sticky;top:calc(var(--bar-h) + 12px);max-height:calc(100dvh - var(--bar-h) - 24px);overflow:auto;background:var(--s-low);border-radius:28px;padding:18px 14px 18px 18px;scrollbar-width:thin;overscroll-behavior:contain}
+.rail-h{display:flex;justify-content:space-between;align-items:center;margin:0 0 6px}
+.rail-h h2{margin:0;font-size:20px;font-weight:850;font-variation-settings:"wdth" 125}
+.link{background:none;border:0;color:var(--primary);font-weight:700;font-size:14px;cursor:pointer;padding:6px 8px;border-radius:999px}
+.link:hover{background:color-mix(in srgb,var(--primary) 10%,transparent)}
+.link[hidden]{display:none}
+.fsec{border-top:1px solid var(--ov);padding:12px 0 6px}
+.fsec:first-of-type{border-top:0}
+.fsec>h3,.fsec>summary{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:800;margin:0 0 4px;letter-spacing:.01em;min-height:32px}
+.fsec>summary{cursor:pointer;list-style:none}
+.fsec>summary::-webkit-details-marker{display:none}
+.fsec>summary::after{content:"";width:9px;height:9px;border:2px solid var(--on-sv);border-width:0 2px 2px 0;rotate:45deg;translate:-6px -3px;transition:rotate .4s var(--spring)}
+.fsec[open]>summary::after{rotate:225deg;translate:-6px 2px}
+.fsec h3 .sel,.fsec summary .sel{font-weight:600;color:var(--primary);font-size:13px;margin-left:auto;margin-right:12px}
+.opt{display:flex;align-items:center;gap:12px;min-height:40px;padding:4px 8px;margin:0 -8px;border-radius:12px;cursor:pointer;font-size:15px;transition:background .15s}
+.opt:hover{background:color-mix(in srgb,var(--on-s) 6%,transparent)}
+.opt .nm{flex:1;display:flex;align-items:center;gap:8px}
+.opt .ct{font-size:13px;color:var(--on-sv);font-variant-numeric:tabular-nums;font-weight:600}
+.opt.zero{opacity:.38;cursor:default}
+.opt.zero:hover{background:none}
+.opt .shp{width:16px;height:16px;flex:none}
+.opt .shp path{fill:var(--dd)}
+.opt input[type=checkbox]{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;border:2px solid var(--on-sv);border-radius:4px;display:grid;place-items:center;flex:none;cursor:pointer;transition:background .2s,border-color .2s,border-radius .4s var(--spring)}
+.opt input[type=checkbox]::after{content:"";width:5px;height:10px;border:solid var(--on-primary);border-width:0 2.5px 2.5px 0;rotate:45deg;translate:0 -1px;scale:0;transition:scale .35s var(--spring)}
+.opt input[type=checkbox]:checked{background:var(--primary);border-color:var(--primary);border-radius:6px}
+.opt input[type=checkbox]:checked::after{scale:1}
+.opt input:disabled{cursor:default}
+.opt.sw-row{min-height:48px}
+.opt.sw-row input{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:999px;background:var(--s-highest);border:2px solid var(--outline);position:relative;cursor:pointer;transition:background .25s,border-color .25s;flex:none;margin:0;order:3}
+.opt.sw-row input::after{content:"";position:absolute;top:50%;left:4px;width:12px;height:12px;translate:0 -50%;border-radius:50%;background:var(--outline);transition:left .45s var(--spring),width .45s var(--spring),height .45s var(--spring),background .2s}
+.opt.sw-row input:checked{background:var(--primary);border-color:var(--primary)}
+.opt.sw-row input:checked::after{left:20px;width:18px;height:18px;background:var(--on-primary)}
+.opt.sw-row .ct{order:2}
+.locs{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 6px}
+.lc{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--ov);background:var(--surface);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,border-radius .45s var(--spring),border-color .2s}
+.lc:hover{background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
+.lc .ct{font-weight:500;color:var(--on-sv);font-size:12px}
+.lc[aria-pressed=true]{background:var(--sc);color:var(--on-sc);border-color:transparent;border-radius:18px}
+.lc[aria-pressed=true]::before{content:"";width:8px;height:4px;border:solid currentColor;border-width:0 0 2px 2px;rotate:-45deg;translate:0 -2px}
+.lc.zero{opacity:.38;cursor:default}
+.hint{font-size:12px;color:var(--on-sv);margin:2px 0 0}
+
+/* Quick chips (phones and tablets) */
+.qchips{display:none;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 max(16px,2.5vw) 10px}
+.qchips::-webkit-scrollbar{display:none}
+.qc{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 12px 0 14px;border-radius:8px;border:1px solid var(--ov);background:var(--surface);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s,border-radius .45s var(--spring)}
+.qc::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 2px 2px 0;rotate:45deg;translate:0 -2px;margin-left:2px;opacity:.7}
+.qc.tgl::after,.qc.all::after{display:none}
+.qc[aria-pressed=true]{background:var(--sc);color:var(--on-sc);border-color:transparent;border-radius:20px}
+.qc.all{background:var(--primary);color:var(--on-primary);border-color:transparent}
+.qc.all svg{width:18px;height:18px}
+.qc .n{background:var(--on-primary);color:var(--primary);border-radius:999px;font-size:12px;padding:0 6px;line-height:18px}
+
+/* Empty state suggestions */
+.sugs{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:14px}
+.sugs .btn{background:var(--s-lowest);color:var(--on-s)}
+.sugs .btn b{color:var(--primary)}
+
+/* Compact hero after the first visit, or once filtering starts */
+.hero{transition:padding .5s var(--emph),border-radius .5s var(--spring)}
+body.compact .hero{padding:20px clamp(20px,3vw,32px);border-radius:28px}
+body.compact .hero h1{font-size:clamp(26px,3vw,36px);max-width:none}
+body.compact .hero h1 br{display:none}
+body.compact .hero .sub,body.compact .hero .figs,body.compact .d2,body.compact .d3{display:none}
+body.compact .hero .eyebrow{margin-bottom:10px}
+body.compact .d1{width:140px;top:-50px;right:-30px}
+.expand{display:none;position:absolute;right:20px;bottom:18px;background:var(--s-lowest);color:var(--on-s);min-height:40px;font-size:14px;padding:6px 16px}
+body.compact .expand{display:inline-flex}
+
+/* Summary as a side drawer on mid-size screens */
+.scrim{display:none}
+@media(max-width:1199px){
+  .layout{grid-template-columns:272px minmax(0,1fr)}
+  .detail{position:fixed;top:12px;right:12px;bottom:12px;width:min(560px,calc(100vw - 24px));max-height:none;z-index:50;box-shadow:0 12px 48px rgba(0,0,0,.22);translate:calc(100% + 24px) 0;transition:translate .5s var(--emph),visibility .5s;visibility:hidden}
+  .detail.open{translate:0 0;visibility:visible}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,20,20,.32);z-index:45;opacity:0;pointer-events:none;transition:opacity .3s}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .back{display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:3;background:var(--dc);color:var(--doc);border:0;padding:8px 16px;width:100%;min-height:56px;cursor:pointer;font-size:16px;font-weight:700}
   .dhead{border-radius:0 0 32px 32px;padding-top:8px}
+}
+@media(max-width:899px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .rail{display:none}
+  .qchips{display:flex}
+  .detail{inset:0;width:auto;border-radius:0;box-shadow:none;translate:0 100%;opacity:.4;transition:translate .5s var(--emph),opacity .3s,visibility .5s}
+  .detail.open{opacity:1}
+  .scrim{display:none}
   .dwrap{display:flex;flex-direction:column;min-height:calc(100dvh - 56px)}
   .dacts{position:sticky;bottom:0;order:9;background:var(--s-lowest);flex-wrap:nowrap;padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -1px 0 var(--ov)}
   .dacts .primary{flex:1 1 auto}
   .dbody{flex:1}
-  .tools select:not(#sort){display:none}
-  #sort{max-width:124px}
   dialog.sheet{margin:auto 0 0;width:100vw;max-width:100vw;border-radius:28px 28px 0 0}
   .hero{border-radius:36px}
 }
@@ -244,15 +325,16 @@ footer .wrap{display:grid;gap:6px}
   .gnav .wrap{height:56px}.brand{font-size:18px}.brand svg{width:26px;height:26px}
   .fig{width:calc(50% - 6px);max-width:160px;aspect-ratio:auto;padding:18px 8px}
   .figs{gap:10px}
-  .tabs{width:100%}.tab{padding:0 10px}.sub-bar .count{width:100%}
+  .tabs{width:100%}.tab{flex:auto;font-size:13px;padding:0 10px}.sub-bar .count{width:100%}
   .dhead{padding-left:20px;padding-right:20px}.dbody{padding:20px}.facts{margin:12px 16px 0;grid-template-columns:1fr 1fr}
-  .jb{grid-template-columns:auto minmax(0,1fr) auto;padding:14px 12px 14px 14px}
+  .jb{padding:14px 12px 14px 14px}
   .av{width:44px;height:44px;font-size:13px}
   .meta{grid-column:1/-1}
   .tools .wrap{min-height:68px}
-  input[type=search],.tools .btn,.tools select{min-height:48px}
+  input[type=search],.tools select{min-height:48px}
   .d2,.d3{display:none}.d1{width:150px;right:-50px;top:-40px}
-  .tab{flex:auto;font-size:13px}
+  body.compact .hero h1{font-size:24px}
+  .expand{position:static;margin-top:12px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -260,61 +342,53 @@ footer .wrap{display:grid;gap:6px}
 <body>
 <nav class="gnav" aria-label="Site"><div class="wrap"><span class="brand"><svg viewBox="0 0 100 100" aria-hidden="true"><path data-shape="cookie9" style="fill:var(--primary)"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><button class="navlink" id="navsaved"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Saved</button></div></nav>
 <div class="wrap">
-<header class="hero">
+<header class="hero" id="hero">
   <svg class="deco d1" viewBox="0 0 100 100" aria-hidden="true"><path data-shape="cookie12"/></svg>
   <svg class="deco d2" viewBox="0 0 100 100" aria-hidden="true"><path data-shape="clover4"/></svg>
   <svg class="deco d3" viewBox="0 0 100 100" aria-hidden="true"><path data-shape="flower6"/></svg>
   <p class="eyebrow" id="eyebrow"></p>
-  <h1>Design and research roles <em>in Australia</em></h1>
+  <h1>Design and research roles <br><em>in Australia</em></h1>
   <p class="sub">Straight from employers' own careers sites and government job boards, sorted by what the work actually is.</p>
   <div class="figs" id="figs"></div>
+  <button class="btn expand" id="expand" aria-controls="hero">About this board</button>
 </header>
 </div>
 
 <div class="tools">
  <div class="wrap">
   <label class="search"><span class="vh">Search roles</span>
-   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
    <input type="search" id="q" placeholder="Search titles, employers, skills" autocomplete="off">
   </label>
-  <select id="fst" aria-label="State"></select>
-  <select id="fs" aria-label="Seniority"></select>
-  <select id="fm" class="opt" aria-label="Work mode"></select>
-  <button class="btn" id="openf" aria-haspopup="dialog">Filters <span class="n" id="fcount" hidden></span></button>
   <select id="sort" aria-label="Sort"><option value="new">Newest</option><option value="pay">Highest pay</option><option value="az">Employer A–Z</option></select>
  </div>
+ <div class="qchips" id="qchips" role="group" aria-label="Quick filters"></div>
 </div>
 
 <main class="wrap">
- <div class="strip" id="strip" role="group" aria-label="Filter by discipline"></div>
- <div class="sub-bar">
-  <div class="tabs" role="tablist" aria-label="Which roles">
-   <button class="tab" role="tab" data-v="all" aria-selected="true">All roles<span class="c" id="c-all"></span></button>
-   <button class="tab" role="tab" data-v="new" aria-selected="false">New this week<span class="c" id="c-new"></span></button>
-   <button class="tab" role="tab" data-v="saved" aria-selected="false">Saved<span class="c" id="c-saved"></span></button>
-  </div>
-  <p class="count" id="count" aria-live="polite"></p>
- </div>
- <div class="chips" id="chips"></div>
- <div class="split">
-  <section aria-label="Roles"><div class="list" id="list"></div><div class="more" id="more"></div></section>
+ <div class="layout">
+  <aside class="rail" id="rail" aria-label="Filters"></aside>
+  <section aria-label="Roles">
+   <div class="sub-bar" style="padding-top:0">
+    <div class="tabs" role="tablist" aria-label="Which roles">
+     <button class="tab" role="tab" data-v="all" aria-selected="true">All roles<span class="c" id="c-all"></span></button>
+     <button class="tab" role="tab" data-v="new" aria-selected="false">New this week<span class="c" id="c-new"></span></button>
+     <button class="tab" role="tab" data-v="saved" aria-selected="false">Saved<span class="c" id="c-saved"></span></button>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+   </div>
+   <div class="chips" id="chips"></div>
+   <div class="list" id="list" style="margin-top:12px"></div><div class="more" id="more"></div>
+  </section>
   <aside class="detail" id="detail" aria-label="Role summary" tabindex="-1"></aside>
  </div>
 </main>
+<div class="scrim" id="scrim"></div>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-h">
- <div class="sh"><h2 id="sheet-h">Filters</h2><button class="x" id="closef" aria-label="Close filters">×</button></div>
- <div class="sb">
-  <label class="f" for="m-fst">State</label><select id="m-fst"></select>
-  <label class="f" for="m-fs">Seniority</label><select id="m-fs"></select>
-  <label class="f" for="m-fm">Work mode</label><select id="m-fm"></select>
-  <label class="f" for="fe">Employment</label><select id="fe"></select>
-  <label class="f" for="fsec">Sector</label><select id="fsec"></select>
-  <label class="tg"><input type="checkbox" id="fpay"> Pay listed only</label>
-  <label class="tg"><input type="checkbox" id="frec"> Hide recruiter ads</label>
-  <label class="tg"><input type="checkbox" id="flead"> People leader roles</label>
- </div>
- <div class="sf"><button class="btn" id="resetf">Clear all</button><button class="btn primary" id="applyf">Show roles</button></div>
+ <div class="sh"><h2 id="sheet-h">Filters</h2><button class="x" id="closef" aria-label="Close">×</button></div>
+ <div class="sb" id="sheetbody"></div>
+ <div class="sf"><button class="btn" id="resetf">Clear</button><button class="btn primary" id="applyf">Show roles</button></div>
 </dialog>
 
 <div class="toast" id="toast" role="status"></div>
@@ -326,6 +400,11 @@ footer .wrap{display:grid;gap:6px}
 {
 const D = JSON.parse(document.getElementById('data').textContent);
 const J = D.jobs;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+// ---------- Colour and shapes ----------
 const DISC = {
   "UX, UI & product":      ['light-dark(#ffd8e8,#5e1340)', 'light-dark(#3b0020,#ffd8e8)', 'light-dark(#b4236b,#ffb0cd)', 'cookie9'],
   "Service, strategy & CX":['light-dark(#ffdbc9,#7a3000)', 'light-dark(#331200,#ffdbc9)', 'light-dark(#a04100,#ffb68e)', 'sunny8'],
@@ -335,9 +414,8 @@ const DISC = {
   "Systems & DesignOps":   ['light-dark(#d3e4ff,#0b4779)', 'light-dark(#001c38,#d3e4ff)', 'light-dark(#2e5f98,#a2c9ff)', 'clover3'],
   "Leadership":            ['light-dark(#dce2f9,#3e4759)', 'light-dark(#141b2c,#dce2f9)', 'light-dark(#565e71,#c0c6dc)', 'sunny12'],
 };
-const COL = Object.fromEntries(Object.keys(DISC).map(k => [k, DISC[k][2]]));
+const ORDER = Object.keys(DISC);
 const dvars = d => { const x = DISC[d] || DISC.Leadership; return `--dc:${x[0]};--doc:${x[1]};--dd:${x[2]}`; };
-// Material-style shapes, drawn as wavy circles: r(θ) = R + A·cos(nθ)
 const SHAPES = {cookie9: [44, 5, 9], cookie12: [45, 3.6, 12], sunny8: [44, 5.5, 8], sunny12: [45, 3, 12], clover4: [39, 10, 4], clover3: [38, 11, 3], flower6: [41, 8, 6], circle: [48, 0, 1]};
 const shapePath = k => { const [R, A, n] = SHAPES[k] || SHAPES.circle; let d = ''; for (let i = 0; i <= 180; i++) { const t = i / 180 * 2 * Math.PI, r = R + A * Math.cos(n * t); d += (i ? 'L' : 'M') + (50 + r * Math.cos(t - Math.PI / 2)).toFixed(2) + ' ' + (50 + r * Math.sin(t - Math.PI / 2)).toFixed(2); } return d + 'Z'; };
 const SHP = Object.fromEntries(Object.keys(SHAPES).map(k => [k, shapePath(k)]));
@@ -347,86 +425,108 @@ const AVS = ['cookie9', 'clover4', 'sunny8', 'flower6', 'cookie12', 'clover3', '
 const hashN = s => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 const initials = e => { const w = e.replace(/\(.*?\)/g, '').replace(/[^A-Za-z0-9 &]/g, ' ').split(/\s+/).filter(x => x && !/^(the|of|and|&|group|ltd|limited|australia|pty)$/i.test(x)); return ((w[0] || e)[0] + (w[1] ? w[1][0] : (w[0] || '').slice(1, 2))).toUpperCase(); };
 const SPARK = svgShape('sunny8');
-const ORDER = Object.keys(COL);
-const LINK = {ad: 'View full ad', unverified: 'View full ad', apply: 'Apply on employer site', search: 'Find it on employer site'};
-const SEN = ["Graduate / Intern","Junior","Mid","Senior","Lead / Principal","Head / Director"];
-const PAGE = 30;
-const REMOTE = 'Remote, open to AU/APAC';
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return 'employer site'; } };
-const mobile = () => matchMedia('(max-width:900px)').matches;
 const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+const TUNE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
 
-let saved = new Set();
-try { saved = new Set(JSON.parse(localStorage.getItem('dra-saved') || '[]')); } catch (e) {}
-const persist = () => { try { localStorage.setItem('dra-saved', JSON.stringify([...saved])); } catch (e) {} };
-const st = { disc: null, view: 'all', shown: PAGE, sel: null };
-
-// Dates: "new" = first seen by us, or posted, in the last 7 days.
+// ---------- Dates ----------
 const days = d => { if (!d) return null; const n = Math.floor((Date.now() - Date.parse(d + 'T00:00:00+08:00')) / 864e5); return isNaN(n) ? null : Math.max(0, n); };
 const isNew = j => { const a = days(j.first_seen), b = days(j.posted); return (a !== null && a <= 7) || (b !== null && b <= 7); };
 const ago = (d, verb) => { const n = days(d); if (n === null) return ''; return n === 0 ? `${verb} today` : n === 1 ? `${verb} yesterday` : n < 60 ? `${verb} ${n} days ago` : `${verb} ${new Date(d).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})}`; };
 const when = j => j.posted ? ago(j.posted, 'Posted') : ago(j.first_seen, 'Added');
-
-// Selects: the toolbar and the sheet share the same values.
-const uniq = (f, order) => { const s = [...new Set(J.flatMap(f))].filter(Boolean); return order ? order.filter(x => s.includes(x)) : s.sort(); };
-const OPTS = {
-  fst: ['Anywhere', [...uniq(j => j.states, ["NSW","VIC","QLD","WA","SA","ACT","TAS","NT"]), REMOTE]],
-  fs: ['Any seniority', uniq(j => [j.seniority], SEN)],
-  fm: ['Any work mode', uniq(j => [j.work_mode], ["Remote","Hybrid","Onsite","Not stated"])],
-  fe: ['Any type', uniq(j => [j.employment], ["Permanent","Contract","Fixed term","Part time","Casual","Internship / Grad"])],
-  fsec: ['Any sector', uniq(j => [j.sector])],
-};
-const fill = (id, [label, vals]) => { $(id).innerHTML = `<option value="">${label}</option>` + vals.map(v => `<option>${esc(v)}</option>`).join(''); };
-for (const k in OPTS) { fill(k, OPTS[k]); if ($('m-' + k)) fill('m-' + k, OPTS[k]); }
-const F = { fst: '', fs: '', fm: '', fe: '', fsec: '', fpay: false, frec: false, flead: false };
-const LABEL = { fpay: 'Pay listed', frec: 'No recruiters', flead: 'People leader' };
-const syncInputs = () => {
-  for (const k of ['fst','fs','fm','fe','fsec']) { $(k).value = F[k]; if ($('m-' + k)) $('m-' + k).value = F[k]; }
-  for (const k of ['fpay','frec','flead']) $(k).checked = F[k];
-};
-
-const NEWN = J.filter(isNew).length;
-const emps = new Set(J.map(j => j.employer)).size;
-const payN = J.filter(j => j.pay).length;
-const FIGS = [[J.length, 'live roles', 'cookie12', 'var(--s-lowest)', 'var(--on-s)'], [NEWN, 'new this week', 'sunny8', 'var(--tertiary)', 'light-dark(#fff,#561e16)'], [emps, 'employers', 'clover4', 'var(--primary)', 'var(--on-primary)'], [Math.round(100 * payN / Math.max(J.length, 1)) + '%', 'show pay', 'flower6', 'light-dark(#ffe07c,#574500)', 'light-dark(#231b00,#ffe07c)']];
-$('figs').innerHTML = FIGS.map(([b, s, k, bg, fg]) => `<div class="fig" style="--fb:${bg};--fc:${fg}">${svgShape(k)}<div><b>${b}</b><span>${s}</span></div></div>`).join('');
-$('gen').textContent = `Updated ${D.generated} AWST · ${J.length} roles`;
-$('eyebrow').innerHTML = `<i></i>Updated every morning · ${new Date(D.generated.slice(0, 10) + 'T00:00:00').toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})}`;
-
-const match = (j, skipView) => {
-  const q = $('q').value.trim().toLowerCase();
-  if (!skipView && st.view === 'new' && !isNew(j)) return false;
-  if (!skipView && st.view === 'saved' && !saved.has(j.id)) return false;
-  if (st.disc && j.discipline !== st.disc) return false;
-  if (q && !q.split(/\s+/).every(w => (j.title + ' ' + j.employer + ' ' + j.location + ' ' + j.summary + ' ' + j.discipline + ' ' + j.sector).toLowerCase().includes(w))) return false;
-  if (F.fs && j.seniority !== F.fs) return false;
-  if (F.fst === REMOTE ? !j.remote_apac : F.fst && !j.states.includes(F.fst)) return false;
-  if (F.fm && j.work_mode !== F.fm) return false;
-  if (F.fe && j.employment !== F.fe) return false;
-  if (F.fsec && j.sector !== F.fsec) return false;
-  if (F.fpay && !j.pay) return false;
-  if (F.frec && j.via_recruiter) return false;
-  if (F.flead && !j.people_leader) return false;
-  return true;
-};
-const annual = j => !j.pay ? -1 : j.pay.period === 'year' ? j.pay.max : j.pay.period === 'day' ? j.pay.max * 220 : j.pay.max * 1700;
-const sorted = r => {
-  const s = $('sort').value;
-  if (s === 'pay') return r.sort((a, b) => annual(b) - annual(a));
-  if (s === 'az') return r.sort((a, b) => a.employer.localeCompare(b.employer));
-  return r.sort((a, b) => (b.posted || b.first_seen || '').localeCompare(a.posted || a.first_seen || ''));
-};
 const loc = j => j.location || j.states.join(', ') || 'Location not stated';
 
-const strip = () => {
-  const base = J.filter(j => { const d = st.disc; st.disc = null; const m = match(j); st.disc = d; return m; });
-  const n = d => base.filter(j => j.discipline === d).length;
-  $('strip').innerHTML = `<button class="sw" aria-pressed="${!st.disc}" data-d="">${svgShape('circle', 'shp')}All <b>${base.length}</b></button>` +
-    ORDER.filter(d => J.some(j => j.discipline === d)).map(d => `<button class="sw" style="${dvars(d)}" aria-pressed="${st.disc === d}" data-d="${esc(d)}">${svgShape(DISC[d][3], 'shp')}${esc(d)} <b>${n(d)}</b></button>`).join('');
+// ---------- Filters ----------
+const CITY = {WA: 'Perth & WA', NSW: 'Sydney & NSW', VIC: 'Melbourne & VIC', QLD: 'Brisbane & QLD', SA: 'Adelaide & SA', ACT: 'Canberra', TAS: 'Hobart & TAS', NT: 'Darwin & NT', Remote: 'Remote'};
+const FACETS = [
+  {k: 'loc', title: 'Location', chips: true, order: Object.keys(CITY), label: v => CITY[v] || v, get: j => [...j.states, ...((j.remote_apac || j.work_mode === 'Remote') ? ['Remote'] : [])]},
+  {k: 'disc', title: 'Discipline', order: ORDER, get: j => [j.discipline], icon: v => `<span style="${dvars(v)}">${svgShape(DISC[v][3], 'shp')}</span>`},
+  {k: 'sen', title: 'Seniority', order: ["Graduate / Intern", "Junior", "Mid", "Senior", "Lead / Principal", "Head / Director"], get: j => [j.seniority]},
+  {k: 'mode', title: 'Work mode', order: ["Remote", "Hybrid", "Onsite", "Not stated"], get: j => [j.work_mode]},
+  {k: 'emp', title: 'Employment', order: ["Permanent", "Contract", "Fixed term", "Part time", "Casual", "Internship / Grad", "Not stated"], get: j => [j.employment]},
+  {k: 'sec', title: 'Sector', collapsed: true, get: j => [j.sector || 'Not stated']},
+];
+const FK = Object.fromEntries(FACETS.map(f => [f.k, f]));
+for (const f of FACETS) { const have = new Set(J.flatMap(f.get)); f.opts = f.order ? f.order.filter(v => have.has(v)) : [...have].sort(); }
+const TOGGLES = [['pay', 'Pay listed', j => !!j.pay], ['lead', 'People leader roles', j => j.people_leader], ['norec', 'Hide recruiter ads', j => !j.via_recruiter]];
+const TK = Object.fromEntries(TOGGLES.map(t => [t[0], t]));
+const st = { view: 'all', shown: 30, sel: null, q: '', sort: 'new', f: Object.fromEntries(FACETS.map(f => [f.k, new Set()])), t: {pay: false, lead: false, norec: false} };
+let saved = new Set(store.get('dra-saved', []));
+
+const match = (j, skip) => {
+  if (skip !== 'view' && st.view === 'new' && !isNew(j)) return false;
+  if (skip !== 'view' && st.view === 'saved' && !saved.has(j.id)) return false;
+  if (skip !== 'q' && st.q && !st.q.toLowerCase().split(/\s+/).every(w => (j.title + ' ' + j.employer + ' ' + j.location + ' ' + j.summary + ' ' + j.discipline + ' ' + j.sector).toLowerCase().includes(w))) return false;
+  for (const f of FACETS) { const s = st.f[f.k]; if (skip !== f.k && s.size && !f.get(j).some(v => s.has(v))) return false; }
+  for (const [k, , test] of TOGGLES) if (skip !== k && st.t[k] && !test(j)) return false;
+  return true;
+};
+const countFor = (k, v) => J.filter(j => match(j, k) && FK[k].get(j).includes(v)).length;
+const activeN = () => FACETS.reduce((n, f) => n + st.f[f.k].size, 0) + TOGGLES.filter(t => st.t[t[0]]).length;
+
+// URL + device memory
+const KEYS = {loc: 'loc', disc: 'd', sen: 'lvl', mode: 'mode', emp: 'type', sec: 'sector'};
+const toQuery = () => {
+  const p = new URLSearchParams();
+  if (st.q) p.set('q', st.q);
+  for (const f of FACETS) if (st.f[f.k].size) p.set(KEYS[f.k], [...st.f[f.k]].join('|'));
+  for (const t of TOGGLES) if (st.t[t[0]]) p.set(t[0], '1');
+  if (st.view !== 'all') p.set('view', st.view);
+  if (st.sort !== 'new') p.set('sort', st.sort);
+  return p.toString();
+};
+const fromQuery = qs => {
+  const p = new URLSearchParams(qs);
+  st.q = p.get('q') || '';
+  for (const f of FACETS) st.f[f.k] = new Set((p.get(KEYS[f.k]) || '').split('|').filter(v => f.opts.includes(v)));
+  for (const t of TOGGLES) st.t[t[0]] = p.get(t[0]) === '1';
+  st.view = ['new', 'saved'].includes(p.get('view')) ? p.get('view') : 'all';
+  st.sort = ['pay', 'az'].includes(p.get('sort')) ? p.get('sort') : 'new';
+};
+const remember = () => {
+  const qs = toQuery();
+  store.set('dra-filters', qs);
+  try { history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash); } catch (e) {}
 };
 
+// ---------- Rendering: filters ----------
+const optRow = (f, v) => {
+  const on = st.f[f.k].has(v), n = countFor(f.k, v), zero = !n && !on;
+  return `<label class="opt ${zero ? 'zero' : ''}"><input type="checkbox" data-f="${f.k}" data-v="${esc(v)}" ${on ? 'checked' : ''} ${zero ? 'disabled' : ''}><span class="nm">${f.icon ? f.icon(v) : ''}${esc(f.label ? f.label(v) : v)}</span><span class="ct">${n}</span></label>`;
+};
+const locChip = (f, v) => {
+  const on = st.f[f.k].has(v), n = countFor(f.k, v), zero = !n && !on;
+  return `<button class="lc ${zero ? 'zero' : ''}" data-f="${f.k}" data-v="${esc(v)}" aria-pressed="${on}" ${zero ? 'aria-disabled="true"' : ''}>${esc(f.label(v))}<span class="ct">${n}</span></button>`;
+};
+const facetHTML = (f, inSheet) => {
+  const sel = st.f[f.k].size ? `<span class="sel">${st.f[f.k].size} selected</span>` : '';
+  const body = f.chips ? `<div class="locs">${f.opts.map(v => locChip(f, v)).join('')}</div><p class="hint">Pick as many as you like.</p>` : f.opts.map(v => optRow(f, v)).join('');
+  if (f.collapsed && !inSheet) return `<details class="fsec" ${st.f[f.k].size || openSec.has(f.k) ? 'open' : ''} data-sec="${f.k}"><summary>${f.title}${sel}</summary>${body}</details>`;
+  const h = (inSheet ? '' : f.title) + sel;
+  return `<div class="fsec">${h ? `<h3>${h}</h3>` : ''}${body}</div>`;
+};
+const toggleHTML = () => `<div class="fsec">${TOGGLES.map(([k, label, test]) => { const n = J.filter(j => match(j, k) && test(j)).length; return `<label class="opt sw-row"><span class="nm">${label}</span><span class="ct">${k === 'norec' ? '' : n}</span><input type="checkbox" role="switch" data-t="${k}" ${st.t[k] ? 'checked' : ''}></label>`; }).join('')}</div>`;
+const openSec = new Set();
+const railHTML = () => `<div class="rail-h"><h2>Filters</h2><button class="link" data-clear="all" ${activeN() ? '' : 'hidden'}>Clear all</button></div>` + toggleHTML() + FACETS.map(f => facetHTML(f)).join('');
+
+let sheetKeys = null;
+const sheetHTML = () => sheetKeys === 'all' ? toggleHTML() + FACETS.map(f => facetHTML({...f, collapsed: false})).join('') : facetHTML(FK[sheetKeys], true);
+const qchipsHTML = () => {
+  const n = activeN();
+  const lbl = f => { const s = [...st.f[f.k]]; return s.length ? (f.label ? f.label(s[0]) : s[0]).replace(/ & .*/, '') + (s.length > 1 ? ` +${s.length - 1}` : '') : f.title; };
+  return `<button class="qc all" data-sheet="all">${TUNE}Filters${n ? `<span class="n">${n}</span>` : ''}</button>` +
+    ['loc', 'disc', 'sen', 'mode'].map(k => `<button class="qc" data-sheet="${k}" aria-pressed="${st.f[k].size > 0}">${esc(lbl(FK[k]))}</button>`).join('') +
+    `<button class="qc tgl" data-t-chip="pay" aria-pressed="${st.t.pay}">Pay listed</button><button class="qc" data-sheet="emp" aria-pressed="${st.f.emp.size > 0}">${esc(lbl(FK.emp))}</button>`;
+};
+// Re-render a block and put keyboard focus back where it was.
+const swap = (el, html) => {
+  const a = document.activeElement, key = a && el.contains(a) ? (a.dataset.f ? `[data-f="${a.dataset.f}"][data-v="${CSS.escape(a.dataset.v)}"]` : a.dataset.t ? `[data-t="${a.dataset.t}"]` : a.dataset.clear ? '[data-clear]' : null) : null;
+  const top = el.scrollTop; el.innerHTML = html; el.scrollTop = top;
+  if (key) el.querySelector(key)?.focus();
+};
+
+// ---------- Rendering: roles ----------
+const annual = j => !j.pay ? -1 : j.pay.period === 'year' ? j.pay.max : j.pay.period === 'day' ? j.pay.max * 220 : j.pay.max * 1700;
+const sorted = r => st.sort === 'pay' ? r.sort((a, b) => annual(b) - annual(a)) : st.sort === 'az' ? r.sort((a, b) => a.employer.localeCompare(b.employer)) : r.sort((a, b) => (b.posted || b.first_seen || '').localeCompare(a.posted || a.first_seen || ''));
 const card = j => `<article class="job" style="${dvars(j.discipline)}" data-id="${j.id}" aria-current="${st.sel === j.id}"><div class="jb">
   <span class="av" aria-hidden="true">${svgShape(AVS[hashN(j.employer) % AVS.length])}<b>${esc(initials(j.employer))}</b></span>
   <h3 class="jt"><button data-open="${j.id}">${esc(j.title)}</button></h3>
@@ -434,14 +534,14 @@ const card = j => `<article class="job" style="${dvars(j.discipline)}" data-id="
   <p class="em">${esc(j.employer)} · ${esc(loc(j))}</p>
   <div class="meta">${isNew(j) ? `<span class="new">${SPARK}New</span>` : ''}<span class="pay ${j.pay ? '' : 'nd'}">${j.pay ? esc(j.pay.display) : 'Pay not disclosed'}</span>${j.work_mode && j.work_mode !== 'Not stated' ? `<span>${esc(j.work_mode)}</span>` : ''}<span>${esc(j.discipline)}</span>${when(j) ? `<span>${when(j)}</span>` : ''}${j.via_recruiter ? '<span class="rec">Via recruiter</span>' : ''}</div>
 </div></article>`;
-
+const LINK = {ad: 'View full ad', unverified: 'View full ad', apply: 'Apply on employer site', search: 'Find it on employer site'};
 const detail = j => {
   const d = $('detail');
-  if (!j) { d.innerHTML = `<div class="dbody"><p class="fine">Choose a role to see its summary.</p></div>`; return; }
+  if (!j) { d.removeAttribute('style'); d.innerHTML = `<div class="dbody"><p class="fine">Choose a role to see its summary.</p></div>`; return; }
   d.setAttribute('style', dvars(j.discipline));
   const fact = (k, v, nd) => `<div><dt>${k}</dt><dd class="${nd ? 'nd' : ''}">${esc(v)}</dd></div>`;
   const dates = [j.posted ? ago(j.posted, 'Posted') : '', j.first_seen && j.first_seen !== j.posted ? ago(j.first_seen, 'Added to board') : ''].filter(Boolean).join(' · ');
-  d.innerHTML = `<button class="back" id="back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>All roles</button>
+  d.innerHTML = `<button class="back" id="back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Back to roles</button>
   <div class="dwrap dfade">
   <div class="dhead">
    ${svgShape(DISC[j.discipline]?.[3] || 'circle', 'dshape')}
@@ -470,129 +570,163 @@ const detail = j => {
    <div class="alert">
     <h3>Get roles like this by email</h3>
     <p class="fine" style="margin:0">Alerts will use your current filters.</p>
-    <form id="alert"><label class="vh" for="em">Email</label><input type="email" id="em" required placeholder="you@example.com" autocomplete="email"><button class="btn primary" type="submit">Alert me</button></form>
+    <form id="alert"><label class="vh" for="em">Email</label><input type="email" id="em" required placeholder="you@example.com" autocomplete="email"><button class="btn" type="submit">Alert me</button></form>
     <div id="alertok"></div>
    </div>
   </div>
   </div>`;
 };
 
-const chips = () => {
+const chipsHTML = () => {
   const c = [];
-  if (st.disc) c.push(['disc', st.disc]);
-  for (const k of ['fst','fs','fm','fe','fsec']) if (F[k]) c.push([k, F[k]]);
-  for (const k of ['fpay','frec','flead']) if (F[k]) c.push([k, LABEL[k]]);
-  if ($('q').value.trim()) c.push(['q', `“${$('q').value.trim()}”`]);
-  $('chips').innerHTML = c.map(([k, v]) => `<button class="chip" data-k="${k}">${esc(v)}<span aria-hidden="true">×</span><span class="vh">Remove filter</span></button>`).join('') + (c.length > 1 ? `<button class="chip clear" data-k="all">Clear all</button>` : '');
-  const more = ['fe','fsec','fpay','frec','flead'].filter(k => F[k]).length + (mobile() ? ['fst','fs','fm'].filter(k => F[k]).length : 0);
-  $('fcount').hidden = !more; $('fcount').textContent = more;
+  for (const f of FACETS) for (const v of st.f[f.k]) c.push([`f:${f.k}:${v}`, f.label ? f.label(v) : v]);
+  for (const [k, label] of TOGGLES) if (st.t[k]) c.push([`t:${k}`, label]);
+  if (st.q) c.push(['q', `“${st.q}”`]);
+  return c.map(([k, v]) => `<button class="chip" data-rm="${esc(k)}">${esc(v)}<span aria-hidden="true">×</span><span class="vh">Remove filter</span></button>`).join('') + (c.length > 1 ? `<button class="chip clear" data-clear="all">Clear all</button>` : '');
 };
+
+// When nothing matches, suggest the single change that brings back the most roles.
+const suggestions = () => {
+  const out = [];
+  const tryOut = (label, undo) => { undo(true); const n = J.filter(j => match(j)).length; undo(false); if (n) out.push([n, label]); };
+  for (const f of FACETS) for (const v of [...st.f[f.k]]) tryOut(`Remove “${f.label ? f.label(v) : v}”`, on => on ? st.f[f.k].delete(v) : st.f[f.k].add(v));
+  for (const [k, label] of TOGGLES) if (st.t[k]) tryOut(`Turn off “${label}”`, on => st.t[k] = !on);
+  if (st.q) { const q = st.q; tryOut(`Clear the search “${q}”`, on => st.q = on ? '' : q); }
+  if (st.view !== 'all') { const v = st.view; tryOut('Show all roles, not just ' + (v === 'new' ? 'new ones' : 'saved ones'), on => st.view = on ? 'all' : v); }
+  return out.sort((a, b) => b[0] - a[0]).slice(0, 2);
+};
+const SUGS = [];
 
 let R = [];
+const mq = n => matchMedia(`(max-width:${n}px)`).matches;
+const overlay = () => mq(1199);
 const render = (keepSel) => {
-  strip(); chips();
   R = sorted(J.filter(j => match(j)));
-  const all = J.filter(j => match(j, true));
-  $('c-all').textContent = all.length;
-  $('c-new').textContent = all.filter(isNew).length;
-  $('c-saved').textContent = saved.size;
+  swap($('rail'), railHTML());
+  $('qchips').innerHTML = qchipsHTML();
+  if ($('sheet').open) { swap($('sheetbody'), sheetHTML()); $('applyf').textContent = R.length ? `Show ${R.length} role${R.length === 1 ? '' : 's'}` : 'No roles match'; }
+  $('chips').innerHTML = chipsHTML();
+  const all = J.filter(j => match(j, 'view'));
+  $('c-all').textContent = all.length; $('c-new').textContent = all.filter(isNew).length; $('c-saved').textContent = saved.size;
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.v === st.view));
   $('count').textContent = R.length === J.length ? `${R.length} roles` : `${R.length} of ${J.length} roles`;
-  const shown = R.slice(0, st.shown);
   if (!R.length) {
+    SUGS.length = 0;
+    const s = suggestions(); s.forEach(x => SUGS.push(x));
     const msg = st.view === 'saved' && !saved.size ? 'You haven’t saved any roles yet. Tap the star on a role to keep it here. Saved roles stay on this device.'
-      : st.view === 'new' && !NEWN ? 'No new roles in the last 7 days. Check back tomorrow, the board updates every morning.'
-      : 'No roles match these filters.';
-    $('list').innerHTML = `<div class="empty">${svgShape('clover4')}${msg}${$('chips').innerHTML ? '<br><button class="btn" data-k="all">Clear filters</button>' : ''}</div>`;
-  } else $('list').innerHTML = shown.map(card).join('');
-  $('more').innerHTML = R.length > st.shown ? `<button class="btn" id="loadmore" style="width:100%;margin-top:8px">Show ${Math.min(PAGE, R.length - st.shown)} more of ${R.length - st.shown}</button>` : '';
-  if (!keepSel || !R.some(j => j.id === st.sel)) { if (!mobile()) select(R[0]?.id || null, false); }
+      : 'No roles match all of these filters.';
+    $('list').innerHTML = `<div class="empty">${svgShape('clover4')}${msg}${s.length ? `<div class="sugs">${s.map(([n, label], i) => `<button class="btn" data-sug="${i}">${esc(label)} <b>${n} role${n === 1 ? '' : 's'}</b></button>`).join('')}</div>` : ''}</div>`;
+  } else $('list').innerHTML = R.slice(0, st.shown).map(card).join('');
+  $('more').innerHTML = R.length > st.shown ? `<button class="btn" id="loadmore">Show ${Math.min(30, R.length - st.shown)} more of ${R.length - st.shown}</button>` : '';
+  if (!keepSel || !R.some(j => j.id === st.sel)) { if (!overlay()) select(R[0]?.id || null, false); }
   else detail(J.find(j => j.id === st.sel));
+  document.body.classList.toggle('compact', !heroOpen && (visited || activeN() > 0 || !!st.q));
+  remember();
 };
+const changed = () => { st.shown = 30; render(); };
 
+// ---------- Selecting a role ----------
 const select = (id, fromUser = true) => {
   st.sel = id;
   document.querySelectorAll('.job').forEach(e => e.setAttribute('aria-current', e.dataset.id === id));
   detail(J.find(j => j.id === id));
   if (!fromUser) return;
-  try { history.replaceState(null, '', id ? '#role=' + id : location.pathname + location.search); } catch (e) {}
-  if (mobile()) {
-    $('detail').classList.add('open'); document.body.classList.add('lock');
-    try { history.pushState({sheet: 1}, '', '#role=' + id); } catch (e) {}
+  if (overlay()) {
+    $('detail').classList.add('open'); $('scrim').classList.add('on'); document.body.classList.add('lock');
+    try { history.pushState({sheet: 1}, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
     $('detail').scrollTop = 0; $('back')?.focus();
-  } else $('detail').scrollTop = 0;
+  } else {
+    try { history.replaceState(null, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
+    $('detail').scrollTop = 0;
+  }
 };
-const closeDetail = (viaHistory) => {
+const closeDetail = viaHistory => {
   if (!$('detail').classList.contains('open')) return;
-  $('detail').classList.remove('open'); document.body.classList.remove('lock');
+  $('detail').classList.remove('open'); $('scrim').classList.remove('on'); document.body.classList.remove('lock');
   document.querySelector(`.job[data-id="${st.sel}"] .jt button`)?.focus();
   if (!viaHistory) history.back();
 };
-$('navsaved').addEventListener('click', () => { document.querySelector('.tab[data-v=saved]').click(); document.querySelector('.sub-bar').scrollIntoView({behavior: 'smooth', block: 'center'}); });
 addEventListener('popstate', () => closeDetail(true));
 
+// ---------- Events ----------
 const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 1800); };
-const toggleSave = id => { saved.has(id) ? saved.delete(id) : saved.add(id); persist(); toast(saved.has(id) ? 'Saved on this device' : 'Removed from saved'); render(true); };
-const clearKey = k => {
-  if (k === 'all') { st.disc = null; $('q').value = ''; for (const x in F) F[x] = typeof F[x] === 'boolean' ? false : ''; }
-  else if (k === 'disc') st.disc = null; else if (k === 'q') $('q').value = ''; else F[k] = typeof F[k] === 'boolean' ? false : '';
-  syncInputs(); st.shown = PAGE; render();
+const toggleSave = id => { saved.has(id) ? saved.delete(id) : saved.add(id); store.set('dra-saved', [...saved]); toast(saved.has(id) ? 'Saved on this device' : 'Removed from saved'); render(true); };
+const clearAll = keys => { for (const f of FACETS) if (!keys || keys.includes(f.k)) st.f[f.k].clear(); if (!keys) { for (const k in st.t) st.t[k] = false; st.q = ''; $('q').value = ''; } };
+const openSheet = keys => {
+  sheetKeys = keys;
+  $('sheet-h').textContent = keys === 'all' ? 'All filters' : FK[keys].title;
+  $('resetf').textContent = keys === 'all' ? 'Clear all' : 'Clear';
+  $('sheet').showModal(); render(true);
 };
 
-// Events
-$('strip').addEventListener('click', e => { const b = e.target.closest('.sw'); if (!b) return; st.disc = b.dataset.d || null; st.shown = PAGE; render(); });
-document.querySelector('.tabs').addEventListener('click', e => {
-  const b = e.target.closest('.tab'); if (!b) return;
-  st.view = b.dataset.v; st.shown = PAGE;
-  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t === b));
-  render();
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.f) { const s = st.f[t.dataset.f]; t.checked ? s.add(t.dataset.v) : s.delete(t.dataset.v); changed(); }
+  else if (t.dataset.t) { st.t[t.dataset.t] = t.checked; changed(); }
 });
+document.addEventListener('toggle', e => { const d = e.target; if (d.dataset?.sec) d.open ? openSec.add(d.dataset.sec) : openSec.delete(d.dataset.sec); }, true);
 document.addEventListener('click', e => {
-  const s = e.target.closest('[data-save]'); if (s) { e.stopPropagation(); toggleSave(s.dataset.save); return; }
-  const c = e.target.closest('[data-k]'); if (c) { clearKey(c.dataset.k); return; }
-  if (e.target.closest('#loadmore')) { st.shown += PAGE; render(true); return; }
-  if (e.target.closest('#back')) { closeDetail(); return; }
-  if (e.target.closest('#share')) {
-    const u = location.href.split('#')[0] + '#role=' + st.sel;
-    (navigator.clipboard?.writeText(u) || Promise.reject()).then(() => toast('Link copied'), () => prompt('Copy this link', u));
-    return;
-  }
-  const j = e.target.closest('.job'); if (j) select(j.dataset.id);
+  const g = x => e.target.closest(x);
+  let b;
+  if ((b = g('[data-save]'))) { e.stopPropagation(); toggleSave(b.dataset.save); return; }
+  if ((b = g('.lc'))) { if (b.getAttribute('aria-disabled')) return; const s = st.f[b.dataset.f]; s.has(b.dataset.v) ? s.delete(b.dataset.v) : s.add(b.dataset.v); changed(); return; }
+  if ((b = g('[data-sheet]'))) { openSheet(b.dataset.sheet); return; }
+  if ((b = g('[data-t-chip]'))) { st.t[b.dataset.tChip] = !st.t[b.dataset.tChip]; changed(); return; }
+  if ((b = g('[data-rm]'))) { const k = b.dataset.rm; if (k === 'q') { st.q = ''; $('q').value = ''; } else if (k.startsWith('t:')) st.t[k.slice(2)] = false; else { const [, f, ...v] = k.split(':'); st.f[f].delete(v.join(':')); } changed(); return; }
+  if ((b = g('[data-clear]'))) { clearAll(); changed(); return; }
+  if ((b = g('[data-sug]'))) { const s = SUGS[+b.dataset.sug]; if (!s) return; const label = s[1];
+    for (const f of FACETS) for (const v of [...st.f[f.k]]) if (label === `Remove “${f.label ? f.label(v) : v}”`) st.f[f.k].delete(v);
+    for (const [k, l] of TOGGLES) if (label === `Turn off “${l}”`) st.t[k] = false;
+    if (label.startsWith('Clear the search')) { st.q = ''; $('q').value = ''; }
+    if (label.startsWith('Show all roles')) st.view = 'all';
+    changed(); return; }
+  if (g('#loadmore')) { st.shown += 30; render(true); return; }
+  if (g('#back')) { closeDetail(); return; }
+  if (g('#scrim')) { closeDetail(); return; }
+  if (g('#share')) { const u = location.href.split('#')[0] + '#role=' + st.sel; (navigator.clipboard?.writeText(u) || Promise.reject()).then(() => toast('Link copied, with your filters'), () => prompt('Copy this link', u)); return; }
+  if ((b = g('.tab'))) { st.view = b.dataset.v; changed(); return; }
+  if ((b = g('.job'))) { select(b.dataset.id); return; }
 });
-document.addEventListener('submit', e => {
-  if (e.target.id !== 'alert') return; e.preventDefault();
-  $('alertok').innerHTML = `<div class="ok">Thanks. Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>`;
-});
+document.addEventListener('submit', e => { if (e.target.id !== 'alert') return; e.preventDefault(); $('alertok').innerHTML = `<div class="ok">Thanks. Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>`; });
 $('list').addEventListener('keydown', e => {
-  if (!['ArrowDown','ArrowUp'].includes(e.key)) return;
+  if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
   const cards = [...document.querySelectorAll('.job')]; const i = cards.findIndex(c => c.contains(document.activeElement));
   const n = cards[i + (e.key === 'ArrowDown' ? 1 : -1)]; if (!n) return;
-  e.preventDefault(); n.querySelector('.jt button').focus(); if (!mobile()) select(n.dataset.id);
+  e.preventDefault(); n.querySelector('.jt button').focus(); if (!overlay()) select(n.dataset.id);
 });
-let qt; $('q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(() => { st.shown = PAGE; render(); }, 120); });
-for (const k of ['fst','fs','fm']) $(k).addEventListener('input', () => { F[k] = $(k).value; syncInputs(); st.shown = PAGE; render(); });
-$('sort').addEventListener('input', () => render());
-// Sheet: edit a draft, apply on "Show roles"
-$('openf').addEventListener('click', () => { syncInputs(); $('sheet').showModal(); });
+let qt; $('q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(() => { st.q = $('q').value.trim(); changed(); }, 140); });
+$('sort').addEventListener('input', () => { st.sort = $('sort').value; render(true); });
 $('closef').addEventListener('click', () => $('sheet').close());
+$('applyf').addEventListener('click', () => $('sheet').close());
+$('resetf').addEventListener('click', () => { if (sheetKeys === 'all') clearAll(); else clearAll([sheetKeys]); changed(); });
 $('sheet').addEventListener('click', e => { if (e.target === $('sheet')) $('sheet').close(); });
-$('applyf').addEventListener('click', () => {
-  for (const k of ['fst','fs','fm']) F[k] = $('m-' + k).value;
-  for (const k of ['fe','fsec']) F[k] = $(k).value;
-  for (const k of ['fpay','frec','flead']) F[k] = $(k).checked;
-  syncInputs(); $('sheet').close(); st.shown = PAGE; render();
-});
-$('resetf').addEventListener('click', () => { for (const k of ['m-fst','m-fs','m-fm','fe','fsec']) $(k).value = ''; for (const k of ['fpay','frec','flead']) $(k).checked = false; });
+$('navsaved').addEventListener('click', () => { st.view = 'saved'; changed(); document.querySelector('.layout').scrollIntoView({behavior: 'smooth'}); });
+let heroOpen = false;
+$('expand').addEventListener('click', () => { heroOpen = true; document.body.classList.remove('compact'); $('hero').scrollIntoView({behavior: 'smooth'}); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && $('detail').classList.contains('open')) closeDetail(); });
-matchMedia('(max-width:900px)').addEventListener('change', () => { if (!mobile()) { $('detail').classList.remove('open'); document.body.classList.remove('lock'); } render(true); });
+matchMedia('(max-width:1199px)').addEventListener('change', () => { if (!overlay()) { $('detail').classList.remove('open'); $('scrim').classList.remove('on'); document.body.classList.remove('lock'); } render(true); });
 
-// Open a shared link (#role=id)
+// ---------- Header figures ----------
+const NEWN = J.filter(isNew).length;
+const emps = new Set(J.map(j => j.employer)).size;
+const payN = J.filter(j => j.pay).length;
+const FIGS = [[J.length, 'live roles', 'cookie12', 'var(--s-lowest)', 'var(--on-s)'], [NEWN, 'new this week', 'sunny8', 'var(--tertiary)', 'light-dark(#fff,#561e16)'], [emps, 'employers', 'clover4', 'var(--primary)', 'var(--on-primary)'], [Math.round(100 * payN / Math.max(J.length, 1)) + '%', 'show pay', 'flower6', 'light-dark(#ffe07c,#574500)', 'light-dark(#231b00,#ffe07c)']];
+$('figs').innerHTML = FIGS.map(([b, s, k, bg, fg]) => `<div class="fig" style="--fb:${bg};--fc:${fg}">${svgShape(k)}<div><b>${b}</b><span>${s}</span></div></div>`).join('');
+$('eyebrow').innerHTML = `<i></i>Updated every morning · ${new Date(D.generated.slice(0, 10) + 'T00:00:00').toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})}`;
+$('gen').textContent = `Updated ${D.generated} AWST · ${J.length} roles`;
+
+// ---------- Start: filters from the link, else from this device ----------
+let visited = !!store.get('dra-visited', 0);
+store.set('dra-visited', 1);
+fromQuery(location.search.length > 1 ? location.search : store.get('dra-filters', ''));
+$('q').value = st.q; $('sort').value = st.sort;
 const m = location.hash.match(/role=(\w+)/);
 render();
 if (m && J.some(j => j.id === m[1])) {
   const id = m[1];
-  if (!R.slice(0, st.shown).some(j => j.id === id)) st.shown = Math.max(st.shown, R.findIndex(j => j.id === id) + 1);
-  render(true);
-  if (mobile()) { history.replaceState(null, '', location.pathname); select(id); }
+  if (!R.some(j => j.id === id)) { clearAll(); st.view = 'all'; render(); }
+  const i = R.findIndex(j => j.id === id); if (i >= st.shown) { st.shown = i + 1; render(true); }
+  if (overlay()) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} select(id); }
   else { select(id); document.querySelector(`.job[data-id="${id}"]`)?.scrollIntoView({block: 'center'}); }
 }
 }
