@@ -1,6 +1,5 @@
 {
  "_note": "Employer name (as it appears on the board) -> the employer's main website. Used only to fetch each employer's logo. Add a line when a new employer shows up without a logo.",
- "ACER": "acer.org",
  "AKQA": "akqa.com",
  "AMP": "amp.com.au",
  "ANZ": "anz.com.au",
@@ -90,5 +89,6 @@
  "Atlassian": "atlassian.com",
  "Xero": "xero.com",
  "Culture Amp": "cultureamp.com",
- "SafetyCulture": "safetyculture.com"
+ "SafetyCulture": "safetyculture.com",
+ "ACER": "acer.org"
 }

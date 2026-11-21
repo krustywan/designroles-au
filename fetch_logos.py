@@ -11,6 +11,8 @@ UA = "DesignRolesAU-bot/0.1 (+https://github.com/krustywan/designroles-au)"
 OUT = "logos"
 # Sites whose large icon isn't their logo (e.g. a photo); use their favicon instead.
 SKIP_TOUCH = {"acer.org", "flightcentre.com.au"}
+# Sites whose small icons are not their logo either; go straight to Wikidata.
+SKIP_ICONS = {"acer.org"}
 
 
 def kind_and_size(b):
@@ -60,12 +62,35 @@ def page_icons(domain):
     return []
 
 
-def one(domain):
-    urls = [] if domain in SKIP_TOUCH else [f"https://{domain}/apple-touch-icon.png", f"https://www.{domain}/apple-touch-icon.png"]
-    urls += [f"https://www.google.com/s2/favicons?domain={domain}&sz=128", f"https://icons.duckduckgo.com/ip3/{domain}.ico"]
+def wikidata_logo(name, domain):
+    """The logo Wikidata lists for this organisation (property P154), if its official website matches."""
+    api = "https://www.wikidata.org/w/api.php?format=json&"
+    try:
+        hits = json.loads(fetch(api + urllib.parse.urlencode({"action": "wbsearchentities", "search": re.sub(r"\s*\(.*?\)", "", name), "language": "en", "limit": 5})))["search"]
+        for h in hits:
+            ent = json.loads(fetch(api + urllib.parse.urlencode({"action": "wbgetentities", "ids": h["id"], "props": "claims"})))["entities"][h["id"]]["claims"]
+            sites = [c["mainsnak"].get("datavalue", {}).get("value", "") for c in ent.get("P856", [])]
+            logos = [c["mainsnak"].get("datavalue", {}).get("value", "") for c in ent.get("P154", [])]
+            if logos and any(domain in str(u) for u in sites):
+                return ["https://commons.wikimedia.org/wiki/Special:FilePath/" + urllib.parse.quote(logos[0]) + "?width=256"]
+    except Exception:
+        pass
+    return []
+
+
+def one(item):
+    name, domain = item
+    if domain in SKIP_ICONS:
+        urls = []
+    else:
+        urls = [] if domain in SKIP_TOUCH else [f"https://{domain}/apple-touch-icon.png", f"https://www.{domain}/apple-touch-icon.png"]
+        urls += [f"https://www.google.com/s2/favicons?domain={domain}&sz=128", f"https://www.google.com/s2/favicons?domain_url=https://www.{domain}/&sz=256",
+                 f"https://icons.duckduckgo.com/ip3/{domain}.ico", f"https://unavatar.io/{domain}?fallback=false"]
     best = (0, "", b"")
-    for stage in (urls, None):
-        for url in stage if stage is not None else page_icons(domain):
+    for stage in (urls, "page", "wikidata"):
+        if stage == "page" and domain in SKIP_ICONS:
+            continue
+        for url in stage if isinstance(stage, list) else page_icons(domain) if stage == "page" else wikidata_logo(name, domain):
             try:
                 b = fetch(url)
             except Exception:
@@ -84,7 +109,11 @@ def one(domain):
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    domains = sorted({v for k, v in json.load(open("employer_domains.json")).items() if not k.startswith("_")})
+    names = {}
+    for k, v in json.load(open("employer_domains.json")).items():
+        if not k.startswith("_"):
+            names.setdefault(v, k)
+    domains = sorted((n, d) for d, n in names.items())
     with ThreadPoolExecutor(8) as ex:
         got = list(ex.map(one, domains))
     print(f"logos: {sum(1 for _, w in got if w)} of {len(got)} found;", "missing:", [d for d, w in got if not w])
