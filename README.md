@@ -22,6 +22,10 @@ Python 3.10+, standard library only. One run takes about 10 minutes, because of 
 | `board_template.html` / `build_board.py` | The board page; data is embedded at build time |
 | `pageup_scan.py` / `pageup_au.py` / `pageup_names.py` | One-off discovery: finds PageUp-hosted employers, keeps the Australian ones and names them |
 
+## Testing new sources safely
+
+Push to any branch named `probe/...` and the **Probe (testing only)** workflow runs `discovery/run.sh` on GitHub's computers. It never publishes the board. `discovery/probe.py` finds which hiring platform a company uses; `discovery/test_sources.py` checks what each source returns and why roles are rejected.
+
 ## Adding an employer
 
 1. Find its careers platform (look at the apply link of any job ad).
