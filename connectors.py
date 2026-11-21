@@ -83,7 +83,8 @@ CANDIDATE = re.compile(
     r"design|\bux\b|\bui\b|user experience|customer experience|\bcx\b|research|"
     r"content strateg|ux writ|experience architect|human[- ]centred|human[- ]centered|"
     r"service design|insight|usability|interaction|creative|visual|brand|motion|illustrat|"
-    r"accessibility|journey",
+    r"accessibility|journey|inclusive|improvement|behavioural|behavioral|human factors|proposition|"
+    r"product discovery|content ?op|engagement strateg|customer strateg|customer listening|voice of (the )?customer|venture",
     re.I,
 )
 
@@ -277,7 +278,8 @@ def remotive():
 
 
 KEYWORDS = ["designer", "design", "user experience", "UX", "researcher", "service design",
-            "customer experience", "content design", "CX", "human centred", "experience architect"]
+            "customer experience", "content design", "CX", "human centred", "experience architect",
+            "insights", "improvement", "behavioural", "content operations"]
 
 
 # ---------------- Workday (public cxs API) ----------------
@@ -947,7 +949,8 @@ def listing_site(listing, link_re, employer, source="careers-site", max_pages=15
             seen.add(l)
             full = l if l.startswith("http") else base + l
             slug = re.sub(r"[-_/]+", " ", l.split("?")[0])
-            if not candidate(slug):
+            # Links that carry the job title can be pre-filtered; bare numeric links must be opened.
+            if re.search(r"[a-z]{4,}", l.rstrip("/").rsplit("/", 1)[-1], re.I) and not candidate(slug):
                 continue
             time.sleep(DELAY)
             try:
@@ -965,3 +968,23 @@ def listing_site(listing, link_re, employer, source="careers-site", max_pages=15
         if "{page}" not in listing:
             break
         time.sleep(DELAY)
+
+
+def sf_classic(host, company, employer):
+    """Older SuccessFactors career sites (careerN.successfactors.com) publish an XML list of every job."""
+    raw = get(f"https://{host}/career?" + urllib.parse.urlencode({"company": company, "career_ns": "job_listing_summary", "resultType": "XML"}))
+    root = ET.fromstring(raw)
+    for j in root.iter("Job"):
+        title = (j.findtext("JobTitle") or "").strip()
+        if not candidate(title):
+            continue
+        rid = (j.findtext("ReqId") or "").strip()
+        etype = ""
+        for f in j:
+            if (f.findtext("label") or "").lower() == "employment type":
+                etype = f.findtext("value") or ""
+        loc = re.sub(r"\s*\(AU-\d+\)", ", Australia", (j.findtext("Location") or "").strip())
+        yield dict(source="sf-classic", source_id=f"sfc-{company}-{rid}", employer=employer, title=title,
+                   url=f"https://{host}/career?" + urllib.parse.urlencode({"company": company, "career_ns": "job_listing", "career_job_req_id": rid}),
+                   location=loc, description=strip_html(j.findtext("Job-Description") or ""), posted="",
+                   employment_type=etype, workplace="", salary_text="", remote_flag=None)
