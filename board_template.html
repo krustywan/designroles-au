@@ -52,6 +52,8 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 @keyframes drift4{100%{transform:translate(-30%,-8%) scale(1.3);border-radius:55% 45% 60% 40%/45% 60% 40% 55%}}
 @keyframes hue{to{filter:hue-rotate(-28deg) saturate(1.15)}}
 .coil.off{display:none}
+.coil{opacity:0;transform:translateY(24px) scale(.96);transition:opacity .9s cubic-bezier(.2,.75,.2,1),transform 1.1s cubic-bezier(.2,.75,.2,1)}
+.coil.on{opacity:1;transform:none}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.16;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .coil{position:fixed;right:-160px;top:58px;width:460px;height:auto;filter:drop-shadow(0 40px 60px #12004a99)}
 .top{display:flex;align-items:center;gap:10px;height:64px}
@@ -352,6 +354,10 @@ body.on-page #results{display:none}
 /* On About, Feedback and Saved the header becomes the page title, and the search steps aside */
 body.on-title .intro,body.on-title .find{display:none}
 body.on-saved .tabs{display:none}
+.ptitle h1 span{background-image:linear-gradient(90deg,var(--hg1) 0%,var(--hg2) 45%,#fff 100%)}
+body.t-about{--hg1:#9cc8ff;--hg2:#ddeeff}
+body.t-feedback{--hg1:#ffbf94;--hg2:#ffe8d8}
+body.t-saved{--hg1:#ff9fd6;--hg2:#ffe0f1}
 .ptitle{padding:clamp(18px,3vw,40px) 0 clamp(28px,4vw,52px)}
 .ptitle .pback{display:inline-block;color:#ffffffb3;font-size:15px;margin-bottom:14px}
 .ptitle .pback:hover{color:#fff}
@@ -387,7 +393,10 @@ dialog.menu::backdrop{background:transparent}
  <div class="clip" aria-hidden="true">
   <div class="aurora" id="aurora"><div class="layer" data-d="0.9"><i class="b1"></i></div><div class="layer" data-d="-1.3"><i class="b2"></i></div><div class="layer" data-d="1.6"><i class="b3"></i></div><div class="layer" data-d="-0.7"><i class="b4"></i></div></div>
   <canvas class="gl" id="gl"></canvas>
-  <img class="coil" src="__COIL__" alt="" width="1100" height="1400">
+  <img class="coil on" data-for="roles" src="__COIL__" alt="" width="1100" height="1400">
+  <img class="coil" data-for="about" src="assets/shape-about.webp" alt="" width="1087" height="1193">
+  <img class="coil" data-for="feedback" src="assets/shape-feedback.webp" alt="" width="1001" height="863">
+  <img class="coil" data-for="saved" src="assets/shape-saved.webp" alt="" width="934" height="1000">
  </div>
  <div class="wrap">
   <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><nav class="navlinks" aria-label="Main"><a href="#/" data-nav="roles">Find roles</a><a href="#/saved" data-nav="saved">Saved</a><a href="#/about" data-nav="about">About</a><a href="#/feedback" data-nav="feedback">Feedback</a></nav><button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
@@ -698,7 +707,7 @@ const render = keepSel => {
   const slice = R.slice((st.page - 1) * PER, st.page * PER);
   if (!R.length) {
     SUGS = suggestions();
-    const msg = st.view === 'saved' && !saved.size ? 'You haven’t saved any roles yet. Tap the star on a role to keep it here. Saved roles stay on this device.' : 'No roles match all of these filters.';
+    const msg = st.view === 'saved' && !saved.size ? 'No saved roles yet. <a href="#/">Browse all roles</a>' : 'No roles match all of these filters.';
     $('list').innerHTML = `<div class="empty">${msg}${SUGS.length ? `<div class="sugs">${SUGS.map(([n, label], i) => `<button class="btn" data-sug="${i}">${esc(label)} <b>${n} role${n === 1 ? '' : 's'}</b></button>`).join('')}</div>` : ''}</div>`;
   } else {
     $('list').innerHTML = slice.map(card).join('');
@@ -972,18 +981,30 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
 // It sits in whatever space is left to the right of the heading, search and filters (up to 35% may run off-screen),
 // shrinks to fit, and is hidden when there isn't room for it to read well.
 (() => {
-  const coil = document.querySelector('.coil'), hero = document.querySelector('.hero');
+  const hero = document.querySelector('.hero');
   const fit = () => {
+    const coil = hero.querySelector('.coil.on'), page = coil.dataset.for !== 'roles';
     const vw = document.documentElement.clientWidth;
     let right = 0;
     for (const el of hero.querySelectorAll('.intro h1 span, .ptitle h1 span, .ptitle .psub, .srow > *, .frow > *, .mpill')) {
       const r = el.getBoundingClientRect(); if (r.width) right = Math.max(right, r.right);
+    }
+    if (page) {
+      // Page shapes are cropped tight: fit the whole shape between the nav and the bottom of the header
+      const hH = hero.getBoundingClientRect().height, ar = (coil.naturalWidth || 1) / (coil.naturalHeight || 1);
+      const h = Math.min(hH - 64 - 20, 300), w = Math.min(h * ar, vw - right - 48);
+      coil.classList.toggle('off', w < 160);
+      coil.style.width = Math.round(w) + 'px'; coil.style.right = 'max(16px, calc((100vw - 1240px) / 2 + 2.5vw))';
+      coil.style.top = Math.round(64 + (hH - 64 - w / ar) / 2 - 4) + 'px';
+      return;
     }
     const w = Math.min(500, (vw - right - 32) / 0.65);
     coil.classList.toggle('off', w < 240);
     coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(-0.35 * w) + 'px';
     coil.style.top = Math.round(64 - 0.2 * w * 1400 / 1100) + 'px';   // the render has empty space above the coil; start it just under the nav
   };
+  window.fitShape = fit;
+  hero.querySelectorAll('.coil').forEach(c => c.addEventListener('load', fit));
   new ResizeObserver(fit).observe(hero); addEventListener('resize', fit);
   new MutationObserver(fit).observe($('frow'), {childList: true});
   fit(); setTimeout(fit, 1200);   // again after the arrival animation and fonts settle
@@ -1026,8 +1047,8 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   // Each page has its own palette: the roles page is violet; the others shift to neighbouring hues so they still feel related.
   const THEMES = {
     roles:    [[.13,.06,.31], [.42,.11,.94], [.94,.6,1], [.18,.27,.84], [.64,.3,1]],
-    about:    [[.05,.08,.30], [.20,.24,.96], [.55,.82,1], [.40,.16,.90], [.36,.50,1]],     // indigo into sky blue
-    feedback: [[.03,.13,.24], [.10,.50,.78], [.55,1,.92], [.42,.16,.92], [.22,.40,.96]],   // teal into violet
+    about:    [[.03,.08,.30], [.10,.30,.98], [.45,.85,1], [.30,.20,.90], [.25,.55,1]],     // cobalt into sky blue
+    feedback: [[.20,.06,.18], [.95,.38,.20], [1,.78,.52], [.45,.16,.90], [1,.46,.40]],     // coral and peach, over violet
     saved:    [[.20,.05,.26], [.70,.12,.80], [1,.62,.72], [.36,.16,.90], [.95,.36,.78]],   // fuchsia into rose
   };
   let pal = THEMES.roles.map(c => c.slice()), goal = THEMES.roles;
@@ -1092,11 +1113,15 @@ const route = () => {
   document.body.classList.toggle('on-saved', isSaved);
   document.body.classList.toggle('on-title', cur !== 'roles');
   if (isSaved) st.view = 'saved'; else if (st.view === 'saved') st.view = 'all';
+  route.cur = cur;
   if (was !== undefined || isSaved) changed();
   if (cur !== 'roles') { $('pt-h').innerHTML = `<span>${TITLES[cur][0]}</span>`; subtitle(cur); }
   $('ptitle').hidden = cur === 'roles';
   document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === cur ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   window.heroTheme?.(cur);
+  document.body.classList.remove('t-' + was); document.body.classList.add('t-' + cur);
+  document.querySelectorAll('.coil').forEach(c => c.classList.toggle('on', c.dataset.for === cur));
+  window.fitShape?.();
   if (was !== undefined && was !== cur) {
     scrollTo({top: 0, behavior: 'instant'});   // a new page starts at the top, not part-way down
     // Replay the arrival animation for the new page
@@ -1111,11 +1136,11 @@ const route = () => {
 };
 const subtitle = cur => {
   const n = saved.size;
-  $('pt-p').textContent = cur !== 'saved' ? TITLES[cur][1] : n ? `${n} role${n === 1 ? '' : 's'} saved on this device. No account needed.` : 'Tap the star on any role to keep it here. Saved roles stay on this device.';
+  $('pt-p').textContent = cur !== 'saved' ? TITLES[cur][1] : n ? `Your shortlist of ${n} role${n === 1 ? '' : 's'}, ready when you are. They’re kept on this device, so there’s no account to set up.` : 'Your shortlist lives here. Tap the star on any role to keep it, and come back when you’re ready to apply.';
 };
 const TITLES = {
-  about: ['About DesignRoles AU', 'A free job board for designers and researchers in Australia, built by a designer.'],
-  feedback: ['Feedback', 'Missing an employer? Spotted a role tagged wrong? Got an idea? We’d love to hear it.'],
+  about: ['About DesignRoles AU', 'Every design, research and content role we can find in Australia, checked each morning and taken straight from the employers. Free, and built by a designer.'],
+  feedback: ['Feedback', 'Help shape what this board becomes. Tell us about an employer we’re missing, a role that looks wrong, or an idea that would make your search easier.'],
   saved: ['Saved roles', ''],
 };
 addEventListener('hashchange', () => { if (!/^#role=/.test(location.hash)) route(); });
