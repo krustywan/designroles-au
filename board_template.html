@@ -953,8 +953,8 @@ const lockPage = on => {
   locks = Math.max(0, locks + (on ? 1 : -1));
   const b = document.body;
   // Keep the scrollbar's width as padding while it's hidden, so the page doesn't shift sideways when it goes and comes back
-  if (on && locks === 1) { lockY = scrollY; const sb = innerWidth - document.documentElement.clientWidth; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0', paddingRight: sb ? sb + 'px' : ''}); }
-  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: '', paddingRight: ''}); scrollTo(0, lockY); }
+  if (on && locks === 1) { lockY = scrollY; const sb = innerWidth - document.documentElement.clientWidth; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0', paddingRight: sb ? sb + 'px' : ''}); document.documentElement.style.setProperty('--sb', sb + 'px'); }
+  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: '', paddingRight: ''}); document.documentElement.style.removeProperty('--sb'); scrollTo(0, lockY); }
 };
 $('sheet').addEventListener('close', () => { if ($('sheet').dataset.locked) { delete $('sheet').dataset.locked; lockPage(false); } });
 new MutationObserver(() => { if ($('sheet').open && !$('sheet').dataset.locked) { $('sheet').dataset.locked = 1; lockPage(true); } }).observe($('sheet'), {attributes: true, attributeFilter: ['open']});
@@ -1023,7 +1023,7 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
     let w = 560 * ar, x = Math.max(vw - edge - w, right + 32);
     if (vw - x < 0.65 * w) { w = (vw - right - 32) / 0.65; x = right + 32; }
     coil.classList.toggle('off', w / ar < 260);
-    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(vw - x - w) + 'px';
+    coil.style.width = Math.round(w) + 'px'; coil.style.right = `calc(${Math.round(vw - x - w)}px + var(--sb, 0px))`;   // --sb: room left by a hidden scrollbar
     coil.style.top = (64 + 24) + 'px';   // a clear gap under the nav
   };
   window.fitShape = fit;
