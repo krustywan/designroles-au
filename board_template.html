@@ -243,10 +243,6 @@ select{appearance:none;-webkit-appearance:none;font:inherit;font-size:14px;font-
 .aitag{display:inline-block;vertical-align:middle;margin-left:8px;font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 40%,transparent);border-radius:999px;padding:1px 8px}
 .fine{font-size:13px;color:var(--on-sv)}
 .warn{font-size:14px;background:var(--s-low);border-radius:12px;padding:12px 14px;margin:0 0 16px}
-.alert{margin-top:20px;background:var(--s-low);border-radius:18px;padding:20px}
-.alert h3{margin:0 0 4px}
-.alert form{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.alert input{flex:1 1 200px;font:inherit;font-size:16px;border:1px solid var(--ov);background:var(--s-lowest);color:var(--on-s);border-radius:12px;padding:10px 14px;min-height:48px}
 .ok{font-size:14px;margin-top:12px}
 .toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--on-ink);padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
@@ -353,16 +349,19 @@ dialog.sdrawer::backdrop{background:#000}
 .pform .btn{justify-self:start}
 .pok{font-size:14px;background:var(--s-low);border-radius:12px;padding:12px 14px}
 body.on-page #results{display:none}
-dialog.menu{color-scheme:dark;border:0;padding:0;margin:0 0 0 auto;inset:0 0 0 auto;width:min(380px,88vw);max-width:none;height:100dvh;max-height:100dvh;color:#fff;background:radial-gradient(80% 50% at 100% 100%,#7b2cf2 0%,transparent 60%),linear-gradient(180deg,#07040e 0%,#1a0b3d 70%,#2a0f63 100%)}
-dialog.menu[open]{display:flex;flex-direction:column;animation:fromright .3s var(--std)}
-dialog.menu::backdrop{background:rgba(0,0,0,.45)}
-.mh{display:flex;align-items:center;justify-content:space-between;padding:10px 10px 10px 20px}
-.mlist{flex:1;overflow:auto;padding:8px 12px;display:grid;align-content:start;gap:2px}
-.mlist a{display:grid;gap:2px;padding:14px 12px;border-radius:14px;color:#fff;text-decoration:none}
-.mlist a:hover,.mlist a[aria-current=page]{background:#ffffff14}
-.mlist b{font-size:18px;font-weight:600;letter-spacing:-.015em}
-.mlist span{font-size:14px;color:#ffffffa8}
-.mfoot{padding:16px 24px calc(20px + env(safe-area-inset-bottom));margin:0;font-size:13px;color:#ffffff90}
+dialog.menu{color-scheme:dark;border:0;padding:0;margin:0;inset:0;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;color:#f5f5f7;background:rgba(10,6,20,.82);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px)}
+dialog.menu[open]{display:flex;flex-direction:column;animation:menuin .32s cubic-bezier(.4,0,.6,1)}
+@keyframes menuin{from{opacity:0}}
+dialog.menu::backdrop{background:transparent}
+.mh{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 max(16px,2.5vw) 0 max(16px,2.5vw)}
+.mh .sd-x{width:44px;height:44px;font-size:28px;color:#f5f5f7}
+.mlist{flex:1;overflow:auto;padding:28px max(28px,6vw);display:grid;align-content:start;gap:4px}
+.mlist a{color:#e8e8ed;text-decoration:none;font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.2;padding:8px 0;opacity:0;transform:translateY(-8px);animation:mitem .45s cubic-bezier(.2,.7,.2,1) forwards}
+.mlist a:nth-child(2){animation-delay:.04s}.mlist a:nth-child(3){animation-delay:.08s}.mlist a:nth-child(4){animation-delay:.12s}
+@keyframes mitem{to{opacity:1;transform:none}}
+.mlist a:hover{color:#fff}
+.mlist a[aria-current=page]{color:#fff}
+.mlist a[aria-current=page]::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#b9a2ff;margin-left:10px;vertical-align:middle}
 /* Arrival: heading lines, search and the first cards rise in, one after another */
 @keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
 .intro h1 span,.find .srow,.rbar,.job.in{animation:rise .9s cubic-bezier(.2,.75,.2,1) both}
@@ -380,7 +379,7 @@ dialog.menu::backdrop{background:rgba(0,0,0,.45)}
   <img class="coil" src="__COIL__" alt="" width="1100" height="1400">
  </div>
  <div class="wrap">
-  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><nav class="navlinks" aria-label="Main"><a href="#/" data-nav="roles">Find roles</a><a href="#/saved" data-nav="saved">Saved</a><a href="#/alerts" data-nav="alerts">Job alerts</a><a href="#/about" data-nav="about">About</a></nav><button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><nav class="navlinks" aria-label="Main"><a href="#/" data-nav="roles">Find roles</a><a href="#/saved" data-nav="saved">Saved</a><a href="#/about" data-nav="about">About</a><a href="#/feedback" data-nav="feedback">Feedback</a></nav><button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
   <div class="intro"><h1><span class="l1">Design, research and </span><span class="l2">content roles in Australia</span></h1></div>
   <div class="find" id="find">
    <button type="button" class="mpill" id="mpill" aria-haspopup="dialog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="mpill-t">Search for a new job role</span></button>
@@ -413,32 +412,6 @@ dialog.menu::backdrop{background:rgba(0,0,0,.45)}
   <h3>What makes it different</h3>
   <ul><li><b>Straight from the source.</b> Roles come from employers' own sites, so you see ones that never reach the big boards.</li><li><b>Sorted by discipline.</b> Not just "design" as a keyword: UX, research, content, service design and more.</li><li><b>Pay, work mode and recruiter ads made clear.</b> You can see at a glance what's advertised and who's behind it.</li><li><b>Free, no account needed.</b> Saved roles stay on your device.</li></ul>
   <p class="fine">This is a prototype and a community project. If it helps you, share it with someone who's looking.</p>
- </section>
- <section class="page" id="page-how" hidden aria-labelledby="h-how">
-  <a class="pback" href="#/">← Back to roles</a>
-  <h2 id="h-how">How it works</h2>
-  <h3>Where roles come from</h3>
-  <ul><li>Employers' own careers sites: banks, insurers, retailers, telcos, tech companies, universities, not-for-profits and more (over 250 sources)</li><li>Government job boards: WA, Queensland and NSW, plus Australian Public Service vacancies from the APS Gazette</li><li>A small number of recruiter sites. Their ads are marked "Via recruiter"</li></ul>
-  <h3>When it updates</h3>
-  <p>Every morning, around 6am Perth time. Roles that close or disappear from the employer's site drop off the board at the next update. <span id="how-upd"></span></p>
-  <h3>How roles are sorted</h3>
-  <p>Each role is tagged by discipline, seniority, work mode, work type and location using rules based on the ad's title and text. "New" means we first saw the role in the last 7 days.</p>
-  <h3>Summaries and pay</h3>
-  <p>Summaries are taken from the ad automatically, and pay is only shown when the ad states it. Tags can occasionally be wrong, so always check the original ad before applying.</p>
-  <h3>Logos and data</h3>
-  <p class="fine">Employer logos come from each employer's own website or public icon services and belong to their owners. APS vacancies are from the Australian Public Service Gazette, licensed under CC BY 4.0. We only read public pages, slowly and politely, and link back to the original ad every time.</p>
- </section>
- <section class="page" id="page-alerts" hidden aria-labelledby="h-alerts">
-  <a class="pback" href="#/">← Back to roles</a>
-  <h2 id="h-alerts">Job alerts</h2>
-  <p class="lead">Get new roles that match your search, straight to your inbox.</p>
-  <form class="pform" id="alertform">
-   <div class="pfield"><span class="pl">Your search</span><p class="psearch" id="alert-search"></p><a href="#/" class="fine">Change your search or filters</a></div>
-   <label class="pfield"><span class="pl">Email</span><input type="email" required placeholder="you@example.com" autocomplete="email"></label>
-   <fieldset class="pfield"><legend class="pl">How often</legend><label class="pr"><input type="radio" name="freq" checked> Daily</label><label class="pr"><input type="radio" name="freq"> Weekly</label></fieldset>
-   <button class="btn primary" type="submit">Create alert</button>
-   <div class="pok" hidden>Thanks! Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>
-  </form>
  </section>
  <section class="page" id="page-feedback" hidden aria-labelledby="h-feedback">
   <a class="pback" href="#/">← Back to roles</a>
@@ -486,14 +459,11 @@ dialog.menu::backdrop{background:rgba(0,0,0,.45)}
 <dialog class="menu" id="menu" aria-label="Menu">
  <div class="mh"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><button class="sd-x" id="menuclose" aria-label="Close menu">×</button></div>
  <nav class="mlist" aria-label="Main">
-  <a href="#/" data-nav="roles"><b>Find roles</b><span>Every design, research and content role we can find</span></a>
-  <a href="#/saved" data-nav="saved"><b>Saved roles</b><span id="m-saved">Roles you've starred on this device</span></a>
-  <a href="#/alerts" data-nav="alerts"><b>Job alerts</b><span>New roles matching your search, by email</span></a>
-  <a href="#/about" data-nav="about"><b>About</b><span>Why this board exists</span></a>
-  <a href="#/how-it-works" data-nav="how"><b>How it works</b><span>Where roles come from and how they're sorted</span></a>
-  <a href="#/feedback" data-nav="feedback"><b>Feedback</b><span>Suggest an employer, report a problem, share an idea</span></a>
+  <a href="#/" data-nav="roles">Find roles</a>
+  <a href="#/saved" data-nav="saved">Saved roles</a>
+  <a href="#/about" data-nav="about">About</a>
+  <a href="#/feedback" data-nav="feedback">Feedback</a>
  </nav>
- <p class="mfoot">Free for designers and researchers. Prototype.</p>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
@@ -666,12 +636,6 @@ const detail = j => {
    ${j.via_recruiter ? `<p class="warn">This ad is placed by a recruitment agency, so the hiring company may not be named.</p>` : ''}
    ${aiHTML(j)}
    <p class="fine">${j.ai ? 'AI summary of the ad. It can miss or misread details, so check' : 'This summary is taken from the ad automatically. Read'} the full description, requirements and how to apply in the original ad on ${esc(j.employer.replace(/ \(recruiter\)$/, ''))}'s site.</p>
-   <div class="alert">
-    <h3>Get roles like this by email</h3>
-    <p class="fine" style="margin:0">Alerts will use your current filters.</p>
-    <form id="alert"><label class="vh" for="em">Email</label><input type="email" id="em" required placeholder="you@example.com" autocomplete="email"><button class="btn primary" type="submit">Alert me</button></form>
-    <div id="alertok"></div>
-   </div>
   </div>
   </div>`;
 };
@@ -819,7 +783,6 @@ document.addEventListener('click', e => {
   if ((b = g('.job'))) { select(b.dataset.id); return; }
 });
 $('sform').addEventListener('submit', e => { e.preventDefault(); hideSug('q'); st.q = $('q').value.trim(); if (st.pop) closeMenu(); changed(); document.activeElement?.blur(); saveRecent(); closeSearch(); toResults(); });
-document.addEventListener('submit', e => { if (e.target.id !== 'alert') return; e.preventDefault(); $('alertok').innerHTML = `<div class="ok">Thanks. Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>`; });
 $('list').addEventListener('keydown', e => {
   if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
   const cards = [...document.querySelectorAll('.job')]; const i = cards.findIndex(c => c.contains(document.activeElement));
@@ -1099,8 +1062,8 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
 })();
 
 
-// ---------- Menu and pages (#/about, #/how-it-works, #/alerts, #/feedback, #/saved) ----------
-const PAGES = {'#/about': 'about', '#/how-it-works': 'how', '#/alerts': 'alerts', '#/feedback': 'feedback'};
+// ---------- Menu and pages (#/about, #/feedback, #/saved) ----------
+const PAGES = {'#/about': 'about', '#/feedback': 'feedback'};
 const route = () => {
   const h = location.hash, page = PAGES[h];
   document.querySelectorAll('.page').forEach(p => p.hidden = p.id !== 'page-' + page);
@@ -1109,16 +1072,14 @@ const route = () => {
   if (h === '#/' && st.view === 'saved') { st.view = 'all'; changed(); }
   const cur = page || (h === '#/saved' ? 'saved' : 'roles');
   document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === cur ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  if (page === 'alerts') { const l = searchLabel(), n = activeN(); $('alert-search').textContent = (l || 'All roles in Australia') + (n ? ` · ${n} filter${n === 1 ? '' : 's'}` : ''); }
-  if (page === 'how') $('how-upd').textContent = `Last updated ${D.generated} (Perth time), ${J.length} roles.`;
   if (page || h === '#/saved') (page ? $('pages') : $('results')).scrollIntoView({behavior: smooth()});
 };
 addEventListener('hashchange', () => { if (!/^#role=/.test(location.hash)) route(); });
-$('burger').addEventListener('click', () => { $('m-saved').textContent = saved.size ? `${saved.size} role${saved.size === 1 ? '' : 's'} starred on this device` : 'Roles you star stay on this device'; $('menu').showModal(); lockPage(true); });
+$('burger').addEventListener('click', () => { $('menu').showModal(); lockPage(true); });
 $('menu').addEventListener('close', () => lockPage(false));
 $('menuclose').addEventListener('click', () => $('menu').close());
 $('menu').addEventListener('click', e => { if (e.target === $('menu') || e.target.closest('a')) $('menu').close(); });
-for (const f of ['alertform', 'fbform']) $(f).addEventListener('submit', e => { e.preventDefault(); e.target.querySelector('.pok').hidden = false; });
+for (const f of ['fbform']) $(f).addEventListener('submit', e => { e.preventDefault(); e.target.querySelector('.pok').hidden = false; });
 document.addEventListener('click', e => { const a = e.target.closest('a[href="#/"]'); if (a && location.hash === '#/') { e.preventDefault(); route(); } });
 
 // ---------- Start: filters from the link, else from this device ----------
@@ -1127,7 +1088,7 @@ st.open = store.get('dra-filters-open', true);
 $('q').value = st.q; $('sort').value = st.sort;
 const m = location.hash.match(/role=(\w+)/);
 render();
-if (location.hash.startsWith('#/')) route();
+if (!/^#role=/.test(location.hash)) route();
 if (m && J.some(j => j.id === m[1])) {
   const id = m[1];
   if (!R.some(j => j.id === id)) { clearAll(); st.view = 'all'; render(); }
