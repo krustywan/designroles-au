@@ -67,7 +67,7 @@ h1 span{display:inline-block;background:linear-gradient(90deg,#e7b6ff 0%,#f3e2ff
 
 /* Search, with filters revealed underneath (Seek-style) */
 .find{position:relative;padding:clamp(20px,2.6vw,30px) 0 clamp(24px,3vw,36px)}
-@media(min-width:900px){.srow{width:66.67%;min-width:780px}.srow .fld input{font-size:16px}.srow .fld{padding-left:14px;gap:8px}.srow .fld{flex:1 1 0}.srow .fld.what{flex:1.9 1 0}.gobtn{min-width:0;padding:10px 18px}}
+@media(min-width:900px){.srow{width:66.67%;min-width:780px}.srow .fld input,.srow .wbtn{font-size:16px}.srow .fld{padding-left:14px;gap:8px}.srow .fld{flex:1 1 0}.srow .fld.what{flex:1.9 1 0}.gobtn{min-width:0;padding:10px 18px}}
 .srow{display:flex;align-items:center;gap:10px}
 .sbar{color-scheme:light;flex:1;display:flex;align-items:center;gap:6px;background:#fffffff2;color:#18181b;border-radius:999px;padding:6px;box-shadow:0 10px 40px #1a005066}
 .box{flex:1;display:flex;align-items:center}
@@ -78,6 +78,11 @@ h1 span{display:inline-block;background:linear-gradient(90deg,#e7b6ff 0%,#f3e2ff
 .fld input::placeholder{color:#62626b;text-overflow:ellipsis}
 .fld input{text-overflow:ellipsis}
 .fld input::-webkit-search-cancel-button{display:none}
+.wbtn{border:0;background:none;font:inherit;font-size:17px;color:#18181b;text-align:left;cursor:pointer;min-height:48px;padding-right:14px}
+.wbtn .wl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wbtn .wl.ph{color:#62626b}
+.wbtn .caret{flex:none;width:8px;height:8px;border:solid #4b4b55;border-width:0 2px 2px 0;rotate:45deg;translate:0 -3px;transition:rotate .2s}
+.wbtn[aria-expanded=true] .caret{rotate:225deg;translate:0 2px}
 .xin{flex:none;width:28px;height:28px;border-radius:50%;border:0;background:#ececf0;color:#4b4b55;cursor:pointer;font-size:16px;line-height:1;margin-right:6px}
 .xin[hidden]{display:none}
 .sep{flex:none;width:1px;align-self:stretch;margin:8px 4px;background:#dcdce1}
@@ -279,7 +284,17 @@ dialog.sdrawer{color-scheme:dark;border:0;padding:0;margin:0;width:100vw;max-wid
 dialog.sdrawer[open]{display:flex;flex-direction:column;animation:fade .25s var(--std)}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}}
 dialog.sdrawer::backdrop{background:#000}
-.sd-top{display:flex;justify-content:flex-end;padding:12px 12px 0}
+.sd-top{display:flex;align-items:center;justify-content:flex-end;padding:12px 12px 0}
+.cmp{margin-right:auto;margin-left:4px;display:flex;align-items:center;gap:4px;font-size:12px;color:#ffffffa0}
+.cmp[hidden]{display:none}
+.cmp button{border:1px solid #ffffff40;background:none;color:#fff;border-radius:999px;font:inherit;font-size:12px;padding:4px 10px;cursor:pointer}
+.cmp button[aria-pressed=true]{background:#fff;color:#18181b}
+.inl{margin-top:12px;background:var(--s-lowest);border-radius:16px;padding:6px 6px 8px}
+.inl[hidden]{display:none}
+.inl .ih{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 4px}
+.inl .ih b{font-size:15px;font-weight:600}
+.inl .ih button{border:0;background:none;color:var(--on-s);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
+.sd-body .dd[aria-expanded=true]{background:#fff;color:#18181b;border-color:#fff}
 .sd-x{width:48px;height:48px;border:0;border-radius:50%;background:none;color:#fff;font-size:30px;line-height:1;cursor:pointer}
 .sd-body{flex:1;overflow:auto;padding:4px 16px 16px}
 .sd-body .sbar{flex-direction:column;align-items:stretch;background:none;box-shadow:none;padding:0;border-radius:0}
@@ -345,7 +360,7 @@ dialog.sdrawer::backdrop{background:#000}
      <div class="box">
       <div class="fld what"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><label class="vh" for="q">Job title, keywords or company</label><input type="text" id="q" placeholder="Job title, keyword or company" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-q" spellcheck="false"><button type="button" class="xin" data-xin="q" aria-label="Clear keywords" hidden>×</button><ul class="sug" id="sug-q" role="listbox" aria-label="Suggestions" hidden></ul></div>
       <span class="sep" aria-hidden="true"></span>
-      <div class="fld where"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><label class="vh" for="w">Location</label><input type="text" id="w" placeholder="Location" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-w" spellcheck="false"><button type="button" class="xin" data-xin="w" aria-label="Clear location" hidden>×</button><ul class="sug" id="sug-w" role="listbox" aria-label="Locations" hidden></ul></div>
+      <button type="button" class="fld where wbtn" id="w" data-dd="loc" aria-haspopup="true" aria-expanded="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span class="wl" id="wl">Location</span><span class="caret" aria-hidden="true"></span></button>
      </div>
      <button type="submit" class="btn primary gobtn">Find roles</button>
     </form>
@@ -379,8 +394,8 @@ dialog.sdrawer::backdrop{background:#000}
  <div class="sb" id="sheetbody"></div>
 </dialog>
 <dialog class="sdrawer" id="sdrawer" aria-label="Search roles">
- <div class="sd-top"><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
- <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="recent" id="recent"></div></div>
+ <div class="sd-top"><div class="cmp" id="cmp" hidden><span>Filter style</span><button type="button" data-mode="inline">Inline</button><button type="button" data-mode="sheet">Pop-up</button></div><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
+ <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="inl" id="inl" hidden></div><div class="recent" id="recent"></div></div>
  <div class="sd-foot"><button type="submit" form="sform" class="btn" id="sdgo">Find roles</button></div>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
@@ -602,6 +617,7 @@ const render = keepSel => {
   $('reveal').classList.toggle('open', open); $('fbtn').setAttribute('aria-expanded', open);
   $('frow').inert = !open;
   swap($('frow'), frowHTML());
+  if (st.pop && !$('inl').hidden) swap($('inl'), inlHTML());
   if (st.pop && !$('pop').hidden) { swap($('pop'), `<div class="opts">${menuHTML(st.pop)}</div><div class="pfoot"><button type="button" class="btn" data-popclear>Clear</button><button type="button" class="btn primary" data-popdone>${resultsLabel()}</button></div>`); }
   if ($('sheet').open) { swap($('sheetbody'), st.pop === 'all' ? drawerHTML() : menuHTML(st.pop)); $('resetf').hidden = !(st.pop === 'all' ? activeN() : st.pop === 'more' ? st.t.lead || st.t.norec : st.f[st.pop]?.size); }
   $('sdgo').textContent = R.length ? `Show ${R.length} role${R.length === 1 ? '' : 's'}` : 'No roles match';
@@ -635,9 +651,17 @@ const placePop = btn => {
   pop.style.top = (b.bottom - f.top + 8) + 'px';
   pop.style.left = Math.max(0, Math.min(b.left - f.left, f.width - pop.offsetWidth)) + 'px';
 };
+let menuMode = store.get('dra-menu-mode', 'inline');
+const inlineOn = () => phone() && $('sdrawer').open && menuMode === 'inline';
+const inlHTML = () => { const k = st.pop, has = k === 'more' ? st.t.lead || st.t.norec : st.f[k]?.size;
+  return `<div class="ih"><b>${k === 'more' ? 'More filters' : FK[k].title}</b>${has ? '<button type="button" data-inlclear>Clear</button>' : ''}</div><div class="opts">${menuHTML(k)}</div>`; };
 const openMenu = (k, btn) => {
   if (st.pop === k) { closeMenu(); return; }
   st.pop = k;
+  if (inlineOn()) {   // options open right under the field or filter buttons, on the same layer
+    (k === 'loc' ? $('sform') : $('frow')).insertAdjacentElement('afterend', $('inl'));
+    $('inl').hidden = false; render(true); $('inl').scrollIntoView({block: 'nearest', behavior: smooth()}); return;
+  }
   if (phone() && k !== 'all') { $('sheet').classList.remove('drawer'); $('sheet-h').textContent = k === 'more' ? 'More filters' : FK[k].title; $('resetf').textContent = 'Clear'; $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
   if (k === 'all') { st.pop = 'all'; $('sheet-h').textContent = 'Filters'; $('resetf').textContent = 'Clear all'; $('sheet').classList.add('drawer'); $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
   $('pop').hidden = false; $('pop').setAttribute('aria-label', k === 'more' ? 'More filters' : FK[k].title);
@@ -645,10 +669,10 @@ const openMenu = (k, btn) => {
   $('pop').querySelector('input:not(:disabled)')?.focus();
 };
 const closeMenu = (refocus) => {
-  const k = st.pop; st.pop = null; $('pop').hidden = true;
+  const k = st.pop; st.pop = null; $('pop').hidden = true; $('inl').hidden = true;
   if ($('sheet').open) $('sheet').close();
   render(true);
-  if (refocus && k) $('frow').querySelector(`[data-dd="${k}"]`)?.focus();
+  if (refocus && k) ($('frow').querySelector(`[data-dd="${k}"]`) || (k === 'loc' ? $('w') : null))?.focus();
 };
 const clearMenu = k => { if (k === 'all') clearAll(); else if (k === 'more') { st.t.lead = st.t.norec = false; } else st.f[k].clear(); changed(); };
 
@@ -706,7 +730,7 @@ document.addEventListener('click', e => {
   if ((b = g('.tab'))) { st.view = b.dataset.v; changed(); return; }
   if ((b = g('.job'))) { select(b.dataset.id); return; }
 });
-$('sform').addEventListener('submit', e => { e.preventDefault(); hideSug('q'); hideSug('w'); st.q = $('q').value.trim(); setWhere($('w').value); if (st.pop) closeMenu(); changed(); document.activeElement?.blur(); saveRecent(); closeSearch(); toResults(); });
+$('sform').addEventListener('submit', e => { e.preventDefault(); hideSug('q'); st.q = $('q').value.trim(); if (st.pop) closeMenu(); changed(); document.activeElement?.blur(); saveRecent(); closeSearch(); toResults(); });
 document.addEventListener('submit', e => { if (e.target.id !== 'alert') return; e.preventDefault(); $('alertok').innerHTML = `<div class="ok">Thanks. Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>`; });
 $('list').addEventListener('keydown', e => {
   if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
@@ -805,12 +829,15 @@ const setWhere = raw => {
   if (code) { st.f.loc = new Set([code]); st.wtxt = ''; } else { st.f.loc.clear(); st.wtxt = raw.trim(); }
 };
 const syncWhere = () => {
-  if (document.activeElement === $('w')) return;
-  $('w').value = st.wtxt || [...st.f.loc].map(c => CITY[c] || c).join(', ');
-  $('sug-w').hidden = true;
-  for (const id of ['q', 'w']) document.querySelector(`[data-xin="${id}"]`).hidden = !$(id).value;
+  const names = [...st.f.loc].map(c => CITY[c] || c).concat(st.wtxt ? [st.wtxt] : []);
+  const short = names.map(n => n.replace(/ & .*/, ''));   // "Perth & WA" -> "Perth" when several are picked
+  $('wl').textContent = !names.length ? 'Location' : names.length === 1 ? names[0] : names.length === 2 ? short.join(', ') : `${names.length} locations`;
+  $('wl').classList.toggle('ph', !names.length);
+  $('w').setAttribute('aria-expanded', st.pop === 'loc');
+  $('w').setAttribute('aria-label', names.length ? `Location: ${names.join(', ')}` : 'Location');
+  document.querySelector('[data-xin="q"]').hidden = !$('q').value;
 };
-for (const id of ['q', 'w']) {
+for (const id of ['q']) {
   const el = $(id);
   el.addEventListener('input', () => { document.querySelector(`[data-xin="${id}"]`).hidden = !el.value; showSug(id);
     if (id === 'w') { clearTimeout(el._t); el._t = setTimeout(() => { setWhere(el.value); changed(); showSug('w'); }, 250); } });
@@ -875,10 +902,18 @@ const closeSearch = () => {
 };
 $('sdrawer').addEventListener('close', () => {
   lockPage(false);
+  if (!$('inl').hidden) { st.pop = null; $('inl').hidden = true; }
   if (home.form) { home.form[0].insertBefore($('sform'), home.form[1]); home.frow[0].insertBefore($('frow'), home.frow[1]); }
   st.open = store.get('dra-filters-open', true); render(true);
 });
 $('mpill').addEventListener('click', openSearch);
+$('inl').addEventListener('click', e => { if (e.target.closest('[data-inlclear]')) clearMenu(st.pop); });
+if (window.PREVIEW_COMPARE) {
+  $('cmp').hidden = false;
+  const paint = () => $('cmp').querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === menuMode));
+  paint();
+  $('cmp').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (!b) return; if (st.pop) closeMenu(); menuMode = b.dataset.mode; store.set('dra-menu-mode', menuMode); paint(); });
+}
 $('sdclose').addEventListener('click', closeSearch);
 $('recent').addEventListener('click', e => { const b = e.target.closest('[data-recent]'); if (!b) return; const r = recentList()[+b.dataset.recent]; if (!r) return; fromQuery(r.qs); $('q').value = st.q; changed(); closeSearch(); toResults(); });
 
