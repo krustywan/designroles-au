@@ -990,17 +990,17 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
     for (const el of hero.querySelectorAll('.intro h1 span, .ptitle h1 span, .ptitle .psub, .srow > *, .frow > *, .mpill')) {
       const r = el.getBoundingClientRect(); if (r.width) right = Math.max(right, r.right);
     }
-    // The whole shape always shows: it sits below the nav and above the bottom of the header, inside the
-    // content edge and clear of the text, shrinking to fit, and hides when there isn't room for it to read well.
+    // Large, like a lockup: it starts a clear gap below the nav and runs past the bottom of the header, which crops it.
+    // The image itself holds the whole shape, so nothing is cut off inside the header. On wide screens the whole
+    // width shows inside the content edge; as space runs out it slides off the right edge (up to 35% hidden), then
+    // shrinks, and hides when there isn't room for it to read well.
     const ar = (coil.naturalWidth || +coil.getAttribute('width')) / (coil.naturalHeight || +coil.getAttribute('height'));
     const gut = Math.max(16, 0.025 * vw), edge = Math.max(gut, (vw - 1240) / 2 + gut);
-    const top = 64 + 28, hH = hero.getBoundingClientRect().height;   // clear gap under the nav
-    let h = Math.min(440, hH - top - 28), w = h * ar;
-    const room = vw - edge - (right + 40);
-    if (w > room) { w = room; h = w / ar; }
-    coil.classList.toggle('off', h < 200);
-    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(edge) + 'px';
-    coil.style.top = Math.round(top + (hH - top - 28 - h) / 2) + 'px';
+    let w = 560 * ar, x = Math.max(vw - edge - w, right + 32);
+    if (vw - x < 0.65 * w) { w = (vw - right - 32) / 0.65; x = right + 32; }
+    coil.classList.toggle('off', w / ar < 260);
+    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(vw - x - w) + 'px';
+    coil.style.top = (64 + 24) + 'px';   // a clear gap under the nav
   };
   window.fitShape = fit;
   hero.querySelectorAll('.coil').forEach(c => c.addEventListener('load', fit));
