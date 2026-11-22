@@ -58,6 +58,13 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .brand svg{width:24px;height:24px}
 .proto{font-size:12px;font-weight:500;border:1px solid #ffffff40;border-radius:999px;padding:1px 9px;color:#ffffffcc}
+.navlinks{margin-left:auto;display:flex;gap:2px}
+.navlinks a{color:#ffffffd9;text-decoration:none;font-size:15px;font-weight:500;padding:8px 14px;border-radius:999px}
+.navlinks a:hover{background:#ffffff1a;color:#fff}
+.navlinks a[aria-current=page]{color:#fff;background:#ffffff1f}
+.burger{margin-left:auto;display:none;width:44px;height:44px;border:0;border-radius:50%;background:none;color:#fff;cursor:pointer;place-items:center}
+.burger:hover{background:#ffffff1a}
+@media(max-width:899px){.navlinks{display:none}.burger{display:grid}}
 .navlink{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;color:#fff;font-weight:500;padding:8px 14px;border-radius:999px}
 .navlink:hover{background:#ffffff1a}
 .intro{padding:clamp(20px,3.5vw,48px) 0 0}
@@ -325,6 +332,37 @@ dialog.sdrawer::backdrop{background:#000}
   .dhead{padding:20px 20px 4px}.dbody{padding:20px}.facts{margin:12px 20px 0;grid-template-columns:1fr 1fr}
   .pg.num{display:none}.pg.num[aria-current=page]{display:inline-block}.gap{display:none}
 }
+.pages:has(.page:not([hidden])){padding-top:clamp(24px,4vw,48px);padding-bottom:64px}
+.page{max-width:720px;background:var(--s-lowest);border:1px solid var(--ov);border-radius:24px;padding:clamp(22px,4vw,44px)}
+.page h2{font-size:clamp(28px,3vw,38px);font-weight:650;letter-spacing:-.035em;line-height:1.1;margin:10px 0 10px}
+.page h3{font-size:18px;font-weight:600;letter-spacing:-.015em;margin:28px 0 8px}
+.page p,.page li{max-width:64ch}
+.page ul{padding-left:20px;margin:0}
+.page li{margin:6px 0}
+.page .lead{font-size:19px;color:var(--on-sv);margin:0 0 18px}
+.pback{font-size:14px;color:var(--on-sv);text-decoration:none}
+.pback:hover{color:var(--on-s);text-decoration:underline}
+.pform{display:grid;gap:18px;margin-top:22px;max-width:520px}
+.pfield{display:grid;gap:6px;border:0;padding:0;margin:0}
+.pl{font-size:14px;font-weight:600}
+.pform input[type=email],.pform textarea{font:inherit;font-size:16px;color:var(--on-s);background:var(--s-lowest);border:1px solid var(--outline);border-radius:12px;padding:12px 14px}
+.pform input[type=email]:focus,.pform textarea:focus{outline:2px solid var(--ink);outline-offset:0;border-color:var(--ink)}
+.pr{display:flex;align-items:center;gap:10px;font-size:15px;min-height:36px;cursor:pointer}
+.pr input{width:18px;height:18px;accent-color:var(--ink)}
+.psearch{margin:0;font-size:16px;font-weight:600;background:var(--s-low);border-radius:12px;padding:12px 14px}
+.pform .btn{justify-self:start}
+.pok{font-size:14px;background:var(--s-low);border-radius:12px;padding:12px 14px}
+body.on-page #results{display:none}
+dialog.menu{color-scheme:dark;border:0;padding:0;margin:0 0 0 auto;inset:0 0 0 auto;width:min(380px,88vw);max-width:none;height:100dvh;max-height:100dvh;color:#fff;background:radial-gradient(80% 50% at 100% 100%,#7b2cf2 0%,transparent 60%),linear-gradient(180deg,#07040e 0%,#1a0b3d 70%,#2a0f63 100%)}
+dialog.menu[open]{display:flex;flex-direction:column;animation:fromright .3s var(--std)}
+dialog.menu::backdrop{background:rgba(0,0,0,.45)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:10px 10px 10px 20px}
+.mlist{flex:1;overflow:auto;padding:8px 12px;display:grid;align-content:start;gap:2px}
+.mlist a{display:grid;gap:2px;padding:14px 12px;border-radius:14px;color:#fff;text-decoration:none}
+.mlist a:hover,.mlist a[aria-current=page]{background:#ffffff14}
+.mlist b{font-size:18px;font-weight:600;letter-spacing:-.015em}
+.mlist span{font-size:14px;color:#ffffffa8}
+.mfoot{padding:16px 24px calc(20px + env(safe-area-inset-bottom));margin:0;font-size:13px;color:#ffffff90}
 /* Arrival: heading lines, search and the first cards rise in, one after another */
 @keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
 .intro h1 span,.find .srow,.rbar,.job.in{animation:rise .9s cubic-bezier(.2,.75,.2,1) both}
@@ -342,7 +380,7 @@ dialog.sdrawer::backdrop{background:#000}
   <img class="coil" src="__COIL__" alt="" width="1100" height="1400">
  </div>
  <div class="wrap">
-  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><button class="navlink" id="navsaved"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Saved</button></div>
+  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><nav class="navlinks" aria-label="Main"><a href="#/" data-nav="roles">Find roles</a><a href="#/saved" data-nav="saved">Saved</a><a href="#/alerts" data-nav="alerts">Job alerts</a><a href="#/about" data-nav="about">About</a></nav><button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
   <div class="intro"><h1><span class="l1">Design, research and </span><span class="l2">content roles in Australia</span></h1></div>
   <div class="find" id="find">
    <button type="button" class="mpill" id="mpill" aria-haspopup="dialog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="mpill-t">Search for a new job role</span></button>
@@ -363,6 +401,62 @@ dialog.sdrawer::backdrop{background:#000}
  </div>
 </header>
 
+<div class="wrap pages" id="pages">
+ <section class="page" id="page-about" hidden aria-labelledby="h-about">
+  <a class="pback" href="#/">← Back to roles</a>
+  <h2 id="h-about">About DesignRoles AU</h2>
+  <p class="lead">A free job board for designers and researchers in Australia, built by a designer.</p>
+  <p>Design roles are scattered. Plenty never make it to the big job boards. They sit on a bank's careers site, a government portal or a university's hiring system, and they're easy to miss unless you check dozens of sites every week.</p>
+  <p>DesignRoles AU does that checking for you. Every morning it visits employers' own careers sites and government job boards, keeps the roles that are genuinely design, research or content work, and puts them in one place, sorted by what the work actually is.</p>
+  <h3>Who it's for</h3>
+  <ul><li>UX, UI, product, service and interaction designers</li><li>User and design researchers</li><li>Content designers, UX writers and content strategists</li><li>CX, strategy, design systems, DesignOps and design leaders</li><li>Graduates through to heads of design, across every state and remote</li></ul>
+  <h3>What makes it different</h3>
+  <ul><li><b>Straight from the source.</b> Roles come from employers' own sites, so you see ones that never reach the big boards.</li><li><b>Sorted by discipline.</b> Not just "design" as a keyword: UX, research, content, service design and more.</li><li><b>Pay, work mode and recruiter ads made clear.</b> You can see at a glance what's advertised and who's behind it.</li><li><b>Free, no account needed.</b> Saved roles stay on your device.</li></ul>
+  <p class="fine">This is a prototype and a community project. If it helps you, share it with someone who's looking.</p>
+ </section>
+ <section class="page" id="page-how" hidden aria-labelledby="h-how">
+  <a class="pback" href="#/">← Back to roles</a>
+  <h2 id="h-how">How it works</h2>
+  <h3>Where roles come from</h3>
+  <ul><li>Employers' own careers sites: banks, insurers, retailers, telcos, tech companies, universities, not-for-profits and more (over 250 sources)</li><li>Government job boards: WA, Queensland and NSW, plus Australian Public Service vacancies from the APS Gazette</li><li>A small number of recruiter sites. Their ads are marked "Via recruiter"</li></ul>
+  <h3>When it updates</h3>
+  <p>Every morning, around 6am Perth time. Roles that close or disappear from the employer's site drop off the board at the next update. <span id="how-upd"></span></p>
+  <h3>How roles are sorted</h3>
+  <p>Each role is tagged by discipline, seniority, work mode, work type and location using rules based on the ad's title and text. "New" means we first saw the role in the last 7 days.</p>
+  <h3>Summaries and pay</h3>
+  <p>Summaries are taken from the ad automatically, and pay is only shown when the ad states it. Tags can occasionally be wrong, so always check the original ad before applying.</p>
+  <h3>Logos and data</h3>
+  <p class="fine">Employer logos come from each employer's own website or public icon services and belong to their owners. APS vacancies are from the Australian Public Service Gazette, licensed under CC BY 4.0. We only read public pages, slowly and politely, and link back to the original ad every time.</p>
+ </section>
+ <section class="page" id="page-alerts" hidden aria-labelledby="h-alerts">
+  <a class="pback" href="#/">← Back to roles</a>
+  <h2 id="h-alerts">Job alerts</h2>
+  <p class="lead">Get new roles that match your search, straight to your inbox.</p>
+  <form class="pform" id="alertform">
+   <div class="pfield"><span class="pl">Your search</span><p class="psearch" id="alert-search"></p><a href="#/" class="fine">Change your search or filters</a></div>
+   <label class="pfield"><span class="pl">Email</span><input type="email" required placeholder="you@example.com" autocomplete="email"></label>
+   <fieldset class="pfield"><legend class="pl">How often</legend><label class="pr"><input type="radio" name="freq" checked> Daily</label><label class="pr"><input type="radio" name="freq"> Weekly</label></fieldset>
+   <button class="btn primary" type="submit">Create alert</button>
+   <div class="pok" hidden>Thanks! Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>
+  </form>
+ </section>
+ <section class="page" id="page-feedback" hidden aria-labelledby="h-feedback">
+  <a class="pback" href="#/">← Back to roles</a>
+  <h2 id="h-feedback">Feedback</h2>
+  <p class="lead">Missing an employer? Spotted a role tagged wrong? Got an idea? We'd love to hear it.</p>
+  <form class="pform" id="fbform">
+   <fieldset class="pfield"><legend class="pl">What's it about?</legend>
+    <label class="pr"><input type="radio" name="fbt" checked> Suggest an employer or job site</label>
+    <label class="pr"><input type="radio" name="fbt"> A role is wrong or out of date</label>
+    <label class="pr"><input type="radio" name="fbt"> Something isn't working</label>
+    <label class="pr"><input type="radio" name="fbt"> An idea or other feedback</label></fieldset>
+   <label class="pfield"><span class="pl">Details</span><textarea rows="5" required placeholder="e.g. Please add Example Co's careers page: example.com/careers"></textarea></label>
+   <label class="pfield"><span class="pl">Email <span class="fine">(optional, if you'd like a reply)</span></span><input type="email" placeholder="you@example.com" autocomplete="email"></label>
+   <button class="btn primary" type="submit">Send feedback</button>
+   <div class="pok" hidden>Thanks! Feedback isn't connected yet, so this wasn't sent. It's a preview of the page.</div>
+  </form>
+ </section>
+</div>
 <main class="wrap" id="results">
  <div class="rbar">
   <div class="tabs" role="tablist" aria-label="Which roles">
@@ -388,6 +482,18 @@ dialog.sdrawer::backdrop{background:#000}
  <div class="sd-top"><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
  <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="recent" id="recent"></div></div>
  <div class="sd-foot"><button type="submit" form="sform" class="btn" id="sdgo">Find roles</button></div>
+</dialog>
+<dialog class="menu" id="menu" aria-label="Menu">
+ <div class="mh"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><button class="sd-x" id="menuclose" aria-label="Close menu">×</button></div>
+ <nav class="mlist" aria-label="Main">
+  <a href="#/" data-nav="roles"><b>Find roles</b><span>Every design, research and content role we can find</span></a>
+  <a href="#/saved" data-nav="saved"><b>Saved roles</b><span id="m-saved">Roles you've starred on this device</span></a>
+  <a href="#/alerts" data-nav="alerts"><b>Job alerts</b><span>New roles matching your search, by email</span></a>
+  <a href="#/about" data-nav="about"><b>About</b><span>Why this board exists</span></a>
+  <a href="#/how-it-works" data-nav="how"><b>How it works</b><span>Where roles come from and how they're sorted</span></a>
+  <a href="#/feedback" data-nav="feedback"><b>Feedback</b><span>Suggest an employer, report a problem, share an idea</span></a>
+ </nav>
+ <p class="mfoot">Free for designers and researchers. Prototype.</p>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
@@ -726,7 +832,7 @@ $('closef').addEventListener('click', () => closeMenu(true));
 $('resetf').addEventListener('click', () => clearMenu(st.pop));
 $('sheet').addEventListener('close', () => { if (st.pop) { st.pop = null; render(true); } });
 $('sheet').addEventListener('click', e => { if (e.target === $('sheet')) closeMenu(true); });
-$('navsaved').addEventListener('click', () => { st.view = 'saved'; changed(); toResults(); });
+
 addEventListener('resize', () => { if (st.pop && !$('pop').hidden) { const b = $('frow').querySelector(`[data-dd="${st.pop}"]`); if (b) placePop(b); } });
 addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -992,12 +1098,36 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   hero.addEventListener('pointerdown', e => { if (calm(e)) return; const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 3.2, power: 0.55}); });
 })();
 
+
+// ---------- Menu and pages (#/about, #/how-it-works, #/alerts, #/feedback, #/saved) ----------
+const PAGES = {'#/about': 'about', '#/how-it-works': 'how', '#/alerts': 'alerts', '#/feedback': 'feedback'};
+const route = () => {
+  const h = location.hash, page = PAGES[h];
+  document.querySelectorAll('.page').forEach(p => p.hidden = p.id !== 'page-' + page);
+  document.body.classList.toggle('on-page', !!page);
+  if (h === '#/saved') { st.view = 'saved'; changed(); }
+  if (h === '#/' && st.view === 'saved') { st.view = 'all'; changed(); }
+  const cur = page || (h === '#/saved' ? 'saved' : 'roles');
+  document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === cur ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  if (page === 'alerts') { const l = searchLabel(), n = activeN(); $('alert-search').textContent = (l || 'All roles in Australia') + (n ? ` · ${n} filter${n === 1 ? '' : 's'}` : ''); }
+  if (page === 'how') $('how-upd').textContent = `Last updated ${D.generated} (Perth time), ${J.length} roles.`;
+  if (page || h === '#/saved') (page ? $('pages') : $('results')).scrollIntoView({behavior: smooth()});
+};
+addEventListener('hashchange', () => { if (!/^#role=/.test(location.hash)) route(); });
+$('burger').addEventListener('click', () => { $('m-saved').textContent = saved.size ? `${saved.size} role${saved.size === 1 ? '' : 's'} starred on this device` : 'Roles you star stay on this device'; $('menu').showModal(); lockPage(true); });
+$('menu').addEventListener('close', () => lockPage(false));
+$('menuclose').addEventListener('click', () => $('menu').close());
+$('menu').addEventListener('click', e => { if (e.target === $('menu') || e.target.closest('a')) $('menu').close(); });
+for (const f of ['alertform', 'fbform']) $(f).addEventListener('submit', e => { e.preventDefault(); e.target.querySelector('.pok').hidden = false; });
+document.addEventListener('click', e => { const a = e.target.closest('a[href="#/"]'); if (a && location.hash === '#/') { e.preventDefault(); route(); } });
+
 // ---------- Start: filters from the link, else from this device ----------
 fromQuery(location.search.length > 1 ? location.search : store.get('dra-filters', ''));
 st.open = store.get('dra-filters-open', true);
 $('q').value = st.q; $('sort').value = st.sort;
 const m = location.hash.match(/role=(\w+)/);
 render();
+if (location.hash.startsWith('#/')) route();
 if (m && J.some(j => j.id === m[1])) {
   const id = m[1];
   if (!R.some(j => j.id === id)) { clearAll(); st.view = 'all'; render(); }
