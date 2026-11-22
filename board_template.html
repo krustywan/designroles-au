@@ -949,6 +949,7 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
 
 // ---------- Stop the page scrolling behind full-screen layers ----------
 let locks = 0, lockY = 0;
+const pageY = () => locks ? lockY : scrollY;   // while the page is locked (menu or drawer open), keep the scroll it had
 const lockPage = on => {
   locks = Math.max(0, locks + (on ? 1 : -1));
   const b = document.body;
@@ -1042,7 +1043,7 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   if (!gl) return;
   const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const VS = 'attribute vec2 p;varying vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
-  const FS = `precision mediump float;varying vec2 uv;uniform float t;uniform vec2 res;uniform sampler2D rip;uniform vec2 texel;uniform vec3 c0,c1,c2,c3,c4;
+  const FS = `precision mediump float;varying vec2 uv;uniform float t;uniform vec2 res;uniform sampler2D rip;uniform vec2 texel;uniform float sc;uniform vec3 c0,c1,c2,c3,c4;
   vec3 blob(vec2 q,vec2 c,float r,vec3 col){vec2 d=q-c;return col*exp(-dot(d,d)/(r*r));}
   vec3 field(vec2 q){
     float a=res.x/res.y;vec2 s=vec2(q.x*a,q.y);
@@ -1055,7 +1056,7 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   void main(){
     float h=texture2D(rip,uv).r;
     vec2 n=vec2(texture2D(rip,uv+vec2(texel.x,0.)).r-texture2D(rip,uv-vec2(texel.x,0.)).r,texture2D(rip,uv+vec2(0.,texel.y)).r-texture2D(rip,uv-vec2(0.,texel.y)).r);
-    vec3 col=field(uv-n*.06);
+    vec3 col=field(uv-n*.06+vec2(0.,sc));   // sc: scroll parallax, the gradient drifts a little slower than the page
     col+=vec3(.75,.7,1.)*clamp(dot(n,vec2(-.7,.7))*1.6,0.,1.)*.18;   // a soft sheen on the ripple's lit side
     // Accessibility: never let the background get brighter than luminance 0.11, so white text stays above 4.5:1
     // (WCAG AA) and the tinted headings above 3:1. Colours keep their hue and just get deeper where they'd be too bright.
@@ -1104,6 +1105,7 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
     gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, rc);
     const k = 1 - Math.exp(-dt * 2.2);   // ease toward the page's palette over about a second and a half
     pal.forEach((c, i) => c.forEach((v, j) => c[j] = v + (goal[i][j] - v) * k)); setPal();
+    gl.uniform1f(U('sc'), still ? 0 : pageY() * 0.35 / Math.max(1, hero.getBoundingClientRect().height));
     gl.uniform1f(U('t'), still ? 4 : (now - t0) / 1000);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   };
@@ -1129,6 +1131,27 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   hero.addEventListener('pointerdown', e => { if (calm(e)) return; const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 3.2, power: 0.55}); });
 })();
 
+
+// ---------- Gentle parallax in the header as the page scrolls ----------
+// The gradient drifts slower than the page (in the shader), the heading lags a little and fades, and the shape rises a
+// little slower than the page. Uses the separate `translate` property so it never fights the entrance animations.
+(() => {
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const hero = document.querySelector('.hero');
+  let queued = false;
+  const apply = () => {
+    queued = false;
+    const y = pageY(), h = hero.offsetHeight;
+    if (y > h + 200) return;
+    const k = Math.min(1, y / h);
+    // the heading lag is capped so it never reaches the search below
+    for (const el of document.querySelectorAll('.intro, .ptitle')) { el.style.translate = `0 ${Math.min(y * 0.15, 24).toFixed(1)}px`; el.style.opacity = (1 - k * 0.7).toFixed(3); }
+    for (const c of document.querySelectorAll('.coil')) c.style.translate = `0 ${(-y * 0.15).toFixed(1)}px`;
+  };
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(apply); } }, {passive: true});
+  addEventListener('hashchange', () => requestAnimationFrame(apply));
+  apply();
+})();
 
 // ---------- Menu and pages (#/about, #/feedback, #/saved) ----------
 const PAGES = {'#/about': 'about', '#/feedback': 'feedback'};
