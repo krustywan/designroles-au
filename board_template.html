@@ -56,7 +56,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .coil{opacity:0;transform:translateY(24px) scale(.96);transition:opacity .9s cubic-bezier(.2,.75,.2,1),transform 1.1s cubic-bezier(.2,.75,.2,1)}
 .coil.on{opacity:1;transform:none}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.16;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.coil{position:fixed;right:-160px;top:58px;width:460px;height:auto;filter:drop-shadow(0 40px 60px #12004a99)}
+.coil{position:fixed;right:-160px;top:58px;width:460px;height:auto;filter:drop-shadow(0 30px 50px #12004a66)}
 .top{display:flex;align-items:center;gap:10px;height:64px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .brand svg{width:24px;height:24px}
@@ -394,10 +394,10 @@ dialog.menu::backdrop{background:transparent}
  <div class="clip" aria-hidden="true">
   <div class="aurora" id="aurora"><div class="layer" data-d="0.9"><i class="b1"></i></div><div class="layer" data-d="-1.3"><i class="b2"></i></div><div class="layer" data-d="1.6"><i class="b3"></i></div><div class="layer" data-d="-0.7"><i class="b4"></i></div></div>
   <canvas class="gl" id="gl"></canvas>
-  <img class="coil on" data-for="roles" src="__COIL__" alt="" width="1317" height="1400">
-  <img class="coil" data-for="about" src="assets/shape-about.webp" alt="" width="1203" height="1400">
-  <img class="coil" data-for="feedback" src="assets/shape-feedback.webp" alt="" width="1020" height="1400">
-  <img class="coil" data-for="saved" src="assets/shape-saved.webp" alt="" width="1148" height="1400">
+  <img class="coil on" data-for="roles" src="__COIL__" alt="" width="985" height="1000">
+  <img class="coil" data-for="about" src="assets/shape-about.webp" alt="" width="1000" height="980">
+  <img class="coil" data-for="feedback" src="assets/shape-feedback.webp" alt="" width="1000" height="934">
+  <img class="coil" data-for="saved" src="assets/shape-saved.webp" alt="" width="983" height="1000">
  </div>
  <div class="wrap">
   <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><nav class="navlinks" aria-label="Main"><a href="#/" data-nav="roles">Find roles</a><a href="#/saved" data-nav="saved">Saved</a><a href="#/about" data-nav="about">About</a><a href="#/feedback" data-nav="feedback">Feedback</a></nav><button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
@@ -990,15 +990,17 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
     for (const el of hero.querySelectorAll('.intro h1 span, .ptitle h1 span, .ptitle .psub, .srow > *, .frow > *, .mpill')) {
       const r = el.getBoundingClientRect(); if (r.width) right = Math.max(right, r.right);
     }
-    // Full size is 636px tall. On wide screens the whole shape sits inside the content edge; as space runs out it
-    // slides off the right edge (up to 35% hidden), then shrinks, and hides when there isn't room for it to read well.
-    const ar = (coil.naturalWidth || +coil.getAttribute('width')) / (coil.naturalHeight || 1400);
+    // The whole shape always shows: it sits below the nav and above the bottom of the header, inside the
+    // content edge and clear of the text, shrinking to fit, and hides when there isn't room for it to read well.
+    const ar = (coil.naturalWidth || +coil.getAttribute('width')) / (coil.naturalHeight || +coil.getAttribute('height'));
     const gut = Math.max(16, 0.025 * vw), edge = Math.max(gut, (vw - 1240) / 2 + gut);
-    let w = 636 * ar, x = Math.max(vw - edge - w, right + 32);
-    if (vw - x < 0.65 * w) { w = (vw - right - 32) / 0.65; x = right + 32; }
-    coil.classList.toggle('off', w / ar < 305);
-    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(vw - x - w) + 'px';
-    coil.style.top = Math.round(64 - 0.2 * w / ar) + 'px';   // the render has empty space above the shape; start it just under the nav
+    const top = 64 + 28, hH = hero.getBoundingClientRect().height;   // clear gap under the nav
+    let h = Math.min(440, hH - top - 28), w = h * ar;
+    const room = vw - edge - (right + 40);
+    if (w > room) { w = room; h = w / ar; }
+    coil.classList.toggle('off', h < 200);
+    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(edge) + 'px';
+    coil.style.top = Math.round(top + (hH - top - 28 - h) / 2) + 'px';
   };
   window.fitShape = fit;
   hero.querySelectorAll('.coil').forEach(c => c.addEventListener('load', fit));
