@@ -373,8 +373,15 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
 /* Menu button (after Olivier Larose's curved menu): a violet circle at the top right of the page. It scrolls away with
    the header, and is pinned in place only while the menu is open so it can close it.
    Its two thin lines twist into a cross while the menu is open, and it stays on top of the panel to close it. */
-.burger{position:absolute;top:0;right:0;margin:20px;z-index:101;width:80px;height:80px;border-radius:50%;border:0;background:#6b38fb;color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 30px #12004a59;transition:background .3s,transform .3s cubic-bezier(.2,.75,.2,1)}
-.burger:hover{background:#7d4dff;transform:scale(1.06)}
+@property --b1{syntax:'<color>';inherits:true;initial-value:#6b38fb}
+@property --b2{syntax:'<color>';inherits:true;initial-value:#a63ad8}
+.burger{position:absolute;top:0;right:0;margin:20px;z-index:101;width:80px;height:80px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--b1),var(--b2));color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 30px #12004a59;transition:--b1 .9s,--b2 .9s,transform .3s cubic-bezier(.2,.75,.2,1)}
+/* Each page's colours, all dark enough for white lines at 4.5:1 or more (WCAG AA) */
+body{--b1:#6b38fb;--b2:#a63ad8}
+body.t-about{--b1:#2563eb;--b2:#4f46e5}
+body.t-feedback{--b1:#c74b2a;--b2:#a8329f}
+body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
+.burger:hover{transform:scale(1.06)}
 .burger.pinned{position:fixed}
 .burger:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .lines{position:relative;width:32px;height:14px;display:block}
@@ -1133,8 +1140,8 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
 
 
 // ---------- Gentle parallax in the header as the page scrolls ----------
-// The gradient drifts slower than the page (in the shader), the heading lags a little and fades, and the shape rises a
-// little slower than the page. Uses the separate `translate` property so it never fights the entrance animations.
+// The gradient drifts slower than the page (in the shader), the heading, search and filters rise together a little faster
+// and fade out, and the shape rises a little slower than the page. Uses the separate `translate` property so it never fights the entrance animations.
 (() => {
   if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
   const hero = document.querySelector('.hero');
@@ -1143,9 +1150,13 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
     queued = false;
     const y = pageY(), h = hero.offsetHeight;
     if (y > h + 200) return;
-    const k = Math.min(1, y / h);
-    // the heading lag is capped so it never reaches the search below
-    for (const el of document.querySelectorAll('.intro, .ptitle')) { el.style.translate = `0 ${Math.min(y * 0.15, 24).toFixed(1)}px`; el.style.opacity = (1 - k * 0.7).toFixed(3); }
+    // Heading, search and filters move as one block: a touch faster than the page (so they never slide onto the
+    // listings) and fading out over the first half of the header
+    const fade = Math.max(0, 1 - y / (h * 0.55));
+    for (const el of document.querySelectorAll('.intro, .find, .ptitle')) {
+      el.style.translate = `0 ${(-y * 0.2).toFixed(1)}px`; el.style.opacity = fade.toFixed(3);
+      el.style.pointerEvents = fade < 0.15 ? 'none' : '';
+    }
     for (const c of document.querySelectorAll('.coil')) c.style.translate = `0 ${(-y * 0.15).toFixed(1)}px`;
   };
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(apply); } }, {passive: true});
