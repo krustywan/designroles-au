@@ -61,13 +61,9 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .brand svg{width:24px;height:24px}
 .proto{font-size:12px;font-weight:500;border:1px solid #ffffff59;border-radius:999px;padding:1px 9px;color:#fff}
-.navlinks{margin-left:auto;display:flex;gap:2px}
-.navlinks a{color:#fff;text-decoration:none;font-size:15px;font-weight:500;padding:8px 14px;border-radius:999px}
-.navlinks a:hover{background:#ffffff1a;color:#fff}
-.navlinks a[aria-current=page]{color:#fff;background:#ffffff1f}
-.burger{margin-left:auto;display:none;width:44px;height:44px;border:0;border-radius:50%;background:none;color:#fff;cursor:pointer;place-items:center}
-.burger:hover{background:#ffffff1a}
-@media(max-width:899px){.navlinks{display:none}.burger{display:grid}}
+.burger{margin-left:auto;display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 10px 0 18px;border:1px solid #ffffff4d;border-radius:999px;background:#0000002e;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.burger:hover{background:#00000047}
+@media(max-width:599px){.burger{width:44px;padding:0;justify-content:center}.burger .bl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
 .navlink{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;color:#fff;font-weight:500;padding:8px 14px;border-radius:999px}
 .navlink:hover{background:#ffffff1a}
 .intro{padding:clamp(20px,3.5vw,48px) 0 0}
@@ -367,19 +363,32 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
 .psub{margin:12px 0 0;font-size:clamp(17px,1.6vw,20px);line-height:1.45;color:#fff;max-width:46ch}
 .ptitle.go .pback,.ptitle.go h1 span,.ptitle.go .psub,.go-page{animation:rise .9s cubic-bezier(.2,.75,.2,1) both}
 .ptitle.go h1 span{animation-delay:.08s}.ptitle.go .psub{animation-delay:.2s}.go-page{animation-delay:.32s}
-dialog.menu{color-scheme:dark;border:0;padding:0;margin:0;inset:0;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;color:#f5f5f7;background:rgba(10,6,20,.82);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px)}
-dialog.menu[open]{display:flex;flex-direction:column;animation:menuin .32s cubic-bezier(.4,0,.6,1)}
-@keyframes menuin{from{opacity:0}}
-dialog.menu::backdrop{background:transparent}
-.mh{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 max(16px,2.5vw) 0 max(16px,2.5vw)}
-.mh .sd-x{width:44px;height:44px;font-size:28px;color:#f5f5f7}
-.mlist{flex:1;overflow:auto;padding:28px max(28px,6vw);display:grid;align-content:start;gap:4px}
-.mlist a{color:#e8e8ed;text-decoration:none;font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.2;padding:8px 0;opacity:0;transform:translateY(-8px);animation:mitem .45s cubic-bezier(.2,.7,.2,1) forwards}
-.mlist a:nth-child(2){animation-delay:.04s}.mlist a:nth-child(3){animation-delay:.08s}.mlist a:nth-child(4){animation-delay:.12s}
-@keyframes mitem{to{opacity:1;transform:none}}
-.mlist a:hover{color:#fff}
-.mlist a[aria-current=page]{color:#fff}
-.mlist a[aria-current=page]::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#b9a2ff;margin-left:10px;vertical-align:middle}
+/* Menu: a dark panel slides in from the right with a curved leading edge that flattens as it lands
+   (after Olivier Larose's curved menu). Links glide in one after another; a violet dot marks the current page. */
+dialog.menu{color-scheme:dark;border:0;padding:0;margin:0;inset:0;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;background:transparent;overflow:hidden;color:#fff}
+dialog.menu[open]{display:block}
+dialog.menu::backdrop{background:rgba(6,3,14,0);transition:background .6s}
+dialog.menu.open::backdrop{background:rgba(6,3,14,.5)}
+.mpanel{position:absolute;top:0;right:0;height:100%;width:min(520px,100vw);background:#150d28;transform:translateX(calc(100% + 100px));transition:transform .8s cubic-bezier(.76,0,.24,1);display:flex;flex-direction:column}
+dialog.menu.open .mpanel{transform:none}
+.mcurve{position:absolute;top:0;right:calc(100% - 1px);width:100px;height:100%;overflow:visible;pointer-events:none}
+.mcurve path{fill:#150d28}
+.mtop{display:flex;justify-content:flex-end;align-items:center;height:64px;padding:0 max(16px,2.5vw)}
+.mx{width:48px;height:48px;border-radius:50%;border:0;background:#6b38fb;color:#fff;cursor:pointer;display:grid;place-items:center}
+.mx:hover{background:#7d4dff}
+.mbody{flex:1;overflow:auto;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,6vh,72px) clamp(28px,5vw,80px) 36px}
+.mlabel{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#b4aec2;border-bottom:1px solid #ffffff2e;padding-bottom:12px;margin:0 0 28px}
+.mlist{display:grid;gap:6px}
+.mlist a{position:relative;display:flex;align-items:center;color:#fff;text-decoration:none;font-size:clamp(36px,4.2vw,52px);font-weight:600;letter-spacing:-.035em;line-height:1.15;padding:4px 0;opacity:0;transform:translateX(80px);transition:transform .8s cubic-bezier(.76,0,.24,1),opacity .6s}
+dialog.menu.open .mlist a{opacity:1;transform:none}
+.mlist a:nth-child(1){transition-delay:.05s}.mlist a:nth-child(2){transition-delay:.1s}.mlist a:nth-child(3){transition-delay:.15s}.mlist a:nth-child(4){transition-delay:.2s}
+.mlist a::before{content:"";position:absolute;left:-26px;width:10px;height:10px;border-radius:50%;background:#b9a2ff;transform:scale(0);transition:transform .35s cubic-bezier(.76,0,.24,1)}
+.mlist a:hover::before,.mlist a:focus-visible::before{transform:scale(.6)}
+.mlist a[aria-current=page]::before{transform:scale(1)}
+.mfoot{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;color:#b4aec2;margin-top:40px;opacity:0;transition:opacity .6s .35s}
+dialog.menu.open .mfoot{opacity:1}
+.mfoot a{color:#fff;text-decoration:none}.mfoot a:hover{text-decoration:underline}
+@media(max-width:599px){.mlist a::before{left:-18px;width:8px;height:8px}}
 /* Arrival: heading lines, search and the first cards rise in, one after another */
 @keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
 .intro h1 span,.find .srow,.rbar,.job.in{animation:rise .9s cubic-bezier(.2,.75,.2,1) both}
@@ -400,7 +409,7 @@ dialog.menu::backdrop{background:transparent}
   <img class="coil" data-for="saved" src="assets/shape-saved.webp" alt="" width="983" height="1000">
  </div>
  <div class="wrap">
-  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><nav class="navlinks" aria-label="Main"><a href="#/" data-nav="roles">Find roles</a><a href="#/saved" data-nav="saved">Saved</a><a href="#/about" data-nav="about">About</a><a href="#/feedback" data-nav="feedback">Feedback</a></nav><button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><button class="burger" id="burger" aria-haspopup="dialog"><span class="bl">Menu</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9h16M4 15h16"/></svg></button></div>
   <div class="ptitle" id="ptitle" hidden><a class="pback" href="#/">← All roles</a><h1 id="pt-h"></h1><p class="psub" id="pt-p"></p></div>
   <div class="intro"><h1><span class="l1">Design, research and </span><span class="l2">content roles in Australia</span></h1></div>
   <div class="find" id="find">
@@ -473,13 +482,22 @@ dialog.menu::backdrop{background:transparent}
  <div class="sd-foot"><button type="submit" form="sform" class="btn" id="sdgo">Find roles</button></div>
 </dialog>
 <dialog class="menu" id="menu" aria-label="Menu">
- <div class="mh"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><button class="sd-x" id="menuclose" aria-label="Close menu">×</button></div>
- <nav class="mlist" aria-label="Main">
-  <a href="#/" data-nav="roles">Find roles</a>
-  <a href="#/saved" data-nav="saved">Saved roles</a>
-  <a href="#/about" data-nav="about">About</a>
-  <a href="#/feedback" data-nav="feedback">Feedback</a>
- </nav>
+ <div class="mpanel">
+  <svg class="mcurve" aria-hidden="true" preserveAspectRatio="none"><path id="mcurve"/></svg>
+  <div class="mtop"><button class="mx" id="menuclose" aria-label="Close menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="mbody">
+   <div>
+    <p class="mlabel">Navigation</p>
+    <nav class="mlist" aria-label="Main">
+     <a href="#/" data-nav="roles">Find roles</a>
+     <a href="#/saved" data-nav="saved">Saved roles</a>
+     <a href="#/about" data-nav="about">About</a>
+     <a href="#/feedback" data-nav="feedback">Feedback</a>
+    </nav>
+   </div>
+   <p class="mfoot" id="mfoot"></p>
+  </div>
+ </div>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1147,10 +1165,36 @@ const TITLES = {
   saved: ['Saved roles', ''],
 };
 addEventListener('hashchange', () => { if (!/^#role=/.test(location.hash)) route(); });
-$('burger').addEventListener('click', () => { $('menu').showModal(); lockPage(true); });
-$('menu').addEventListener('close', () => lockPage(false));
-$('menuclose').addEventListener('click', () => $('menu').close());
-$('menu').addEventListener('click', e => { if (e.target === $('menu') || e.target.closest('a')) $('menu').close(); });
+// The curve: the panel's left edge bulges out as it slides in, then flattens (and the reverse on the way out)
+const menu = $('menu'), still = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
+let curveAnim = 0;
+const curve = (from, to, ms) => {
+  cancelAnimationFrame(curveAnim);
+  const H = innerHeight, path = $('mcurve'), t0 = performance.now();
+  path.parentNode.setAttribute('viewBox', `0 0 100 ${H}`);
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const step = now => {
+    const k = still() ? 1 : Math.min(1, (now - t0) / ms), c = from + (to - from) * ease(k);
+    path.setAttribute('d', `M100 0 L100 ${H} Q${c} ${H / 2} 100 0`);
+    if (k < 1) curveAnim = requestAnimationFrame(step);
+  };
+  curveAnim = requestAnimationFrame(step);
+};
+const openNav = () => {
+  $('mfoot').innerHTML = `${J.length} roles · updated ${new Date(D.generated.split(' ')[0]).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})} · <a href="#/feedback">Suggest an employer</a>`;
+  menu.showModal(); lockPage(true); curve(-100, 100, 1000);
+  requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('open')));
+};
+const closeNav = () => {
+  if (!menu.open || menu.classList.contains('closing')) return;
+  menu.classList.add('closing'); menu.classList.remove('open'); curve(100, -100, 800);
+  setTimeout(() => { menu.classList.remove('closing'); menu.close(); }, still() ? 0 : 800);
+};
+$('burger').addEventListener('click', openNav);
+menu.addEventListener('close', () => { lockPage(false); $('burger').focus({preventScroll: true}); });
+menu.addEventListener('cancel', e => { e.preventDefault(); closeNav(); });   // Esc
+$('menuclose').addEventListener('click', closeNav);
+menu.addEventListener('click', e => { if (e.target === menu || e.target.closest('a')) closeNav(); });
 for (const f of ['fbform']) $(f).addEventListener('submit', e => { e.preventDefault(); e.target.querySelector('.pok').hidden = false; });
 document.addEventListener('click', e => { const a = e.target.closest('a[href="#/"]'); if (a && location.hash === '#/') { e.preventDefault(); route(); } });
 
