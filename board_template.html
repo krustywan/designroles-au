@@ -61,9 +61,6 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .brand svg{width:24px;height:24px}
 .proto{font-size:12px;font-weight:500;border:1px solid #ffffff59;border-radius:999px;padding:1px 9px;color:#fff}
-.burger{margin-left:auto;display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 10px 0 18px;border:1px solid #ffffff4d;border-radius:999px;background:#0000002e;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-.burger:hover{background:#00000047}
-@media(max-width:599px){.burger{width:44px;padding:0;justify-content:center}.burger .bl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
 .navlink{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;color:#fff;font-weight:500;padding:8px 14px;border-radius:999px}
 .navlink:hover{background:#ffffff1a}
 .intro{padding:clamp(20px,3.5vw,48px) 0 0}
@@ -371,16 +368,18 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
 .mpanel{position:absolute;top:0;right:0;height:100%;width:min(520px,100vw);background:#150d28;display:flex;flex-direction:column;will-change:transform}
 .mcurve{position:absolute;top:0;right:calc(100% - 1px);width:100px;height:100%;overflow:visible;pointer-events:none}
 .mcurve path{fill:#150d28}
-.mtop{display:flex;justify-content:flex-end;align-items:center;height:64px;padding:0 max(16px,2.5vw)}
-.mx{position:fixed;z-index:101;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 10px 0 18px;border:0;border-radius:999px;background:#6b38fb;color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-.mx:hover{background:#7d4dff}
-.mx[hidden]{display:none}
-@media(max-width:599px){.mx{width:44px;padding:0}.mx .bl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}}
-/* Two lines that turn into a cross, on the header button and the close button */
-.lines{position:relative;width:22px;height:22px;display:inline-block}
-.lines i{position:absolute;left:3px;right:3px;height:2px;border-radius:2px;background:currentColor;transition:transform .45s cubic-bezier(.76,0,.24,1),top .45s cubic-bezier(.76,0,.24,1)}
-.lines i:first-child{top:7px}.lines i:last-child{top:13px}
-.is-x .lines i{top:10px}.is-x .lines i:first-child{transform:rotate(45deg)}.is-x .lines i:last-child{transform:rotate(-45deg)}
+.mtop{height:96px}
+@media(max-width:899px){.mtop{height:64px}}
+/* Floating menu button (after Olivier Larose's curved menu): a violet circle fixed top right, always in reach.
+   Its two thin lines twist into a cross while the menu is open, and it stays on top of the panel to close it. */
+.burger{position:fixed;top:0;right:0;margin:20px;z-index:101;width:80px;height:80px;border-radius:50%;border:0;background:#6b38fb;color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 30px #12004a59;transition:background .3s,transform .3s cubic-bezier(.2,.75,.2,1)}
+.burger:hover{background:#7d4dff;transform:scale(1.06)}
+.burger:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lines{position:relative;width:32px;height:14px;display:block}
+.lines i{position:absolute;left:0;right:0;height:2px;border-radius:2px;background:currentColor;transition:transform .45s cubic-bezier(.76,0,.24,1),top .45s cubic-bezier(.76,0,.24,1)}
+.lines i:first-child{top:2px}.lines i:last-child{top:10px}
+.is-x .lines i{top:6px}.is-x .lines i:first-child{transform:rotate(45deg)}.is-x .lines i:last-child{transform:rotate(-45deg)}
+@media(max-width:899px){.burger{width:56px;height:56px;margin:12px 12px}.lines{width:24px;height:12px}.lines i:last-child{top:8px}.is-x .lines i{top:5px}}
 .mbody{flex:1;overflow:auto;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,6vh,72px) clamp(28px,5vw,80px) 36px}
 .mlabel{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#b4aec2;border-bottom:1px solid #ffffff2e;padding-bottom:12px;margin:0 0 28px}
 .mlist{display:grid;gap:6px}
@@ -411,7 +410,7 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
   <img class="coil" data-for="saved" src="assets/shape-saved.webp" alt="" width="983" height="1000">
  </div>
  <div class="wrap">
-  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><button class="burger" id="burger" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu"><span class="bl">Menu</span><span class="lines" aria-hidden="true"><i></i><i></i></span></button></div>
+  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span></div>
   <div class="ptitle" id="ptitle" hidden><a class="pback" href="#/">← All roles</a><h1 id="pt-h"></h1><p class="psub" id="pt-p"></p></div>
   <div class="intro"><h1><span class="l1">Design, research and </span><span class="l2">content roles in Australia</span></h1></div>
   <div class="find" id="find">
@@ -502,7 +501,7 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
   </div>
  </div>
 </div>
-<button class="mx" id="menuclose" hidden><span class="bl">Close</span><span class="lines" aria-hidden="true"><i></i><i></i></span></button>
+<button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu"><span class="lines" aria-hidden="true"><i></i><i></i></span></button>
 <div class="toast" id="toast" role="status"></div>
 
 <footer><div class="wrap"><span id="gen"></span><span>Prototype. Sources: employer careers sites (PageUp, SuccessFactors, Workday, Oracle, Greenhouse, Lever, Ashby, SmartRecruiters and others), the WA and Queensland government job boards, NSW Government, and APS vacancies from the Australian Public Service Gazette (CC BY 4.0). Summaries and tags are generated by rules and may be wrong; check the original ad. Employer logos are fetched from each employer's own website or public icon services and belong to their owners.</span></div></footer>
@@ -1185,25 +1184,23 @@ const curve = (from, to, ms) => {
   curveAnim = requestAnimationFrame(step);
 };
 // Animations run with the Web Animations API so they play the same in every browser, opening and closing.
-const EASE = 'cubic-bezier(.76,0,.24,1)', panel = menu.querySelector('.mpanel'), shut = $('menuclose');
+const EASE = 'cubic-bezier(.76,0,.24,1)', panel = menu.querySelector('.mpanel'), shut = $('burger');
 let navOpen = false, navTimer = 0;
 const anim = (el, frames, ms, delay = 0) => el.animate(frames, {duration: still() ? Math.min(ms, 200) : ms, delay: still() ? 0 : delay, easing: EASE, fill: 'both'});
 const slide = still() ? 'translateX(0)' : 'translateX(calc(100% + 100px))';
-const inertAll = on => document.querySelectorAll('body > *:not(#menu):not(#menuclose):not(script)').forEach(el => el.inert = on);
+const inertAll = on => document.querySelectorAll('body > *:not(#menu):not(#burger):not(script)').forEach(el => el.inert = on);
 const openNav = () => {
   if (navOpen) return; navOpen = true; clearTimeout(navTimer);
   $('mfoot').innerHTML = `${J.length} roles · updated ${new Date(D.generated.split(' ')[0]).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})} · <a href="#/feedback">Suggest an employer</a>`;
-  const r = $('burger').getBoundingClientRect();   // the close button sits exactly where the Menu button was
-  Object.assign(shut.style, {top: r.top + 'px', right: (document.documentElement.clientWidth - r.right) + 'px'});
-  menu.hidden = false; shut.hidden = false; lockPage(true); inertAll(true);
-  $('burger').setAttribute('aria-expanded', 'true');
+  menu.hidden = false; lockPage(true); inertAll(true);
+  shut.setAttribute('aria-expanded', 'true'); shut.setAttribute('aria-label', 'Close menu');
   anim($('mshade'), [{opacity: 0}, {opacity: 1}], 600);
   anim(panel, [{transform: slide, opacity: still() ? 0 : 1}, {transform: 'translateX(0)', opacity: 1}], 800);
   if (!still()) curve(-100, 100, 1000);
   menu.querySelectorAll('.mlist a').forEach((a, i) => anim(a, [{transform: 'translateX(80px)', opacity: 0}, {transform: 'none', opacity: 1}], 800, 100 + i * 50));
   anim($('mfoot'), [{opacity: 0}, {opacity: 1}], 600, 350);
-  requestAnimationFrame(() => shut.classList.add('is-x'));
-  shut.focus({preventScroll: true});
+  shut.classList.add('is-x');
+  menu.querySelector('.mlist a').focus({preventScroll: true});
 };
 const closeNav = () => {
   if (!navOpen) return; navOpen = false;
@@ -1214,12 +1211,11 @@ const closeNav = () => {
   [...menu.querySelectorAll('.mlist a')].forEach((a, i) => anim(a, [{transform: 'none', opacity: 1}, {transform: 'translateX(80px)', opacity: 0}], 600, i * 40));
   anim($('mfoot'), [{opacity: 1}, {opacity: 0}], 300);
   navTimer = setTimeout(() => {
-    menu.hidden = true; shut.hidden = true; lockPage(false); inertAll(false);
-    $('burger').setAttribute('aria-expanded', 'false'); $('burger').focus({preventScroll: true});
+    menu.hidden = true; lockPage(false); inertAll(false);
+    shut.setAttribute('aria-expanded', 'false'); shut.setAttribute('aria-label', 'Open menu'); shut.focus({preventScroll: true});
   }, still() ? 200 : 800);
 };
-$('burger').addEventListener('click', openNav);
-shut.addEventListener('click', closeNav);
+shut.addEventListener('click', () => navOpen ? closeNav() : openNav());
 $('mshade').addEventListener('click', closeNav);
 menu.addEventListener('click', e => { if (e.target.closest('.mlist a, .mfoot a')) closeNav(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && navOpen) closeNav(); });
