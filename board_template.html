@@ -285,15 +285,6 @@ dialog.sdrawer[open]{display:flex;flex-direction:column;animation:fade .25s var(
 @keyframes fade{from{opacity:0;transform:translateY(12px)}}
 dialog.sdrawer::backdrop{background:#000}
 .sd-top{display:flex;align-items:center;justify-content:flex-end;padding:12px 12px 0}
-.cmp{margin-right:auto;margin-left:4px;display:flex;align-items:center;gap:4px;font-size:12px;color:#ffffffa0}
-.cmp[hidden]{display:none}
-.cmp button{border:1px solid #ffffff40;background:none;color:#fff;border-radius:999px;font:inherit;font-size:12px;padding:4px 10px;cursor:pointer}
-.cmp button[aria-pressed=true]{background:#fff;color:#18181b}
-.inl{margin-top:12px;background:var(--s-lowest);border-radius:16px;padding:6px 6px 8px}
-.inl[hidden]{display:none}
-.inl .ih{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 4px}
-.inl .ih b{font-size:15px;font-weight:600}
-.inl .ih button{border:0;background:none;color:var(--on-s);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px}
 .sd-body .dd[aria-expanded=true]{background:#fff;color:#18181b;border-color:#fff}
 .sd-x{width:48px;height:48px;border:0;border-radius:50%;background:none;color:#fff;font-size:30px;line-height:1;cursor:pointer}
 .sd-body{flex:1;overflow:auto;padding:4px 16px 16px}
@@ -394,8 +385,8 @@ dialog.sdrawer::backdrop{background:#000}
  <div class="sb" id="sheetbody"></div>
 </dialog>
 <dialog class="sdrawer" id="sdrawer" aria-label="Search roles">
- <div class="sd-top"><div class="cmp" id="cmp" hidden><span>Filter style</span><button type="button" data-mode="inline">Inline</button><button type="button" data-mode="sheet">Pop-up</button></div><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
- <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="inl" id="inl" hidden></div><div class="recent" id="recent"></div></div>
+ <div class="sd-top"><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
+ <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="recent" id="recent"></div></div>
  <div class="sd-foot"><button type="submit" form="sform" class="btn" id="sdgo">Find roles</button></div>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
@@ -617,7 +608,6 @@ const render = keepSel => {
   $('reveal').classList.toggle('open', open); $('fbtn').setAttribute('aria-expanded', open);
   $('frow').inert = !open;
   swap($('frow'), frowHTML());
-  if (st.pop && !$('inl').hidden) swap($('inl'), inlHTML());
   if (st.pop && !$('pop').hidden) { swap($('pop'), `<div class="opts">${menuHTML(st.pop)}</div><div class="pfoot"><button type="button" class="btn" data-popclear>Clear</button><button type="button" class="btn primary" data-popdone>${resultsLabel()}</button></div>`); }
   if ($('sheet').open) { swap($('sheetbody'), st.pop === 'all' ? drawerHTML() : menuHTML(st.pop)); $('resetf').hidden = !(st.pop === 'all' ? activeN() : st.pop === 'more' ? st.t.lead || st.t.norec : st.f[st.pop]?.size); }
   $('sdgo').textContent = R.length ? `Show ${R.length} role${R.length === 1 ? '' : 's'}` : 'No roles match';
@@ -651,17 +641,9 @@ const placePop = btn => {
   pop.style.top = (b.bottom - f.top + 8) + 'px';
   pop.style.left = Math.max(0, Math.min(b.left - f.left, f.width - pop.offsetWidth)) + 'px';
 };
-let menuMode = store.get('dra-menu-mode', 'inline');
-const inlineOn = () => phone() && $('sdrawer').open && menuMode === 'inline';
-const inlHTML = () => { const k = st.pop, has = k === 'more' ? st.t.lead || st.t.norec : st.f[k]?.size;
-  return `<div class="ih"><b>${k === 'more' ? 'More filters' : FK[k].title}</b>${has ? '<button type="button" data-inlclear>Clear</button>' : ''}</div><div class="opts">${menuHTML(k)}</div>`; };
 const openMenu = (k, btn) => {
   if (st.pop === k) { closeMenu(); return; }
   st.pop = k;
-  if (inlineOn()) {   // options open right under the field or filter buttons, on the same layer
-    (k === 'loc' ? $('sform') : $('frow')).insertAdjacentElement('afterend', $('inl'));
-    $('inl').hidden = false; render(true); $('inl').scrollIntoView({block: 'nearest', behavior: smooth()}); return;
-  }
   if (phone() && k !== 'all') { $('sheet').classList.remove('drawer'); $('sheet-h').textContent = k === 'more' ? 'More filters' : FK[k].title; $('resetf').textContent = 'Clear'; $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
   if (k === 'all') { st.pop = 'all'; $('sheet-h').textContent = 'Filters'; $('resetf').textContent = 'Clear all'; $('sheet').classList.add('drawer'); $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
   $('pop').hidden = false; $('pop').setAttribute('aria-label', k === 'more' ? 'More filters' : FK[k].title);
@@ -669,7 +651,7 @@ const openMenu = (k, btn) => {
   $('pop').querySelector('input:not(:disabled)')?.focus();
 };
 const closeMenu = (refocus) => {
-  const k = st.pop; st.pop = null; $('pop').hidden = true; $('inl').hidden = true;
+  const k = st.pop; st.pop = null; $('pop').hidden = true;
   if ($('sheet').open) $('sheet').close();
   render(true);
   if (refocus && k) ($('frow').querySelector(`[data-dd="${k}"]`) || (k === 'loc' ? $('w') : null))?.focus();
@@ -902,18 +884,10 @@ const closeSearch = () => {
 };
 $('sdrawer').addEventListener('close', () => {
   lockPage(false);
-  if (!$('inl').hidden) { st.pop = null; $('inl').hidden = true; }
   if (home.form) { home.form[0].insertBefore($('sform'), home.form[1]); home.frow[0].insertBefore($('frow'), home.frow[1]); }
   st.open = store.get('dra-filters-open', true); render(true);
 });
 $('mpill').addEventListener('click', openSearch);
-$('inl').addEventListener('click', e => { if (e.target.closest('[data-inlclear]')) clearMenu(st.pop); });
-if (window.PREVIEW_COMPARE) {
-  $('cmp').hidden = false;
-  const paint = () => $('cmp').querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === menuMode));
-  paint();
-  $('cmp').addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (!b) return; if (st.pop) closeMenu(); menuMode = b.dataset.mode; store.set('dra-menu-mode', menuMode); paint(); });
-}
 $('sdclose').addEventListener('click', closeSearch);
 $('recent').addEventListener('click', e => { const b = e.target.closest('[data-recent]'); if (!b) return; const r = recentList()[+b.dataset.recent]; if (!r) return; fromQuery(r.qs); $('q').value = st.q; changed(); closeSearch(); toResults(); });
 
