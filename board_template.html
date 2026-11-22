@@ -370,10 +370,12 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
 .mcurve path{fill:#150d28}
 .mtop{height:96px}
 @media(max-width:899px){.mtop{height:64px}}
-/* Floating menu button (after Olivier Larose's curved menu): a violet circle fixed top right, always in reach.
+/* Menu button (after Olivier Larose's curved menu): a violet circle at the top right of the page. It scrolls away with
+   the header, and is pinned in place only while the menu is open so it can close it.
    Its two thin lines twist into a cross while the menu is open, and it stays on top of the panel to close it. */
-.burger{position:fixed;top:0;right:0;margin:20px;z-index:101;width:80px;height:80px;border-radius:50%;border:0;background:#6b38fb;color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 30px #12004a59;transition:background .3s,transform .3s cubic-bezier(.2,.75,.2,1)}
+.burger{position:absolute;top:0;right:0;margin:20px;z-index:101;width:80px;height:80px;border-radius:50%;border:0;background:#6b38fb;color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 30px #12004a59;transition:background .3s,transform .3s cubic-bezier(.2,.75,.2,1)}
 .burger:hover{background:#7d4dff;transform:scale(1.06)}
+.burger.pinned{position:fixed}
 .burger:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .lines{position:relative;width:32px;height:14px;display:block}
 .lines i{position:absolute;left:0;right:0;height:2px;border-radius:2px;background:currentColor;transition:transform .45s cubic-bezier(.76,0,.24,1),top .45s cubic-bezier(.76,0,.24,1)}
@@ -950,8 +952,9 @@ let locks = 0, lockY = 0;
 const lockPage = on => {
   locks = Math.max(0, locks + (on ? 1 : -1));
   const b = document.body;
-  if (on && locks === 1) { lockY = scrollY; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0'}); }
-  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: ''}); scrollTo(0, lockY); }
+  // Keep the scrollbar's width as padding while it's hidden, so the page doesn't shift sideways when it goes and comes back
+  if (on && locks === 1) { lockY = scrollY; const sb = innerWidth - document.documentElement.clientWidth; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0', paddingRight: sb ? sb + 'px' : ''}); }
+  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: '', paddingRight: ''}); scrollTo(0, lockY); }
 };
 $('sheet').addEventListener('close', () => { if ($('sheet').dataset.locked) { delete $('sheet').dataset.locked; lockPage(false); } });
 new MutationObserver(() => { if ($('sheet').open && !$('sheet').dataset.locked) { $('sheet').dataset.locked = 1; lockPage(true); } }).observe($('sheet'), {attributes: true, attributeFilter: ['open']});
@@ -1192,6 +1195,8 @@ const inertAll = on => document.querySelectorAll('body > *:not(#menu):not(#burge
 const openNav = () => {
   if (navOpen) return; navOpen = true; clearTimeout(navTimer);
   $('mfoot').innerHTML = `${J.length} roles · updated ${new Date(D.generated.split(' ')[0]).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})} · <a href="#/feedback">Suggest an employer</a>`;
+  const sb = innerWidth - document.documentElement.clientWidth;
+  shut.classList.add('pinned'); shut.style.right = sb ? sb + 'px' : '';   // stay put (and clear of the scrollbar space) while the page is locked
   menu.hidden = false; lockPage(true); inertAll(true);
   shut.setAttribute('aria-expanded', 'true'); shut.setAttribute('aria-label', 'Close menu');
   anim($('mshade'), [{opacity: 0}, {opacity: 1}], 600);
@@ -1211,7 +1216,7 @@ const closeNav = () => {
   [...menu.querySelectorAll('.mlist a')].forEach((a, i) => anim(a, [{transform: 'none', opacity: 1}, {transform: 'translateX(80px)', opacity: 0}], 600, i * 40));
   anim($('mfoot'), [{opacity: 1}, {opacity: 0}], 300);
   navTimer = setTimeout(() => {
-    menu.hidden = true; lockPage(false); inertAll(false);
+    menu.hidden = true; lockPage(false); inertAll(false); shut.classList.remove('pinned'); shut.style.right = '';
     shut.setAttribute('aria-expanded', 'false'); shut.setAttribute('aria-label', 'Open menu'); shut.focus({preventScroll: true});
   }, still() ? 200 : 800);
 };
