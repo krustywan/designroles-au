@@ -67,7 +67,7 @@ h1 span{display:inline-block;background:linear-gradient(90deg,#e7b6ff 0%,#f3e2ff
 
 /* Search, with filters revealed underneath (Seek-style) */
 .find{position:relative;padding:clamp(20px,2.6vw,30px) 0 clamp(24px,3vw,36px)}
-@media(min-width:900px){.srow{width:66.67%;min-width:780px}.srow .fld input{font-size:16px}.srow .fld{padding-left:14px;gap:8px}.srow .fld{flex:1 1 0}.srow .fld.what{flex:1.9 1 0}.gobtn{min-width:0;padding:10px 18px}}
+@media(min-width:900px){.srow{width:66.67%;min-width:780px}.srow .fld input,.srow .wbtn{font-size:16px}.srow .fld{padding-left:14px;gap:8px}.srow .fld{flex:1 1 0}.srow .fld.what{flex:1.9 1 0}.gobtn{min-width:0;padding:10px 18px}}
 .srow{display:flex;align-items:center;gap:10px}
 .sbar{color-scheme:light;flex:1;display:flex;align-items:center;gap:6px;background:#fffffff2;color:#18181b;border-radius:999px;padding:6px;box-shadow:0 10px 40px #1a005066}
 .box{flex:1;display:flex;align-items:center}
@@ -78,6 +78,11 @@ h1 span{display:inline-block;background:linear-gradient(90deg,#e7b6ff 0%,#f3e2ff
 .fld input::placeholder{color:#62626b;text-overflow:ellipsis}
 .fld input{text-overflow:ellipsis}
 .fld input::-webkit-search-cancel-button{display:none}
+.wbtn{border:0;background:none;font:inherit;font-size:17px;color:#18181b;text-align:left;cursor:pointer;min-height:48px;padding-right:14px}
+.wbtn .wl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wbtn .wl.ph{color:#62626b}
+.wbtn .caret{flex:none;width:8px;height:8px;border:solid #4b4b55;border-width:0 2px 2px 0;rotate:45deg;translate:0 -3px;transition:rotate .2s}
+.wbtn[aria-expanded=true] .caret{rotate:225deg;translate:0 2px}
 .xin{flex:none;width:28px;height:28px;border-radius:50%;border:0;background:#ececf0;color:#4b4b55;cursor:pointer;font-size:16px;line-height:1;margin-right:6px}
 .xin[hidden]{display:none}
 .sep{flex:none;width:1px;align-self:stretch;margin:8px 4px;background:#dcdce1}
@@ -244,7 +249,10 @@ dialog.sheet{border:0;padding:0;background:var(--s-lowest);color:var(--on-s);bor
 dialog.sheet::backdrop{background:rgba(0,0,0,.4)}
 .sh{display:flex;justify-content:space-between;align-items:center;padding:26px 20px 4px;position:sticky;top:0;z-index:1;background:var(--s-lowest)}
 .sh::before{content:"";position:absolute;top:10px;left:50%;translate:-50% 0;width:32px;height:4px;border-radius:2px;background:var(--outline);opacity:.5}
-.sh h2{margin:0;font-size:21px;font-weight:650;letter-spacing:-.02em}
+.sh h2{margin:0;font-size:21px;font-weight:650;letter-spacing:-.02em;flex:1}
+.sclear{border:0;background:none;color:var(--on-s);font:inherit;font-size:15px;font-weight:500;text-decoration:underline;text-underline-offset:3px;padding:10px 12px;margin-right:4px;cursor:pointer}
+.sclear[hidden]{display:none}
+dialog.sheet .sb{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
 .sb{padding:0 12px 10px}
 .sf{display:flex;gap:10px;padding:12px 20px 20px;position:sticky;bottom:0;background:var(--s-lowest);border-top:1px solid var(--ov)}
 .sf .btn{flex:1;min-height:52px}
@@ -276,7 +284,8 @@ dialog.sdrawer{color-scheme:dark;border:0;padding:0;margin:0;width:100vw;max-wid
 dialog.sdrawer[open]{display:flex;flex-direction:column;animation:fade .25s var(--std)}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}}
 dialog.sdrawer::backdrop{background:#000}
-.sd-top{display:flex;justify-content:flex-end;padding:12px 12px 0}
+.sd-top{display:flex;align-items:center;justify-content:flex-end;padding:12px 12px 0}
+.sd-body .dd[aria-expanded=true]{background:#fff;color:#18181b;border-color:#fff}
 .sd-x{width:48px;height:48px;border:0;border-radius:50%;background:none;color:#fff;font-size:30px;line-height:1;cursor:pointer}
 .sd-body{flex:1;overflow:auto;padding:4px 16px 16px}
 .sd-body .sbar{flex-direction:column;align-items:stretch;background:none;box-shadow:none;padding:0;border-radius:0}
@@ -342,7 +351,7 @@ dialog.sdrawer::backdrop{background:#000}
      <div class="box">
       <div class="fld what"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><label class="vh" for="q">Job title, keywords or company</label><input type="text" id="q" placeholder="Job title, keyword or company" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-q" spellcheck="false"><button type="button" class="xin" data-xin="q" aria-label="Clear keywords" hidden>×</button><ul class="sug" id="sug-q" role="listbox" aria-label="Suggestions" hidden></ul></div>
       <span class="sep" aria-hidden="true"></span>
-      <div class="fld where"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><label class="vh" for="w">Location</label><input type="text" id="w" placeholder="Location" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sug-w" spellcheck="false"><button type="button" class="xin" data-xin="w" aria-label="Clear location" hidden>×</button><ul class="sug" id="sug-w" role="listbox" aria-label="Locations" hidden></ul></div>
+      <button type="button" class="fld where wbtn" id="w" data-dd="loc" aria-haspopup="true" aria-expanded="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span class="wl" id="wl">Location</span><span class="caret" aria-hidden="true"></span></button>
      </div>
      <button type="submit" class="btn primary gobtn">Find roles</button>
     </form>
@@ -372,9 +381,8 @@ dialog.sdrawer::backdrop{background:#000}
 </main>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-h">
- <div class="sh"><h2 id="sheet-h">Filters</h2><button class="x" id="closef" aria-label="Close">×</button></div>
+ <div class="sh"><h2 id="sheet-h">Filters</h2><button type="button" class="sclear" id="resetf">Clear</button><button class="x" id="closef" aria-label="Done">×</button></div>
  <div class="sb" id="sheetbody"></div>
- <div class="sf"><button class="btn" id="resetf">Clear</button><button class="btn primary" id="applyf">Show roles</button></div>
 </dialog>
 <dialog class="sdrawer" id="sdrawer" aria-label="Search roles">
  <div class="sd-top"><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
@@ -601,7 +609,8 @@ const render = keepSel => {
   $('frow').inert = !open;
   swap($('frow'), frowHTML());
   if (st.pop && !$('pop').hidden) { swap($('pop'), `<div class="opts">${menuHTML(st.pop)}</div><div class="pfoot"><button type="button" class="btn" data-popclear>Clear</button><button type="button" class="btn primary" data-popdone>${resultsLabel()}</button></div>`); }
-  if ($('sheet').open) { swap($('sheetbody'), st.pop === 'all' ? drawerHTML() : menuHTML(st.pop)); $('applyf').textContent = resultsLabel(); }
+  if ($('sheet').open) { swap($('sheetbody'), st.pop === 'all' ? drawerHTML() : menuHTML(st.pop)); $('resetf').hidden = !(st.pop === 'all' ? activeN() : st.pop === 'more' ? st.t.lead || st.t.norec : st.f[st.pop]?.size); }
+  $('sdgo').textContent = R.length ? `Show ${R.length} role${R.length === 1 ? '' : 's'}` : 'No roles match';
   const n = activeN(); $('fcount').hidden = !n; $('fcount').textContent = n;
   syncWhere(); pillText();
   $('chips').innerHTML = chipsHTML();
@@ -645,7 +654,7 @@ const closeMenu = (refocus) => {
   const k = st.pop; st.pop = null; $('pop').hidden = true;
   if ($('sheet').open) $('sheet').close();
   render(true);
-  if (refocus && k) $('frow').querySelector(`[data-dd="${k}"]`)?.focus();
+  if (refocus && k) ($('frow').querySelector(`[data-dd="${k}"]`) || (k === 'loc' ? $('w') : null))?.focus();
 };
 const clearMenu = k => { if (k === 'all') clearAll(); else if (k === 'more') { st.t.lead = st.t.norec = false; } else st.f[k].clear(); changed(); };
 
@@ -657,14 +666,14 @@ const select = (id, fromUser = true) => {
   $('detail').scrollTop = 0;
   if (!fromUser) return;
   if (mobile()) {
-    $('detail').classList.add('open'); document.body.classList.add('lock');
+    $('detail').classList.add('open'); lockPage(true);
     try { history.pushState({sheet: 1}, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
     $('back')?.focus();
   } else try { history.replaceState(null, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
 };
 const closeDetail = viaHistory => {
   if (!$('detail').classList.contains('open')) return;
-  $('detail').classList.remove('open'); document.body.classList.remove('lock');
+  $('detail').classList.remove('open'); lockPage(false);
   document.querySelector(`.job[data-id="${st.sel}"] .jt button`)?.focus();
   if (!viaHistory) history.back();
 };
@@ -703,7 +712,7 @@ document.addEventListener('click', e => {
   if ((b = g('.tab'))) { st.view = b.dataset.v; changed(); return; }
   if ((b = g('.job'))) { select(b.dataset.id); return; }
 });
-$('sform').addEventListener('submit', e => { e.preventDefault(); hideSug('q'); hideSug('w'); st.q = $('q').value.trim(); setWhere($('w').value); if (st.pop) closeMenu(); changed(); document.activeElement?.blur(); saveRecent(); closeSearch(); toResults(); });
+$('sform').addEventListener('submit', e => { e.preventDefault(); hideSug('q'); st.q = $('q').value.trim(); if (st.pop) closeMenu(); changed(); document.activeElement?.blur(); saveRecent(); closeSearch(); toResults(); });
 document.addEventListener('submit', e => { if (e.target.id !== 'alert') return; e.preventDefault(); $('alertok').innerHTML = `<div class="ok">Thanks. Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>`; });
 $('list').addEventListener('keydown', e => {
   if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
@@ -714,7 +723,6 @@ $('list').addEventListener('keydown', e => {
 let qt; $('q').addEventListener('input', () => { clearTimeout(qt); qt = setTimeout(() => { st.q = $('q').value.trim(); changed(); }, 200); });
 $('sort').addEventListener('input', () => { st.sort = $('sort').value; st.page = 1; render(); });
 $('closef').addEventListener('click', () => closeMenu(true));
-$('applyf').addEventListener('click', () => closeMenu(true));
 $('resetf').addEventListener('click', () => clearMenu(st.pop));
 $('sheet').addEventListener('close', () => { if (st.pop) { st.pop = null; render(true); } });
 $('sheet').addEventListener('click', e => { if (e.target === $('sheet')) closeMenu(true); });
@@ -725,7 +733,7 @@ addEventListener('keydown', e => {
   if (st.pop && !$('pop').hidden) closeMenu(true);
   else if ($('detail').classList.contains('open')) closeDetail();
 });
-matchMedia('(max-width:899px)').addEventListener('change', () => { if (!mobile()) { $('detail').classList.remove('open'); document.body.classList.remove('lock'); } render(true); });
+matchMedia('(max-width:899px)').addEventListener('change', () => { if (!mobile()) { if ($('detail').classList.contains('open')) { $('detail').classList.remove('open'); lockPage(false); } } render(true); });
 $('gen').textContent = `Updated ${D.generated} AWST · ${J.length} roles`;
 
 
@@ -803,14 +811,18 @@ const setWhere = raw => {
   if (code) { st.f.loc = new Set([code]); st.wtxt = ''; } else { st.f.loc.clear(); st.wtxt = raw.trim(); }
 };
 const syncWhere = () => {
-  if (document.activeElement === $('w')) return;
-  $('w').value = st.wtxt || [...st.f.loc].map(c => CITY[c] || c).join(', ');
-  $('sug-w').hidden = true;
-  for (const id of ['q', 'w']) document.querySelector(`[data-xin="${id}"]`).hidden = !$(id).value;
+  const names = [...st.f.loc].map(c => CITY[c] || c).concat(st.wtxt ? [st.wtxt] : []);
+  const short = names.map(n => n.replace(/ & .*/, ''));   // "Perth & WA" -> "Perth" when several are picked
+  $('wl').textContent = !names.length ? 'Location' : names.length === 1 ? names[0] : names.length === 2 ? short.join(', ') : `${names.length} locations`;
+  $('wl').classList.toggle('ph', !names.length);
+  $('w').setAttribute('aria-expanded', st.pop === 'loc');
+  $('w').setAttribute('aria-label', names.length ? `Location: ${names.join(', ')}` : 'Location');
+  document.querySelector('[data-xin="q"]').hidden = !$('q').value;
 };
-for (const id of ['q', 'w']) {
+for (const id of ['q']) {
   const el = $(id);
-  el.addEventListener('input', () => { document.querySelector(`[data-xin="${id}"]`).hidden = !el.value; showSug(id); });
+  el.addEventListener('input', () => { document.querySelector(`[data-xin="${id}"]`).hidden = !el.value; showSug(id);
+    if (id === 'w') { clearTimeout(el._t); el._t = setTimeout(() => { setWhere(el.value); changed(); showSug('w'); }, 250); } });
   el.addEventListener('focus', () => showSug(id));
   el.addEventListener('blur', () => setTimeout(() => { hideSug(id); if (id === 'w' && norm(el.value) !== norm(st.wtxt || [...st.f.loc].map(c => CITY[c]).join(', '))) { setWhere(el.value); changed(); } }, 150));
   el.addEventListener('keydown', e => {
@@ -825,6 +837,17 @@ for (const id of ['q', 'w']) {
 document.addEventListener('click', e => { const x = e.target.closest('[data-xin]'); if (!x) return; const id = x.dataset.xin; $(id).value = ''; x.hidden = true; if (id === 'q') st.q = ''; else setWhere(''); changed(); $(id).focus(); });
 
 
+
+// ---------- Stop the page scrolling behind full-screen layers ----------
+let locks = 0, lockY = 0;
+const lockPage = on => {
+  locks = Math.max(0, locks + (on ? 1 : -1));
+  const b = document.body;
+  if (on && locks === 1) { lockY = scrollY; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0'}); }
+  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: ''}); scrollTo(0, lockY); }
+};
+$('sheet').addEventListener('close', () => { if ($('sheet').dataset.locked) { delete $('sheet').dataset.locked; lockPage(false); } });
+new MutationObserver(() => { if ($('sheet').open && !$('sheet').dataset.locked) { $('sheet').dataset.locked = 1; lockPage(true); } }).observe($('sheet'), {attributes: true, attributeFilter: ['open']});
 
 // ---------- Phones: one search pill opens a full-screen search drawer (fields, filter menus, recent searches) ----------
 const searchLabel = () => { const w = st.wtxt || [...st.f.loc].map(c => CITY[c] || c).join(', '); return st.q || w ? `${st.q || 'All roles'}${w ? ' in ' + w : ''}` : ''; };
@@ -852,14 +875,15 @@ const openSearch = () => {
   home.form = [form.parentNode, form.nextSibling]; home.frow = [reveal.parentNode, reveal.nextSibling];
   $('sdslot').append(form, reveal);
   $('recent').innerHTML = recentHTML();
-  st.open = true; $('sdrawer').showModal(); render(true);
-  if (!$('q').value) $('q').focus(); else $('sdclose').focus();
+  st.open = true; $('sdrawer').showModal(); lockPage(true); render(true);
+  $('sdclose').focus({preventScroll: true});   // like Seek: the keyboard only opens when you tap a field
 };
 const closeSearch = () => {
   if (!$('sdrawer').open) return;
   $('sdrawer').close();
 };
 $('sdrawer').addEventListener('close', () => {
+  lockPage(false);
   if (home.form) { home.form[0].insertBefore($('sform'), home.form[1]); home.frow[0].insertBefore($('frow'), home.frow[1]); }
   st.open = store.get('dra-filters-open', true); render(true);
 });
