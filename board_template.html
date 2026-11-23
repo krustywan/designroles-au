@@ -414,9 +414,9 @@ body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
   <div class="aurora" id="aurora"><div class="layer" data-d="0.9"><i class="b1"></i></div><div class="layer" data-d="-1.3"><i class="b2"></i></div><div class="layer" data-d="1.6"><i class="b3"></i></div><div class="layer" data-d="-0.7"><i class="b4"></i></div></div>
   <canvas class="gl" id="gl"></canvas>
   <img class="coil on" data-for="roles" src="__COIL__" alt="" width="985" height="1000">
-  <img class="coil" data-for="about" src="assets/shape-about.webp" alt="" width="1000" height="980">
-  <img class="coil" data-for="feedback" src="assets/shape-feedback.webp" alt="" width="1000" height="934">
-  <img class="coil" data-for="saved" src="assets/shape-saved.webp" alt="" width="983" height="1000">
+  <img class="coil" data-for="about" data-src="assets/shape-about.webp" alt="" width="1000" height="980">
+  <img class="coil" data-for="feedback" data-src="assets/shape-feedback.webp" alt="" width="1000" height="934">
+  <img class="coil" data-for="saved" data-src="assets/shape-saved.webp" alt="" width="983" height="1000">
  </div>
  <div class="wrap">
   <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span></div>
@@ -1181,7 +1181,7 @@ const route = () => {
   document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === cur ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   window.heroTheme?.(cur);
   document.body.classList.remove('t-' + was); document.body.classList.add('t-' + cur);
-  document.querySelectorAll('.coil').forEach(c => c.classList.toggle('on', c.dataset.for === cur));
+  document.querySelectorAll('.coil').forEach(c => { const on = c.dataset.for === cur; if (on && !c.getAttribute('src')) c.src = c.dataset.src; c.classList.toggle('on', on); });   // other pages' shapes load only when first shown
   window.fitShape?.();
   if (was !== undefined && was !== cur) {
     scrollTo({top: 0, behavior: 'instant'});   // a new page starts at the top, not part-way down

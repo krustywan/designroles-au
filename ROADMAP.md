@@ -57,3 +57,10 @@ The likely revenue approach. Recruiters pay to reach a focused design and resear
 - [x] Prototype scraper and board
 - [x] Every role links to its original ad
 - [x] Daily run on GitHub Actions, published with GitHub Pages
+
+## Sites that block GitHub (saved copies)
+Some job sites block GitHub's computers, where the daily update runs. For these, a `*_refresh.py` script saves a copy
+of the roles from a computer the site lets in, and the daily update uses that copy when the live site refuses it
+(skipping roles past their closing date). A weekly scheduled task runs every `*_refresh.py` and commits the results.
+- Victorian Government (careers.vic.gov.au): `vic_refresh.py` → `vic_cache.json`
+- To add another: write `<name>_refresh.py` and a fallback in the connector, following the Victorian one.
