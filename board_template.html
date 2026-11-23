@@ -393,7 +393,7 @@ body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
 .lines i:first-child{top:2px}.lines i:last-child{top:10px}
 .is-x .lines i{top:6px}.is-x .lines i:first-child{transform:rotate(45deg)}.is-x .lines i:last-child{transform:rotate(-45deg)}
 @media(max-width:899px){.burger{width:56px;height:56px;margin:12px 12px}.lines{width:24px;height:12px}.lines i:last-child{top:8px}.is-x .lines i{top:5px}}
-.mbody{flex:1;overflow:auto;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,6vh,72px) clamp(28px,5vw,80px) 36px}
+.mbody{flex:1;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,6vh,72px) clamp(28px,5vw,80px) 36px}
 .mlabel{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#b4aec2;border-bottom:1px solid #ffffff2e;padding-bottom:12px;margin:0 0 28px}
 .mlist{display:grid;gap:6px}
 .mlist a{position:relative;display:flex;align-items:center;color:#fff;text-decoration:none;font-size:clamp(36px,4.2vw,52px);font-weight:600;letter-spacing:-.035em;line-height:1.15;padding:4px 0}
@@ -500,7 +500,7 @@ body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
  <div class="mpanel" role="dialog" aria-modal="true" aria-label="Menu" tabindex="-1">
   <svg class="mcurve" aria-hidden="true" preserveAspectRatio="none"><path id="mcurve"/></svg>
   <div class="mtop"></div>
-  <div class="mbody">
+  <div class="mbody" id="mbody">
    <div>
     <p class="mlabel">Navigation</p>
     <nav class="mlist" aria-label="Main">
@@ -787,14 +787,14 @@ const select = (id, fromUser = true) => {
   $('detail').scrollTop = 0;
   if (!fromUser) return;
   if (mobile()) {
-    $('detail').classList.add('open'); lockPage(true);
+    $('detail').classList.add('open'); lockPage(true, 'detail');
     try { history.pushState({sheet: 1}, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
     $('back')?.focus();
   } else try { history.replaceState(null, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
 };
 const closeDetail = viaHistory => {
   if (!$('detail').classList.contains('open')) return;
-  $('detail').classList.remove('open'); lockPage(false);
+  $('detail').classList.remove('open'); lockPage(false, 'detail');
   document.querySelector(`.job[data-id="${st.sel}"] .jt button`)?.focus();
   if (!viaHistory) history.back();
 };
@@ -853,7 +853,7 @@ addEventListener('keydown', e => {
   if (st.pop && !$('pop').hidden) closeMenu(true);
   else if ($('detail').classList.contains('open')) closeDetail();
 });
-matchMedia('(max-width:899px)').addEventListener('change', () => { if (!mobile()) { if ($('detail').classList.contains('open')) { $('detail').classList.remove('open'); lockPage(false); } } render(true); });
+matchMedia('(max-width:899px)').addEventListener('change', () => { if (!mobile()) { if ($('detail').classList.contains('open')) { $('detail').classList.remove('open'); lockPage(false, 'detail'); } } render(true); });
 $('gen').textContent = `Updated ${D.generated} AWST · ${J.length} roles`;
 
 
@@ -959,17 +959,23 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
 
 
 // ---------- Stop the page scrolling behind full-screen layers ----------
-let locks = 0, lockY = 0;
-const pageY = () => locks ? lockY : scrollY;   // while the page is locked (menu or drawer open), keep the scroll it had
-const lockPage = on => {
-  locks = Math.max(0, locks + (on ? 1 : -1));
+// The page is locked (no scrolling behind) while any of these is open. Each holder has a name, so opening the same
+// thing twice can never leave the page stuck unscrollable after it closes.
+const lockers = new Set();
+let lockY = 0;
+const pageY = () => lockers.size ? lockY : scrollY;   // while the page is locked, keep the scroll it had
+const lockPage = (on, who) => {
+  const before = lockers.size;
+  on ? lockers.add(who) : lockers.delete(who);
+  const locks = lockers.size;
+  if (locks === before) return;
   const b = document.body;
   // Keep the scrollbar's width as padding while it's hidden, so the page doesn't shift sideways when it goes and comes back
   if (on && locks === 1) { lockY = scrollY; const sb = innerWidth - document.documentElement.clientWidth; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0', paddingRight: sb ? sb + 'px' : ''}); document.documentElement.style.setProperty('--sb', sb + 'px'); }
   if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: '', paddingRight: ''}); document.documentElement.style.removeProperty('--sb'); scrollTo(0, lockY); }
 };
-$('sheet').addEventListener('close', () => { if ($('sheet').dataset.locked) { delete $('sheet').dataset.locked; lockPage(false); } });
-new MutationObserver(() => { if ($('sheet').open && !$('sheet').dataset.locked) { $('sheet').dataset.locked = 1; lockPage(true); } }).observe($('sheet'), {attributes: true, attributeFilter: ['open']});
+$('sheet').addEventListener('close', () => { if ($('sheet').dataset.locked) { delete $('sheet').dataset.locked; lockPage(false, 'sheet'); } });
+new MutationObserver(() => { if ($('sheet').open && !$('sheet').dataset.locked) { $('sheet').dataset.locked = 1; lockPage(true, 'sheet'); } }).observe($('sheet'), {attributes: true, attributeFilter: ['open']});
 
 // ---------- Phones: one search pill opens a full-screen search drawer (fields, filter menus, recent searches) ----------
 const searchLabel = () => { const w = st.wtxt || [...st.f.loc].map(c => CITY[c] || c).join(', '); return st.q || w ? `${st.q || 'All roles'}${w ? ' in ' + w : ''}` : ''; };
@@ -998,7 +1004,7 @@ const openSearch = () => {
   $('sdslot').append(form, reveal);
   $('recent').innerHTML = recentHTML();
   const d = $('sdrawer');
-  st.open = true; d.showModal(); lockPage(true); render(true);
+  st.open = true; d.showModal(); lockPage(true, 'search'); render(true);
   // Focus the title, not a field (so the keyboard only opens when you tap one, like Seek) or the close button
   // (which would show its focus ring). Start at the top every time.
   $('sdtitle').focus({preventScroll: true}); $('sdbody').scrollTop = 0; requestAnimationFrame(() => $('sdbody').scrollTop = 0);
@@ -1019,7 +1025,7 @@ const closeSearch = () => {
 };
 $('sdrawer').addEventListener('cancel', e => { e.preventDefault(); closeSearch(); });   // Esc slides it out too
 $('sdrawer').addEventListener('close', () => {
-  lockPage(false);
+  lockPage(false, 'search');
   if (home.form) { home.form[0].insertBefore($('sform'), home.form[1]); home.frow[0].insertBefore($('frow'), home.frow[1]); }
   st.open = store.get('dra-filters-open', true); render(true);
 });
@@ -1244,21 +1250,27 @@ let navOpen = false, navTimer = 0;
 const anim = (el, frames, ms, delay = 0) => el.animate(frames, {duration: still() ? Math.min(ms, 200) : ms, delay: still() ? 0 : delay, easing: EASE, fill: 'both'});
 // Plain pixel values (no calc) so Safari and Chrome on iPhone animate the slide too
 const slide = () => still() ? 'translateX(0px)' : `translateX(${panel.offsetWidth + 100}px)`;
-const inertAll = on => document.querySelectorAll('body > *:not(#menu):not(#burger):not(script)').forEach(el => el.inert = on);
+$('mfoot').innerHTML = `${J.length} roles · updated ${new Date(D.generated.split(' ')[0]).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})} · <a href="#/feedback">Suggest an employer</a>`;
+// The menu doesn't lock the page (on iPhone that recalculates the whole page and held up the opening slide, so the
+// panel just appeared). Instead the menu itself swallows scrolling, except inside its own list.
+const noScroll = e => { if (navOpen && !(e.target.closest('.mbody') && $('mbody').scrollHeight > $('mbody').clientHeight)) e.preventDefault(); };
+menu.addEventListener('touchmove', noScroll, {passive: false});
+menu.addEventListener('wheel', noScroll, {passive: false});
+// Keep keyboard focus inside the menu (and its close button) while it's open
+addEventListener('keydown', e => {
+  if (!navOpen || e.key !== 'Tab') return;
+  const items = [shut, ...menu.querySelectorAll('a')], i = items.indexOf(document.activeElement);
+  if (i === -1 || (e.shiftKey ? i === 0 : i === items.length - 1)) { e.preventDefault(); items[e.shiftKey ? items.length - 1 : 0].focus(); }
+});
 const openNav = () => {
   if (navOpen) return; navOpen = true; clearTimeout(navTimer);
-  $('mfoot').innerHTML = `${J.length} roles · updated ${new Date(D.generated.split(' ')[0]).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})} · <a href="#/feedback">Suggest an employer</a>`;
-  const sb = innerWidth - document.documentElement.clientWidth;
-  shut.classList.add('pinned'); shut.style.right = sb ? sb + 'px' : '';   // stay put (and clear of the scrollbar space) while the page is locked
-  menu.hidden = false; lockPage(true); inertAll(true);
-  shut.setAttribute('aria-expanded', 'true'); shut.setAttribute('aria-label', 'Close menu');
+  shut.classList.add('pinned', 'is-x'); menu.hidden = false;
   anim($('mshade'), [{opacity: 0}, {opacity: 1}], 600);
-  panel.offsetWidth;   // make sure the panel is laid out before it starts moving
   anim(panel, [{transform: slide(), opacity: still() ? 0 : 1}, {transform: 'translateX(0px)', opacity: 1}], 800);
   if (!still()) curve(-100, 100, 1000);
   menu.querySelectorAll('.mlist a').forEach((a, i) => anim(a, [{transform: 'translateX(80px)', opacity: 0}, {transform: 'translateX(0px)', opacity: 1}], 800, 100 + i * 50));
   anim($('mfoot'), [{opacity: 0}, {opacity: 1}], 600, 350);
-  shut.classList.add('is-x');
+  shut.setAttribute('aria-expanded', 'true'); shut.setAttribute('aria-label', 'Close menu');
   panel.focus({preventScroll: true});   // focus the panel itself, so no focus ring appears on a link
 };
 const closeNav = () => {
@@ -1270,7 +1282,7 @@ const closeNav = () => {
   [...menu.querySelectorAll('.mlist a')].forEach((a, i) => anim(a, [{transform: 'translateX(0px)', opacity: 1}, {transform: 'translateX(80px)', opacity: 0}], 600, i * 40));
   anim($('mfoot'), [{opacity: 1}, {opacity: 0}], 300);
   navTimer = setTimeout(() => {
-    menu.hidden = true; lockPage(false); inertAll(false); shut.classList.remove('pinned'); shut.style.right = '';
+    menu.hidden = true; shut.classList.remove('pinned');
     shut.setAttribute('aria-expanded', 'false'); shut.setAttribute('aria-label', 'Open menu'); shut.focus({preventScroll: true});
   }, still() ? 200 : 800);
 };
