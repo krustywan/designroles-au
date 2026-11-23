@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# What the testing-only Probe workflow runs on probe/* branches.
 set -e
-python discovery/test_sources.py discovery/new_sources.json
+pip -q install pillow cairosvg
+python discovery/logo_probe.py
