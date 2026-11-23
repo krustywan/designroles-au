@@ -1,9 +1,6 @@
-python3 - <<'PY'
-import json, urllib.request, re
-h = urllib.request.urlopen("https://krustywan.github.io/designroles-au/?x=2").read().decode()
-m = re.search(r'<script id="data" type="application/json">(.*?)</script>', h, re.S)
-d = json.loads(m.group(1).replace("<\\/", "</"))
-for j in d["jobs"]:
-    if not j.get("logo"): print("NOLOGO", j["employer"], "|", j["source"], "|", j["title"])
-print("TOTAL", len(d["jobs"]), sum(1 for j in d["jobs"] if j.get("logo")))
-PY
+python3 -c "
+import os, fetch_logos as F
+os.makedirs(F.OUT, exist_ok=True)
+print('RESULT', F.one(('Qantas Group','qantas.com')))
+"
+mkdir -p discovery/out/q && cp logos/qantas.com.* discovery/out/q/ 2>/dev/null; ls discovery/out/q
