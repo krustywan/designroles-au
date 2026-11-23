@@ -51,8 +51,8 @@ def discipline(title, desc=""):
         return None
     for name, rx in DISC_RE:
         if rx.search(t):
-            # A generic "Designer" title: use the description to pick a better discipline.
-            if name == "Visual & brand" and re.fullmatch(r"(senior |junior |lead |principal )?(designer|design lead)", t.strip(), re.I):
+            # A generic "Designer" / "Design Lead" title (even with a team name after it): use the description to pick a better discipline.
+            if name == "Visual & brand" and re.match(r"(senior |junior |lead |principal )?(designer|design lead)\b(?!.*\b(graphic|visual|brand|motion|creative)\b)", t.strip(), re.I):
                 for n2, rx2 in DISC_RE[:-1]:
                     if len(rx2.findall(desc or "")) >= 3:
                         return n2
