@@ -387,6 +387,7 @@ body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
 @media(hover:hover){.burger:hover{transform:scale(1.06)}}
 .burger{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .burger.pinned{position:fixed}
+body.role-open .burger{visibility:hidden}   /* a role open full-screen on a phone has its own back button */
 .burger:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .lines{position:relative;width:32px;height:14px;display:block}
 .lines i{position:absolute;left:0;right:0;height:2px;border-radius:2px;background:currentColor;transition:transform .45s cubic-bezier(.76,0,.24,1),top .45s cubic-bezier(.76,0,.24,1)}
@@ -787,14 +788,14 @@ const select = (id, fromUser = true) => {
   $('detail').scrollTop = 0;
   if (!fromUser) return;
   if (mobile()) {
-    $('detail').classList.add('open'); lockPage(true, 'detail');
+    $('detail').classList.add('open'); lockPage(true, 'detail'); document.body.classList.add('role-open');
     try { history.pushState({sheet: 1}, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
     $('back')?.focus();
   } else try { history.replaceState(null, '', location.pathname + location.search + '#role=' + id); } catch (e) {}
 };
 const closeDetail = viaHistory => {
   if (!$('detail').classList.contains('open')) return;
-  $('detail').classList.remove('open'); lockPage(false, 'detail');
+  $('detail').classList.remove('open'); lockPage(false, 'detail'); document.body.classList.remove('role-open');
   document.querySelector(`.job[data-id="${st.sel}"] .jt button`)?.focus();
   if (!viaHistory) history.back();
 };
@@ -853,7 +854,7 @@ addEventListener('keydown', e => {
   if (st.pop && !$('pop').hidden) closeMenu(true);
   else if ($('detail').classList.contains('open')) closeDetail();
 });
-matchMedia('(max-width:899px)').addEventListener('change', () => { if (!mobile()) { if ($('detail').classList.contains('open')) { $('detail').classList.remove('open'); lockPage(false, 'detail'); } } render(true); });
+matchMedia('(max-width:899px)').addEventListener('change', () => { if (!mobile()) { if ($('detail').classList.contains('open')) { $('detail').classList.remove('open'); lockPage(false, 'detail'); document.body.classList.remove('role-open'); } } render(true); });
 $('gen').textContent = `Updated ${D.generated} AWST · ${J.length} roles`;
 
 
@@ -1004,7 +1005,7 @@ const openSearch = () => {
   $('sdslot').append(form, reveal);
   $('recent').innerHTML = recentHTML();
   const d = $('sdrawer');
-  st.open = true; d.showModal(); lockPage(true, 'search'); render(true);
+  st.open = true; d.showModal(); lockPage(true, 'search'); window.heroHold?.(true); render(true);
   // Focus the title, not a field (so the keyboard only opens when you tap one, like Seek) or the close button
   // (which would show its focus ring). Start at the top every time.
   $('sdtitle').focus({preventScroll: true}); $('sdbody').scrollTop = 0; requestAnimationFrame(() => $('sdbody').scrollTop = 0);
@@ -1025,7 +1026,7 @@ const closeSearch = () => {
 };
 $('sdrawer').addEventListener('cancel', e => { e.preventDefault(); closeSearch(); });   // Esc slides it out too
 $('sdrawer').addEventListener('close', () => {
-  lockPage(false, 'search');
+  lockPage(false, 'search'); window.heroHold?.(false);
   if (home.form) { home.form[0].insertBefore($('sform'), home.form[1]); home.frow[0].insertBefore($('frow'), home.frow[1]); }
   st.open = store.get('dra-filters-open', true); render(true);
 });
@@ -1116,17 +1117,21 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   setPal();
   const rc = document.createElement('canvas'), rx = rc.getContext('2d');
   const SCALE = 0.5;   // the gradient is soft, so half resolution looks the same and is much lighter
-  let W = 0, H = 0, ripples = [], last = null, visible = true, t0 = performance.now(), running = false, prev = performance.now();
+  let W = 0, H = 0, ripples = [], last = null, visible = true, t0 = performance.now(), running = false, prev = performance.now(), held = false, inked = true;
   const size = () => {
+    inked = true;
     const r = hero.getBoundingClientRect(); W = Math.max(2, Math.round(r.width * SCALE)); H = Math.max(2, Math.round(r.height * SCALE));
     cv.width = W; cv.height = H; rc.width = Math.round(W / 2); rc.height = Math.round(H / 2); gl.viewport(0, 0, W, H);
     gl.uniform2f(U('res'), W, H); gl.uniform2f(U('texel'), 1.5 / rc.width, 1.5 / rc.height);
   };
   const draw = now => {
     const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
+    ripples = ripples.filter(r => (r.age += dt) < r.life);
+    // Only redraw and re-upload the ripple map while there are ripples (uploading it every frame is costly on phones)
+    if (ripples.length || inked) {
+    inked = ripples.length > 0;
     rx.globalCompositeOperation = 'source-over'; rx.fillStyle = '#000'; rx.fillRect(0, 0, rc.width, rc.height);
     rx.globalCompositeOperation = 'lighter';
-    ripples = ripples.filter(r => (r.age += dt) < r.life);
     for (const r of ripples) {
       const k = r.age / r.life, rad = (6 + r.age * 38) * rc.width / 600, a = (1 - k) * (1 - k) * r.power;
       const g = rx.createRadialGradient(r.x * rc.width, r.y * rc.height, rad * 0.25, r.x * rc.width, r.y * rc.height, rad);
@@ -1134,13 +1139,16 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
       rx.fillStyle = g; rx.beginPath(); rx.arc(r.x * rc.width, r.y * rc.height, rad, 0, 7); rx.fill();
     }
     gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, rc);
+    }
     const k = 1 - Math.exp(-dt * 2.2);   // ease toward the page's palette over about a second and a half
     pal.forEach((c, i) => c.forEach((v, j) => c[j] = v + (goal[i][j] - v) * k)); setPal();
     gl.uniform1f(U('sc'), still ? 0 : pageY() * 0.35 / Math.max(1, hero.getBoundingClientRect().height));
     gl.uniform1f(U('t'), still ? 4 : (now - t0) / 1000);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   };
-  const frame = now => { draw(now); if (!still && visible) requestAnimationFrame(frame); else running = false; };
+  const frame = now => { draw(now); if (!still && visible && !held) requestAnimationFrame(frame); else running = false; };
+  // Pause the moving gradient while the menu or search covers it, so phones put everything into those animations
+  window.heroHold = on => { held = on; if (!on && visible && !still) start(); };
   // Resizing a canvas wipes it, so redraw straight away (before the browser paints) to avoid a black flash.
   const redraw = () => { size(); prev = performance.now(); draw(prev); };
   const start = () => { if (!running) { running = true; prev = performance.now(); requestAnimationFrame(frame); } };
@@ -1264,6 +1272,7 @@ addEventListener('keydown', e => {
 });
 const openNav = () => {
   if (navOpen) return; navOpen = true; clearTimeout(navTimer);
+  window.heroHold?.(true);
   shut.classList.add('pinned', 'is-x'); menu.hidden = false;
   anim($('mshade'), [{opacity: 0}, {opacity: 1}], 600);
   anim(panel, [{transform: slide(), opacity: still() ? 0 : 1}, {transform: 'translateX(0px)', opacity: 1}], 800);
@@ -1282,11 +1291,15 @@ const closeNav = () => {
   [...menu.querySelectorAll('.mlist a')].forEach((a, i) => anim(a, [{transform: 'translateX(0px)', opacity: 1}, {transform: 'translateX(80px)', opacity: 0}], 600, i * 40));
   anim($('mfoot'), [{opacity: 1}, {opacity: 0}], 300);
   navTimer = setTimeout(() => {
-    menu.hidden = true; shut.classList.remove('pinned');
+    menu.hidden = true; shut.classList.remove('pinned'); window.heroHold?.(false);
     shut.setAttribute('aria-expanded', 'false'); shut.setAttribute('aria-label', 'Open menu'); shut.focus({preventScroll: true});
   }, still() ? 200 : 800);
 };
-shut.addEventListener('click', () => navOpen ? closeNav() : openNav());
+// On touch screens act the moment the finger lifts, rather than waiting for the browser's delayed click
+let touchedAt = 0;
+const toggleNav = () => navOpen ? closeNav() : openNav();
+shut.addEventListener('pointerup', e => { if (e.pointerType === 'touch' || e.pointerType === 'pen') { touchedAt = Date.now(); toggleNav(); } });
+shut.addEventListener('click', () => { if (Date.now() - touchedAt > 700) toggleNav(); });
 $('mshade').addEventListener('click', closeNav);
 menu.addEventListener('click', e => { if (e.target.closest('.mlist a, .mfoot a')) closeNav(); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && navOpen) closeNav(); });
