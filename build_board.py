@@ -5,6 +5,8 @@ if d["count"] < 5:
     sys.exit(f"Only {d['count']} roles found - not publishing. Check the 'Scrape the job sites' step log.")
 # Attach a logo to each role when we have one for that employer (see fetch_logos.py).
 domains = {k: v for k, v in json.load(open("employer_domains.json")).items() if not k.startswith("_")}
+if os.path.exists("logos/guessed_domains.json"):   # websites fetch_logos.py worked out for employers not mapped yet
+    domains = {**json.load(open("logos/guessed_domains.json")), **domains}
 GOV_FALLBACK = {"vic-gov": "vic.gov.au"}   # a Victorian department with no logo of its own shows the Victorian Government's
 for j in d["jobs"]:
     dom = domains.get(j["employer"])
@@ -27,3 +29,6 @@ for j in d["jobs"]:
 data = json.dumps(d, ensure_ascii=False).replace("</", "<\\/")
 open("board.html", "w").write(open("board_template.html").read().replace("__COIL__", "assets/coil.webp").replace("__DATA__", data))
 print("board.html", len(data), "bytes of data,", d["count"], "roles,", sum(1 for j in d["jobs"] if j["logo"]), "with logos")
+nologo = sorted({j["employer"] for j in d["jobs"] if not j["logo"]})
+if nologo:
+    print("::warning::Roles without a logo, from: " + ", ".join(nologo))

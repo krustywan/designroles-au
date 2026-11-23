@@ -32,7 +32,10 @@ def kind_and_size(b):
         n = struct.unpack("<H", b[4:6])[0]
         best = max(((b[6 + 16 * k] or 256) for k in range(min(n, 20)) if 6 + 16 * k < len(b)), default=0)
         return "ico", best
-    if b"<svg" in b[:3000]:
+    head = b[:3000].lstrip().lower()
+    if head.startswith((b"<!doctype html", b"<html")) or b"<html" in head[:500]:
+        return "", 0   # a web page sent back in place of an image (some sites answer every address with their home page)
+    if b"<svg" in head:
         return "svg", 999
     return "", 0
 
@@ -126,12 +129,52 @@ def one(item):
     return domain, best[0] if best[0] >= 32 else 0
 
 
+# Job-ad platforms: a role hosted on one of these doesn't tell us the employer's own website
+ATS = ("myworkdayjobs", "lever.co", "ashbyhq", "greenhouse.io", "pageuppeople", "csod.com", "smartrecruiters", "oraclecloud",
+       "successfactors", "livehire", "elmotalent", "silkroad", "careers.vic.gov.au", "jobs.wa.gov.au", "apsjobs", "seek.com",
+       "workable", "bamboohr", "jobvite", "icims", "taleo", "applynow", "recruitee", "teamtailor", "breezy", "jobadder")
+
+
+def guess_domain(name, url):
+    """A website for an employer we haven't mapped yet: from its own careers site's address, else from Wikidata."""
+    host = urllib.parse.urlparse(url or "").hostname or ""
+    if host and not any(a in host for a in ATS):
+        parts = host.split(".")
+        keep = 3 if parts[-1] == "au" and len(parts) >= 3 else 2   # careers.anz.com -> anz.com; jobs.x.com.au -> x.com.au
+        return ".".join(parts[-keep:])
+    api = "https://www.wikidata.org/w/api.php?format=json&"
+    try:
+        hits = json.loads(fetch(api + urllib.parse.urlencode({"action": "wbsearchentities", "search": re.sub(r"\s*\(.*?\)", "", name), "language": "en", "limit": 3})))["search"]
+        for h in hits:
+            ent = json.loads(fetch(api + urllib.parse.urlencode({"action": "wbgetentities", "ids": h["id"], "props": "claims"})))["entities"][h["id"]]["claims"]
+            for c in ent.get("P856", []):
+                site = urllib.parse.urlparse(str(c["mainsnak"].get("datavalue", {}).get("value", ""))).hostname
+                if site:
+                    return site.removeprefix("www.")
+    except Exception:
+        pass
+    return None
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     names = {}
-    for k, v in json.load(open("employer_domains.json")).items():
-        if not k.startswith("_"):
-            names.setdefault(v, k)
+    mapped = {k: v for k, v in json.load(open("employer_domains.json")).items() if not k.startswith("_")}
+    # Every employer on today's board needs a logo: work out a website for any we haven't mapped yet
+    guessed = {}
+    try:
+        for j in json.load(open("jobs.json"))["jobs"]:
+            if j["employer"] not in mapped and j["employer"] not in guessed and j.get("source") not in ("vic-gov",):
+                dom = guess_domain(j["employer"], j.get("url"))
+                if dom:
+                    guessed[j["employer"]] = dom
+    except FileNotFoundError:
+        pass
+    json.dump(guessed, open(os.path.join(OUT, "guessed_domains.json"), "w"), indent=1)
+    if guessed:
+        print("logos: worked out websites for new employers:", guessed)
+    for k, v in {**guessed, **mapped}.items():
+        names.setdefault(v, k)
     # Logos saved by hand in logos_manual/ (for sites whose icons are too small or that block GitHub) win, and
     # those domains aren't fetched again.
     import shutil
@@ -142,3 +185,5 @@ if __name__ == "__main__":
     with ThreadPoolExecutor(8) as ex:
         got = list(ex.map(one, domains))
     print(f"logos: {len(manual)} saved by hand, {sum(1 for _, w in got if w)} of {len(got)} fetched;", "missing:", [d for d, w in got if not w])
+    if any(not w for _, w in got):
+        print("::warning::No logo found for " + ", ".join(names[d] + f" ({d})" for d, w in got if not w) + ". Add one to logos_manual/ or map the employer in employer_domains.json.")
