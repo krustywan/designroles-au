@@ -26,6 +26,7 @@
  --std:cubic-bezier(.2,0,0,1)}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0}
+html{touch-action:manipulation}   /* no double-tap-to-zoom delay, so taps register straight away on phones */
 body{background:var(--surface);color:var(--on-s);font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-feature-settings:"cv11";letter-spacing:-.006em;overflow-x:clip}
 body.lock{overflow:hidden}
 a{color:var(--primary)}
@@ -280,10 +281,12 @@ footer .wrap{display:grid;gap:6px}
 .mpill span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#4b4b55}
 .mpill.has span{color:#18181b;font-weight:500}
 dialog.sdrawer{color-scheme:dark;border:0;padding:0;margin:0;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;color:#fff;background:radial-gradient(90% 60% at 100% 100%,#7b2cf2 0%,transparent 60%),linear-gradient(180deg,#07040e 0%,#1a0b3d 60%,#2a0f63 100%)}
-dialog.sdrawer[open]{display:flex;flex-direction:column;animation:fade .25s var(--std)}
+dialog.sdrawer[open]{display:flex;flex-direction:column}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}}
-dialog.sdrawer::backdrop{background:#000}
-.sd-top{display:flex;align-items:center;justify-content:flex-end;padding:12px 12px 0}
+dialog.sdrawer::backdrop{background:rgba(6,3,14,.5)}
+.sd-top{display:flex;align-items:center;justify-content:space-between;padding:max(12px,env(safe-area-inset-top)) 12px 0 16px}
+.sd-top h2,#sheet-h{outline:none}
+.sd-top h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.02em;outline:none}
 .sd-body .dd[aria-expanded=true]{background:#fff;color:#18181b;border-color:#fff}
 .sd-x{width:48px;height:48px;border:0;border-radius:50%;background:none;color:#fff;font-size:30px;line-height:1;cursor:pointer}
 .sd-body{flex:1;overflow:auto;padding:4px 16px 16px}
@@ -365,7 +368,7 @@ body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
 .menu{position:fixed;inset:0;z-index:100;color-scheme:dark;color:#fff;overflow:hidden}
 .menu[hidden]{display:none}
 .mshade{position:absolute;inset:0;background:rgba(6,3,14,.5)}
-.mpanel{position:absolute;top:0;right:0;height:100%;width:min(520px,100vw);background:#150d28;display:flex;flex-direction:column;will-change:transform}
+.mpanel{outline:none;position:absolute;top:0;right:0;height:100%;width:min(520px,100vw);background:#150d28;display:flex;flex-direction:column;will-change:transform}
 .mcurve{position:absolute;top:0;right:calc(100% - 1px);width:100px;height:100%;overflow:visible;pointer-events:none}
 .mcurve path{fill:#150d28}
 .mtop{height:96px}
@@ -381,7 +384,8 @@ body{--b1:#6b38fb;--b2:#a63ad8}
 body.t-about{--b1:#2563eb;--b2:#4f46e5}
 body.t-feedback{--b1:#c74b2a;--b2:#a8329f}
 body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
-.burger:hover{transform:scale(1.06)}
+@media(hover:hover){.burger:hover{transform:scale(1.06)}}
+.burger{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .burger.pinned{position:fixed}
 .burger:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .lines{position:relative;width:32px;height:14px;display:block}
@@ -483,17 +487,17 @@ body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
 </main>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-h">
- <div class="sh"><h2 id="sheet-h">Filters</h2><button type="button" class="sclear" id="resetf">Clear</button><button class="x" id="closef" aria-label="Done">×</button></div>
+ <div class="sh"><h2 id="sheet-h" tabindex="-1" autofocus>Filters</h2><button type="button" class="sclear" id="resetf">Clear</button><button class="x" id="closef" aria-label="Done">×</button></div>
  <div class="sb" id="sheetbody"></div>
 </dialog>
 <dialog class="sdrawer" id="sdrawer" aria-label="Search roles">
- <div class="sd-top"><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
+ <div class="sd-top"><h2 id="sdtitle" tabindex="-1" autofocus>Search roles</h2><button type="button" class="sd-x" id="sdclose" aria-label="Close search">×</button></div>
  <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="recent" id="recent"></div></div>
  <div class="sd-foot"><button type="submit" form="sform" class="btn" id="sdgo">Find roles</button></div>
 </dialog>
 <div class="menu" id="menu" hidden>
  <div class="mshade" id="mshade"></div>
- <div class="mpanel" role="dialog" aria-modal="true" aria-label="Menu">
+ <div class="mpanel" role="dialog" aria-modal="true" aria-label="Menu" tabindex="-1">
   <svg class="mcurve" aria-hidden="true" preserveAspectRatio="none"><path id="mcurve"/></svg>
   <div class="mtop"></div>
   <div class="mbody">
@@ -761,8 +765,8 @@ const placePop = btn => {
 const openMenu = (k, btn) => {
   if (st.pop === k) { closeMenu(); return; }
   st.pop = k;
-  if (phone() && k !== 'all') { $('sheet').classList.remove('drawer'); $('sheet-h').textContent = k === 'more' ? 'More filters' : FK[k].title; $('resetf').textContent = 'Clear'; $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
-  if (k === 'all') { st.pop = 'all'; $('sheet-h').textContent = 'Filters'; $('resetf').textContent = 'Clear all'; $('sheet').classList.add('drawer'); $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
+  if (phone() && k !== 'all') { $('sheet').classList.remove('drawer'); $('sheet-h').textContent = k === 'more' ? 'More filters' : FK[k].title; $('resetf').textContent = 'Clear'; $('pop').hidden = true; $('sheet').showModal(); render(true); $('sheet-h').focus({preventScroll: true}); return; }
+  if (k === 'all') { st.pop = 'all'; $('sheet-h').textContent = 'Filters'; $('resetf').textContent = 'Clear all'; $('sheet').classList.add('drawer'); $('pop').hidden = true; $('sheet').showModal(); render(true); $('sheet-h').focus({preventScroll: true}); return; }
   $('pop').hidden = false; $('pop').setAttribute('aria-label', k === 'more' ? 'More filters' : FK[k].title);
   render(true); placePop($('frow').querySelector(`[data-dd="${k}"]`) || btn);
   $('pop').querySelector('input:not(:disabled)')?.focus();
@@ -993,13 +997,27 @@ const openSearch = () => {
   home.form = [form.parentNode, form.nextSibling]; home.frow = [reveal.parentNode, reveal.nextSibling];
   $('sdslot').append(form, reveal);
   $('recent').innerHTML = recentHTML();
-  st.open = true; $('sdrawer').showModal(); lockPage(true); render(true);
-  $('sdclose').focus({preventScroll: true});   // like Seek: the keyboard only opens when you tap a field
+  const d = $('sdrawer');
+  st.open = true; d.showModal(); lockPage(true); render(true);
+  // Focus the title, not a field (so the keyboard only opens when you tap one, like Seek) or the close button
+  // (which would show its focus ring). Start at the top every time.
+  $('sdtitle').focus({preventScroll: true}); $('sdbody').scrollTop = 0; requestAnimationFrame(() => $('sdbody').scrollTop = 0);
+  // Slide in from the right, with the same easing as the menu, then the fields and filters rise in one after another
+    d.animate([{transform: still() ? 'none' : 'translateX(100%)', opacity: still() ? 0 : 1}, {transform: 'none', opacity: 1}], {duration: still() ? 200 : 650, easing: EASE});
+  try { d.animate([{opacity: 0}, {opacity: 1}], {duration: 500, pseudoElement: '::backdrop'}); } catch (e) {}
+  if (!still()) [...d.querySelectorAll('.sd-top, #sdslot .fld, #sdslot .frow, .recent, .sd-foot')].forEach((el, i) =>
+    el.animate([{transform: 'translateY(18px)', opacity: 0}, {transform: 'none', opacity: 1}], {duration: 600, delay: 220 + i * 45, easing: 'cubic-bezier(.2,.75,.2,1)', fill: 'backwards'}));
 };
+let searchClosing = false;
 const closeSearch = () => {
-  if (!$('sdrawer').open) return;
-  $('sdrawer').close();
+  const d = $('sdrawer');
+  if (!d.open || searchClosing) return;
+  searchClosing = true;
+  try { d.animate([{opacity: 1}, {opacity: 0}], {duration: 500, fill: 'forwards', pseudoElement: '::backdrop'}); } catch (e) {}
+  d.animate([{transform: 'none', opacity: 1}, {transform: still() ? 'none' : 'translateX(100%)', opacity: still() ? 0 : 1}], {duration: still() ? 150 : 500, easing: EASE, fill: 'forwards'})
+    .finished.then(() => { d.close(); d.getAnimations().forEach(a => a.cancel()); searchClosing = false; });
 };
+$('sdrawer').addEventListener('cancel', e => { e.preventDefault(); closeSearch(); });   // Esc slides it out too
 $('sdrawer').addEventListener('close', () => {
   lockPage(false);
   if (home.form) { home.form[0].insertBefore($('sform'), home.form[1]); home.frow[0].insertBefore($('frow'), home.frow[1]); }
@@ -1239,7 +1257,7 @@ const openNav = () => {
   menu.querySelectorAll('.mlist a').forEach((a, i) => anim(a, [{transform: 'translateX(80px)', opacity: 0}, {transform: 'none', opacity: 1}], 800, 100 + i * 50));
   anim($('mfoot'), [{opacity: 0}, {opacity: 1}], 600, 350);
   shut.classList.add('is-x');
-  menu.querySelector('.mlist a').focus({preventScroll: true});
+  panel.focus({preventScroll: true});   // focus the panel itself, so no focus ring appears on a link
 };
 const closeNav = () => {
   if (!navOpen) return; navOpen = false;
