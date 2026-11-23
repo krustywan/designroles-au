@@ -132,7 +132,13 @@ if __name__ == "__main__":
     for k, v in json.load(open("employer_domains.json")).items():
         if not k.startswith("_"):
             names.setdefault(v, k)
-    domains = sorted((n, d) for d, n in names.items())
+    # Logos saved by hand in logos_manual/ (for sites whose icons are too small or that block GitHub) win, and
+    # those domains aren't fetched again.
+    import shutil
+    manual = {f.rsplit(".", 1)[0] for f in os.listdir("logos_manual")} if os.path.isdir("logos_manual") else set()
+    for f in os.listdir("logos_manual") if manual else []:
+        shutil.copy(os.path.join("logos_manual", f), os.path.join(OUT, f))
+    domains = sorted((n, d) for d, n in names.items() if d not in manual)
     with ThreadPoolExecutor(8) as ex:
         got = list(ex.map(one, domains))
-    print(f"logos: {sum(1 for _, w in got if w)} of {len(got)} found;", "missing:", [d for d, w in got if not w])
+    print(f"logos: {len(manual)} saved by hand, {sum(1 for _, w in got if w)} of {len(got)} fetched;", "missing:", [d for d, w in got if not w])
