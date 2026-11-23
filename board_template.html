@@ -285,6 +285,7 @@ dialog.sdrawer[open]{display:flex;flex-direction:column}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}}
 dialog.sdrawer::backdrop{background:rgba(6,3,14,.5)}
 .sd-top{display:flex;align-items:center;justify-content:space-between;padding:max(12px,env(safe-area-inset-top)) 12px 0 16px}
+.sd-top h2,#sheet-h{outline:none}
 .sd-top h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.02em;outline:none}
 .sd-body .dd[aria-expanded=true]{background:#fff;color:#18181b;border-color:#fff}
 .sd-x{width:48px;height:48px;border:0;border-radius:50%;background:none;color:#fff;font-size:30px;line-height:1;cursor:pointer}
@@ -486,7 +487,7 @@ body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
 </main>
 
 <dialog class="sheet" id="sheet" aria-labelledby="sheet-h">
- <div class="sh"><h2 id="sheet-h">Filters</h2><button type="button" class="sclear" id="resetf">Clear</button><button class="x" id="closef" aria-label="Done">×</button></div>
+ <div class="sh"><h2 id="sheet-h" tabindex="-1" autofocus>Filters</h2><button type="button" class="sclear" id="resetf">Clear</button><button class="x" id="closef" aria-label="Done">×</button></div>
  <div class="sb" id="sheetbody"></div>
 </dialog>
 <dialog class="sdrawer" id="sdrawer" aria-label="Search roles">
@@ -764,8 +765,8 @@ const placePop = btn => {
 const openMenu = (k, btn) => {
   if (st.pop === k) { closeMenu(); return; }
   st.pop = k;
-  if (phone() && k !== 'all') { $('sheet').classList.remove('drawer'); $('sheet-h').textContent = k === 'more' ? 'More filters' : FK[k].title; $('resetf').textContent = 'Clear'; $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
-  if (k === 'all') { st.pop = 'all'; $('sheet-h').textContent = 'Filters'; $('resetf').textContent = 'Clear all'; $('sheet').classList.add('drawer'); $('pop').hidden = true; $('sheet').showModal(); render(true); return; }
+  if (phone() && k !== 'all') { $('sheet').classList.remove('drawer'); $('sheet-h').textContent = k === 'more' ? 'More filters' : FK[k].title; $('resetf').textContent = 'Clear'; $('pop').hidden = true; $('sheet').showModal(); render(true); $('sheet-h').focus({preventScroll: true}); return; }
+  if (k === 'all') { st.pop = 'all'; $('sheet-h').textContent = 'Filters'; $('resetf').textContent = 'Clear all'; $('sheet').classList.add('drawer'); $('pop').hidden = true; $('sheet').showModal(); render(true); $('sheet-h').focus({preventScroll: true}); return; }
   $('pop').hidden = false; $('pop').setAttribute('aria-label', k === 'more' ? 'More filters' : FK[k].title);
   render(true); placePop($('frow').querySelector(`[data-dd="${k}"]`) || btn);
   $('pop').querySelector('input:not(:disabled)')?.focus();
