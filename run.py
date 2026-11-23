@@ -48,7 +48,7 @@ def tasks():
         t.append((f"sf-classic/{company}", sec, lambda h=host, co=company, emp=emp: C.sf_classic(h, co, emp)))
     for tenant, site, emp, sec in SRC.get("cornerstone", []):
         t.append((f"cornerstone/{tenant}", sec, lambda te=tenant, si=site, emp=emp: C.cornerstone(te, si, emp)))
-    for key, fn in (("vic_gov", C.vic_gov), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
+    for key, fn in (("vic_gov", C.vic_gov_or_cache), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
         if SRC.get(key):
             t.append((key.replace("_", "-"), "Government", fn))
     if SRC.get("remotive"):

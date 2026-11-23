@@ -4,7 +4,7 @@ Raw shape:
   source, source_id, employer, title, url, location, description (text),
   posted (ISO date or ''), employment_type, workplace, salary_text, remote_flag
 """
-import json, re, time, html, urllib.request, urllib.parse, urllib.error
+import json, re, time, html, os, datetime, urllib.request, urllib.parse, urllib.error
 import xml.etree.ElementTree as ET
 
 UA = {"User-Agent": "DesignRolesAU-prototype/0.1 (design job aggregator; polite daily crawl)"}
@@ -405,24 +405,47 @@ def vic_gov():
             def field(label):
                 mm = re.search(r"<strong>%s:</strong></p>\s*<p>(.*?)</p>" % label, row, re.S)
                 return strip_html(mm.group(1)) if mm else ""
+            closes = ""
+            try:
+                closes = datetime.datetime.strptime(re.sub(r"^\w+day\s+", "", field("Applications close")), "%d %B %Y").date().isoformat()
+            except Exception:
+                pass
             blurb = re.search(r"Applications close:.*?</p>\s*</div>.*?<p>(.*?)</p>", row, re.S)
             desc = strip_html(blurb.group(1)) if blurb else ""
             time.sleep(DELAY)
             try:
                 d = get("https://www.careers.vic.gov.au" + path).decode("utf8", "ignore")
-                main = re.search(r"<main[^>]*>(.*?)</main>", d, re.S)
+                # The ad itself sits in the "description" field (the page has no <main> element)
+                main = re.search(r'field--name-description[^>]*>(.*?)</div>\s*(?:</div>|<div)', d, re.S) or re.search(r"<main[^>]*>(.*?)</main>", d, re.S)
                 if main:
                     desc = strip_html(main.group(1))[:12000]
             except Exception:
                 pass
             yield dict(
-                source="vic-gov", source_id="vic-" + path.rsplit("-", 1)[-1],
+                source="vic-gov", source_id="vic-" + path.rsplit("-", 1)[-1], closes=closes,
                 employer=strip_html(dept.group(1)) if dept else "Victorian Government",
                 title=title, url="https://www.careers.vic.gov.au" + path,
                 location=(field("Location") + ", VIC").strip(", "), description=desc, posted="",
                 employment_type=field("Work Type"), workplace="", salary_text=field("Salary"), remote_flag=None,
             )
         time.sleep(DELAY)
+
+
+VIC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vic_cache.json")
+
+
+def vic_gov_or_cache():
+    """careers.vic.gov.au blocks GitHub's computers (Cloudflare returns 403 to their whole network), so when the live
+    scrape fails, use the saved copy in vic_cache.json, skipping any role whose closing date has passed.
+    Refresh the saved copy from a computer the site does let in: python vic_refresh.py"""
+    try:
+        return list(vic_gov())
+    except Exception as e:
+        today = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).date().isoformat()
+        cached = json.load(open(VIC_CACHE)) if os.path.exists(VIC_CACHE) else {"jobs": []}
+        live = [j for j in cached["jobs"] if not j.get("closes") or j["closes"] >= today]
+        print(f"note vic-gov: live site unavailable ({e}); using saved copy from {cached.get('saved', '?')}: {len(live)} open roles")
+        return live
 
 
 # ---------------- Avature career sites (e.g. Woolworths Group) ----------------
