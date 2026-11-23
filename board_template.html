@@ -42,6 +42,7 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .layer{position:absolute;inset:0}
 .gl{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s}
 .hero.has-gl .gl{opacity:1}
+.hero:not(.has-gl) .aurora{opacity:.5}   /* without WebGL, keep the CSS fallback dark enough for the text */
 .b1{width:70%;height:120%;left:-10%;bottom:-75%;background:#6a1cf0;animation:drift1 22s ease-in-out infinite alternate}
 .b2{width:45%;height:90%;right:-8%;bottom:-45%;background:#f09bff;opacity:.6!important;animation:drift2 27s ease-in-out infinite alternate}
 .b3{width:40%;height:80%;right:-12%;top:-10%;background:#2f45d6;opacity:.55!important;animation:drift3 31s ease-in-out infinite alternate}
@@ -52,12 +53,14 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 @keyframes drift4{100%{transform:translate(-30%,-8%) scale(1.3);border-radius:55% 45% 60% 40%/45% 60% 40% 55%}}
 @keyframes hue{to{filter:hue-rotate(-28deg) saturate(1.15)}}
 .coil.off{display:none}
+.coil{opacity:0;transform:translateY(24px) scale(.96);transition:opacity .9s cubic-bezier(.2,.75,.2,1),transform 1.1s cubic-bezier(.2,.75,.2,1)}
+.coil.on{opacity:1;transform:none}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.16;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.coil{position:fixed;right:-160px;top:58px;width:460px;height:auto;filter:drop-shadow(0 40px 60px #12004a99)}
+.coil{position:fixed;right:-160px;top:58px;width:460px;height:auto;filter:drop-shadow(0 30px 50px #12004a66)}
 .top{display:flex;align-items:center;gap:10px;height:64px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
 .brand svg{width:24px;height:24px}
-.proto{font-size:12px;font-weight:500;border:1px solid #ffffff40;border-radius:999px;padding:1px 9px;color:#ffffffcc}
+.proto{font-size:12px;font-weight:500;border:1px solid #ffffff59;border-radius:999px;padding:1px 9px;color:#fff}
 .navlink{margin-left:auto;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;color:#fff;font-weight:500;padding:8px 14px;border-radius:999px}
 .navlink:hover{background:#ffffff1a}
 .intro{padding:clamp(20px,3.5vw,48px) 0 0}
@@ -87,8 +90,8 @@ h1 span{display:inline-block;background:linear-gradient(90deg,#e7b6ff 0%,#f3e2ff
 .xin[hidden]{display:none}
 .sep{flex:none;width:1px;align-self:stretch;margin:8px 4px;background:#dcdce1}
 .gobtn{min-width:120px}
-.fbtn{position:relative;display:inline-flex;align-items:center;gap:8px;height:60px;padding:0 22px;border-radius:999px;border:1px solid #ffffff4d;background:#ffffff1a;color:#fff;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap}
-.fbtn:hover,.fbtn[aria-expanded=true]{background:#ffffff26}
+.fbtn{position:relative;display:inline-flex;align-items:center;gap:8px;height:60px;padding:0 22px;border-radius:999px;border:1px solid #ffffff59;background:#0000002e;color:#fff;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap}
+.fbtn:hover,.fbtn[aria-expanded=true]{background:#00000047}
 .fbtn .n{background:#fff;color:#18181b;border-radius:999px;font-size:12px;font-weight:700;padding:0 7px;line-height:20px}
 .sug{position:absolute;z-index:45;top:calc(100% + 14px);left:0;width:max(100%,340px);max-width:calc(100vw - 32px);margin:0;padding:6px;list-style:none;background:var(--s-lowest);color:var(--on-s);border-radius:16px;box-shadow:0 18px 50px #0006;max-height:min(380px,60vh);overflow:auto}
 .sug[hidden]{display:none}
@@ -106,8 +109,8 @@ h1 span{display:inline-block;background:linear-gradient(90deg,#e7b6ff 0%,#f3e2ff
 .reveal.open{grid-template-rows:1fr}
 .reveal>div{overflow:hidden}
 .frow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:14px}
-.dd{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 16px;border-radius:999px;border:1px solid #ffffff38;background:#ffffff14;color:#fff;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
-.dd:hover{background:#ffffff24}
+.dd{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 16px;border-radius:999px;border:1px solid #ffffff4d;background:#0000002e;color:#fff;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.dd:hover{background:#00000047}
 .dd::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.8px 1.8px 0;rotate:45deg;translate:0 -2px;opacity:.8}
 .dd.on{background:#fff;color:#18181b;border-color:#fff;font-weight:600}
 .dd .n{background:var(--primary);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:0 6px;line-height:18px}
@@ -236,10 +239,6 @@ select{appearance:none;-webkit-appearance:none;font:inherit;font-size:14px;font-
 .aitag{display:inline-block;vertical-align:middle;margin-left:8px;font-size:11px;font-weight:600;letter-spacing:.02em;color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 40%,transparent);border-radius:999px;padding:1px 8px}
 .fine{font-size:13px;color:var(--on-sv)}
 .warn{font-size:14px;background:var(--s-low);border-radius:12px;padding:12px 14px;margin:0 0 16px}
-.alert{margin-top:20px;background:var(--s-low);border-radius:18px;padding:20px}
-.alert h3{margin:0 0 4px}
-.alert form{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.alert input{flex:1 1 200px;font:inherit;font-size:16px;border:1px solid var(--ov);background:var(--s-lowest);color:var(--on-s);border-radius:12px;padding:10px 14px;min-height:48px}
 .ok{font-size:14px;margin-top:12px}
 .toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--on-ink);padding:12px 18px;border-radius:12px;font-size:14px;font-weight:500;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
@@ -325,6 +324,81 @@ dialog.sdrawer::backdrop{background:#000}
   .dhead{padding:20px 20px 4px}.dbody{padding:20px}.facts{margin:12px 20px 0;grid-template-columns:1fr 1fr}
   .pg.num{display:none}.pg.num[aria-current=page]{display:inline-block}.gap{display:none}
 }
+.pages:has(.page:not([hidden])){padding-top:clamp(24px,4vw,48px);padding-bottom:64px}
+.page{max-width:720px;background:var(--s-lowest);border:1px solid var(--ov);border-radius:24px;padding:clamp(22px,4vw,44px)}
+.page h2{font-size:clamp(28px,3vw,38px);font-weight:650;letter-spacing:-.035em;line-height:1.1;margin:10px 0 10px}
+.page h3{font-size:18px;font-weight:600;letter-spacing:-.015em;margin:28px 0 8px}
+.page p,.page li{max-width:64ch}
+.page ul{padding-left:20px;margin:0}
+.page li{margin:6px 0}
+.page .lead{font-size:19px;color:var(--on-sv);margin:0 0 18px}
+.pback{font-size:14px;color:var(--on-sv);text-decoration:none}
+.pback:hover{color:var(--on-s);text-decoration:underline}
+.pform{display:grid;gap:18px;margin-top:22px;max-width:520px}
+.pfield{display:grid;gap:6px;border:0;padding:0;margin:0}
+.pl{font-size:14px;font-weight:600}
+.pform input[type=email],.pform textarea{font:inherit;font-size:16px;color:var(--on-s);background:var(--s-lowest);border:1px solid var(--outline);border-radius:12px;padding:12px 14px}
+.pform input[type=email]:focus,.pform textarea:focus{outline:2px solid var(--ink);outline-offset:0;border-color:var(--ink)}
+.pr{display:flex;align-items:center;gap:10px;font-size:15px;min-height:36px;cursor:pointer}
+.pr input{width:18px;height:18px;accent-color:var(--ink)}
+.psearch{margin:0;font-size:16px;font-weight:600;background:var(--s-low);border-radius:12px;padding:12px 14px}
+.pform .btn{justify-self:start}
+.pok{font-size:14px;background:var(--s-low);border-radius:12px;padding:12px 14px}
+body.on-page #results{display:none}
+/* On About, Feedback and Saved the header becomes the page title, and the search steps aside */
+body.on-title .intro,body.on-title .find{display:none}
+body.on-saved .tabs{display:none}
+.ptitle h1 span{background-image:linear-gradient(90deg,var(--hg1) 0%,var(--hg2) 45%,#fff 100%)}
+body.t-about{--hg1:#b0d4ff;--hg2:#ddeeff}
+body.t-feedback{--hg1:#ffbf94;--hg2:#ffe8d8}
+body.t-saved{--hg1:#ffb3de;--hg2:#ffe0f1}
+.ptitle{padding:clamp(18px,3vw,40px) 0 clamp(28px,4vw,52px)}
+.ptitle .pback{display:inline-block;color:#fff;font-size:15px;margin-bottom:14px}
+.ptitle .pback:hover{text-decoration:underline}
+.ptitle h1{max-width:none;font-size:clamp(38px,5.2vw,64px)}
+.ptitle h1 span{display:inline-block}
+.psub{margin:12px 0 0;font-size:clamp(17px,1.6vw,20px);line-height:1.45;color:#fff;max-width:46ch}
+.ptitle.go .pback,.ptitle.go h1 span,.ptitle.go .psub,.go-page{animation:rise .9s cubic-bezier(.2,.75,.2,1) both}
+.ptitle.go h1 span{animation-delay:.08s}.ptitle.go .psub{animation-delay:.2s}.go-page{animation-delay:.32s}
+/* Menu: a dark panel slides in from the right with a curved leading edge that flattens as it lands
+   (after Olivier Larose's curved menu). Links glide in one after another; a violet dot marks the current page. */
+.menu{position:fixed;inset:0;z-index:100;color-scheme:dark;color:#fff;overflow:hidden}
+.menu[hidden]{display:none}
+.mshade{position:absolute;inset:0;background:rgba(6,3,14,.5)}
+.mpanel{position:absolute;top:0;right:0;height:100%;width:min(520px,100vw);background:#150d28;display:flex;flex-direction:column;will-change:transform}
+.mcurve{position:absolute;top:0;right:calc(100% - 1px);width:100px;height:100%;overflow:visible;pointer-events:none}
+.mcurve path{fill:#150d28}
+.mtop{height:96px}
+@media(max-width:899px){.mtop{height:64px}}
+/* Menu button (after Olivier Larose's curved menu): a violet circle at the top right of the page. It scrolls away with
+   the header, and is pinned in place only while the menu is open so it can close it.
+   Its two thin lines twist into a cross while the menu is open, and it stays on top of the panel to close it. */
+@property --b1{syntax:'<color>';inherits:true;initial-value:#6b38fb}
+@property --b2{syntax:'<color>';inherits:true;initial-value:#a63ad8}
+.burger{position:absolute;top:0;right:0;margin:20px;z-index:101;width:80px;height:80px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--b1),var(--b2));color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 30px #12004a59;transition:--b1 .9s,--b2 .9s,transform .3s cubic-bezier(.2,.75,.2,1)}
+/* Each page's colours, all dark enough for white lines at 4.5:1 or more (WCAG AA) */
+body{--b1:#6b38fb;--b2:#a63ad8}
+body.t-about{--b1:#2563eb;--b2:#4f46e5}
+body.t-feedback{--b1:#c74b2a;--b2:#a8329f}
+body.t-saved{--b1:#c0267a;--b2:#9d2fd0}
+.burger:hover{transform:scale(1.06)}
+.burger.pinned{position:fixed}
+.burger:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lines{position:relative;width:32px;height:14px;display:block}
+.lines i{position:absolute;left:0;right:0;height:2px;border-radius:2px;background:currentColor;transition:transform .45s cubic-bezier(.76,0,.24,1),top .45s cubic-bezier(.76,0,.24,1)}
+.lines i:first-child{top:2px}.lines i:last-child{top:10px}
+.is-x .lines i{top:6px}.is-x .lines i:first-child{transform:rotate(45deg)}.is-x .lines i:last-child{transform:rotate(-45deg)}
+@media(max-width:899px){.burger{width:56px;height:56px;margin:12px 12px}.lines{width:24px;height:12px}.lines i:last-child{top:8px}.is-x .lines i{top:5px}}
+.mbody{flex:1;overflow:auto;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,6vh,72px) clamp(28px,5vw,80px) 36px}
+.mlabel{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#b4aec2;border-bottom:1px solid #ffffff2e;padding-bottom:12px;margin:0 0 28px}
+.mlist{display:grid;gap:6px}
+.mlist a{position:relative;display:flex;align-items:center;color:#fff;text-decoration:none;font-size:clamp(36px,4.2vw,52px);font-weight:600;letter-spacing:-.035em;line-height:1.15;padding:4px 0}
+.mlist a::before{content:"";position:absolute;left:-26px;width:10px;height:10px;border-radius:50%;background:#b9a2ff;transform:scale(0);transition:transform .35s cubic-bezier(.76,0,.24,1)}
+.mlist a:hover::before,.mlist a:focus-visible::before{transform:scale(.6)}
+.mlist a[aria-current=page]::before{transform:scale(1)}
+.mfoot{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;color:#b4aec2;margin-top:40px}
+.mfoot a{color:#fff;text-decoration:none}.mfoot a:hover{text-decoration:underline}
+@media(max-width:599px){.mlist a::before{left:-18px;width:8px;height:8px}}
 /* Arrival: heading lines, search and the first cards rise in, one after another */
 @keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
 .intro h1 span,.find .srow,.rbar,.job.in{animation:rise .9s cubic-bezier(.2,.75,.2,1) both}
@@ -339,10 +413,14 @@ dialog.sdrawer::backdrop{background:#000}
  <div class="clip" aria-hidden="true">
   <div class="aurora" id="aurora"><div class="layer" data-d="0.9"><i class="b1"></i></div><div class="layer" data-d="-1.3"><i class="b2"></i></div><div class="layer" data-d="1.6"><i class="b3"></i></div><div class="layer" data-d="-0.7"><i class="b4"></i></div></div>
   <canvas class="gl" id="gl"></canvas>
-  <img class="coil" src="__COIL__" alt="" width="1100" height="1400">
+  <img class="coil on" data-for="roles" src="__COIL__" alt="" width="985" height="1000">
+  <img class="coil" data-for="about" data-src="assets/shape-about.webp" alt="" width="1000" height="980">
+  <img class="coil" data-for="feedback" data-src="assets/shape-feedback.webp" alt="" width="1000" height="934">
+  <img class="coil" data-for="saved" data-src="assets/shape-saved.webp" alt="" width="983" height="1000">
  </div>
  <div class="wrap">
-  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span><button class="navlink" id="navsaved"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Saved</button></div>
+  <div class="top"><span class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1d4ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect x="4" y="4" width="16" height="16" rx="6" fill="none" stroke="url(#bl)" stroke-width="4"/></svg>DesignRoles AU</span><span class="proto">Prototype</span></div>
+  <div class="ptitle" id="ptitle" hidden><a class="pback" href="#/">← All roles</a><h1 id="pt-h"></h1><p class="psub" id="pt-p"></p></div>
   <div class="intro"><h1><span class="l1">Design, research and </span><span class="l2">content roles in Australia</span></h1></div>
   <div class="find" id="find">
    <button type="button" class="mpill" id="mpill" aria-haspopup="dialog"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span id="mpill-t">Search for a new job role</span></button>
@@ -363,6 +441,30 @@ dialog.sdrawer::backdrop{background:#000}
  </div>
 </header>
 
+<div class="wrap pages" id="pages">
+ <section class="page" id="page-about" hidden aria-labelledby="pt-h">
+  <p>Design roles are scattered. Plenty never make it to the big job boards. They sit on a bank's careers site, a government portal or a university's hiring system, and they're easy to miss unless you check dozens of sites every week.</p>
+  <p>DesignRoles AU does that checking for you. Every morning it visits employers' own careers sites and government job boards, keeps the roles that are genuinely design, research or content work, and puts them in one place, sorted by what the work actually is.</p>
+  <h3>Who it's for</h3>
+  <ul><li>UX, UI, product, service and interaction designers</li><li>User and design researchers</li><li>Content designers, UX writers and content strategists</li><li>CX, strategy, design systems, DesignOps and design leaders</li><li>Graduates through to heads of design, across every state and remote</li></ul>
+  <h3>What makes it different</h3>
+  <ul><li><b>Straight from the source.</b> Roles come from employers' own sites, so you see ones that never reach the big boards.</li><li><b>Sorted by discipline.</b> Not just "design" as a keyword: UX, research, content, service design and more.</li><li><b>Pay, work mode and recruiter ads made clear.</b> You can see at a glance what's advertised and who's behind it.</li><li><b>Free, no account needed.</b> Saved roles stay on your device.</li></ul>
+  <p class="fine">This is a prototype and a community project. If it helps you, share it with someone who's looking.</p>
+ </section>
+ <section class="page" id="page-feedback" hidden aria-labelledby="pt-h">
+  <form class="pform" id="fbform" style="margin-top:0">
+   <fieldset class="pfield"><legend class="pl">What's it about?</legend>
+    <label class="pr"><input type="radio" name="fbt" checked> Suggest an employer or job site</label>
+    <label class="pr"><input type="radio" name="fbt"> A role is wrong or out of date</label>
+    <label class="pr"><input type="radio" name="fbt"> Something isn't working</label>
+    <label class="pr"><input type="radio" name="fbt"> An idea or other feedback</label></fieldset>
+   <label class="pfield"><span class="pl">Details</span><textarea rows="5" required placeholder="e.g. Please add Example Co's careers page: example.com/careers"></textarea></label>
+   <label class="pfield"><span class="pl">Email <span class="fine">(optional, if you'd like a reply)</span></span><input type="email" placeholder="you@example.com" autocomplete="email"></label>
+   <button class="btn primary" type="submit">Send feedback</button>
+   <div class="pok" hidden>Thanks! Feedback isn't connected yet, so this wasn't sent. It's a preview of the page.</div>
+  </form>
+ </section>
+</div>
 <main class="wrap" id="results">
  <div class="rbar">
   <div class="tabs" role="tablist" aria-label="Which roles">
@@ -389,6 +491,26 @@ dialog.sdrawer::backdrop{background:#000}
  <div class="sd-body" id="sdbody"><div id="sdslot"></div><div class="recent" id="recent"></div></div>
  <div class="sd-foot"><button type="submit" form="sform" class="btn" id="sdgo">Find roles</button></div>
 </dialog>
+<div class="menu" id="menu" hidden>
+ <div class="mshade" id="mshade"></div>
+ <div class="mpanel" role="dialog" aria-modal="true" aria-label="Menu">
+  <svg class="mcurve" aria-hidden="true" preserveAspectRatio="none"><path id="mcurve"/></svg>
+  <div class="mtop"></div>
+  <div class="mbody">
+   <div>
+    <p class="mlabel">Navigation</p>
+    <nav class="mlist" aria-label="Main">
+     <a href="#/" data-nav="roles">Find roles</a>
+     <a href="#/saved" data-nav="saved">Saved roles</a>
+     <a href="#/about" data-nav="about">About</a>
+     <a href="#/feedback" data-nav="feedback">Feedback</a>
+    </nav>
+   </div>
+   <p class="mfoot" id="mfoot"></p>
+  </div>
+ </div>
+</div>
+<button class="burger" id="burger" aria-label="Open menu" aria-haspopup="dialog" aria-expanded="false" aria-controls="menu"><span class="lines" aria-hidden="true"><i></i><i></i></span></button>
 <div class="toast" id="toast" role="status"></div>
 
 <footer><div class="wrap"><span id="gen"></span><span>Prototype. Sources: employer careers sites (PageUp, SuccessFactors, Workday, Oracle, Greenhouse, Lever, Ashby, SmartRecruiters and others), the WA and Queensland government job boards, NSW Government, and APS vacancies from the Australian Public Service Gazette (CC BY 4.0). Summaries and tags are generated by rules and may be wrong; check the original ad. Employer logos are fetched from each employer's own website or public icon services and belong to their owners.</span></div></footer>
@@ -437,6 +559,7 @@ let saved = new Set(store.get('dra-saved', []));
 const match = (j, skip) => {
   if (skip !== 'view' && st.view === 'new' && !isNew(j)) return false;
   if (skip !== 'view' && st.view === 'saved' && !saved.has(j.id)) return false;
+  if (document.body.classList.contains('on-saved')) return saved.has(j.id);   // the Saved page shows every saved role
   if (skip !== 'q' && st.q && !qMatch(j, st.q)) return false;
   if (skip !== 'loc' && st.wtxt && !(j.location + ' ' + j.states.join(' ')).toLowerCase().includes(st.wtxt.toLowerCase())) return false;
   for (const f of FACETS) { const s = st.f[f.k]; if (skip !== f.k && s.size && !f.get(j).some(v => s.has(v))) return false; }
@@ -560,12 +683,6 @@ const detail = j => {
    ${j.via_recruiter ? `<p class="warn">This ad is placed by a recruitment agency, so the hiring company may not be named.</p>` : ''}
    ${aiHTML(j)}
    <p class="fine">${j.ai ? 'AI summary of the ad. It can miss or misread details, so check' : 'This summary is taken from the ad automatically. Read'} the full description, requirements and how to apply in the original ad on ${esc(j.employer.replace(/ \(recruiter\)$/, ''))}'s site.</p>
-   <div class="alert">
-    <h3>Get roles like this by email</h3>
-    <p class="fine" style="margin:0">Alerts will use your current filters.</p>
-    <form id="alert"><label class="vh" for="em">Email</label><input type="email" id="em" required placeholder="you@example.com" autocomplete="email"><button class="btn primary" type="submit">Alert me</button></form>
-    <div id="alertok"></div>
-   </div>
   </div>
   </div>`;
 };
@@ -617,11 +734,11 @@ const render = keepSel => {
   const all = J.filter(j => match(j, 'view'));
   $('c-all').textContent = all.length; $('c-new').textContent = all.filter(isNew).length; $('c-saved').textContent = saved.size;
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.v === st.view));
-  $('count').textContent = R.length === J.length ? `${R.length} roles` : `${R.length} of ${J.length} roles`;
+  $('count').textContent = route.cur === 'saved' ? `${R.length} saved` : R.length === J.length ? `${R.length} roles` : `${R.length} of ${J.length} roles`;
   const slice = R.slice((st.page - 1) * PER, st.page * PER);
   if (!R.length) {
     SUGS = suggestions();
-    const msg = st.view === 'saved' && !saved.size ? 'You haven’t saved any roles yet. Tap the star on a role to keep it here. Saved roles stay on this device.' : 'No roles match all of these filters.';
+    const msg = st.view === 'saved' && !saved.size ? 'No saved roles yet. <a href="#/">Browse all roles</a>' : 'No roles match all of these filters.';
     $('list').innerHTML = `<div class="empty">${msg}${SUGS.length ? `<div class="sugs">${SUGS.map(([n, label], i) => `<button class="btn" data-sug="${i}">${esc(label)} <b>${n} role${n === 1 ? '' : 's'}</b></button>`).join('')}</div>` : ''}</div>`;
   } else {
     $('list').innerHTML = slice.map(card).join('');
@@ -681,7 +798,7 @@ addEventListener('popstate', () => closeDetail(true));
 
 // ---------- Events ----------
 const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 1800); };
-const toggleSave = id => { saved.has(id) ? saved.delete(id) : saved.add(id); store.set('dra-saved', [...saved]); toast(saved.has(id) ? 'Saved on this device' : 'Removed from saved'); render(true); };
+const toggleSave = id => { saved.has(id) ? saved.delete(id) : saved.add(id); store.set('dra-saved', [...saved]); toast(saved.has(id) ? 'Saved on this device' : 'Removed from saved'); render(true); if (route.cur === 'saved') subtitle('saved'); };
 const clearAll = () => { for (const f of FACETS) st.f[f.k].clear(); for (const k in st.t) st.t[k] = false; st.q = ''; st.wtxt = ''; $('q').value = ''; };
 const smooth = () => matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth';
 const toResults = () => $('results').scrollIntoView({behavior: smooth()});
@@ -713,7 +830,6 @@ document.addEventListener('click', e => {
   if ((b = g('.job'))) { select(b.dataset.id); return; }
 });
 $('sform').addEventListener('submit', e => { e.preventDefault(); hideSug('q'); st.q = $('q').value.trim(); if (st.pop) closeMenu(); changed(); document.activeElement?.blur(); saveRecent(); closeSearch(); toResults(); });
-document.addEventListener('submit', e => { if (e.target.id !== 'alert') return; e.preventDefault(); $('alertok').innerHTML = `<div class="ok">Thanks. Email alerts aren't live yet, so nothing was sent and your address wasn't stored. We're counting interest before we build them.</div>`; });
 $('list').addEventListener('keydown', e => {
   if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
   const cards = [...document.querySelectorAll('.job')]; const i = cards.findIndex(c => c.contains(document.activeElement));
@@ -726,7 +842,7 @@ $('closef').addEventListener('click', () => closeMenu(true));
 $('resetf').addEventListener('click', () => clearMenu(st.pop));
 $('sheet').addEventListener('close', () => { if (st.pop) { st.pop = null; render(true); } });
 $('sheet').addEventListener('click', e => { if (e.target === $('sheet')) closeMenu(true); });
-$('navsaved').addEventListener('click', () => { st.view = 'saved'; changed(); toResults(); });
+
 addEventListener('resize', () => { if (st.pop && !$('pop').hidden) { const b = $('frow').querySelector(`[data-dd="${st.pop}"]`); if (b) placePop(b); } });
 addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -840,11 +956,13 @@ document.addEventListener('click', e => { const x = e.target.closest('[data-xin]
 
 // ---------- Stop the page scrolling behind full-screen layers ----------
 let locks = 0, lockY = 0;
+const pageY = () => locks ? lockY : scrollY;   // while the page is locked (menu or drawer open), keep the scroll it had
 const lockPage = on => {
   locks = Math.max(0, locks + (on ? 1 : -1));
   const b = document.body;
-  if (on && locks === 1) { lockY = scrollY; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0'}); }
-  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: ''}); scrollTo(0, lockY); }
+  // Keep the scrollbar's width as padding while it's hidden, so the page doesn't shift sideways when it goes and comes back
+  if (on && locks === 1) { lockY = scrollY; const sb = innerWidth - document.documentElement.clientWidth; Object.assign(b.style, {position: 'fixed', top: -lockY + 'px', left: '0', right: '0', paddingRight: sb ? sb + 'px' : ''}); document.documentElement.style.setProperty('--sb', sb + 'px'); }
+  if (!on && locks === 0) { Object.assign(b.style, {position: '', top: '', left: '', right: '', paddingRight: ''}); document.documentElement.style.removeProperty('--sb'); scrollTo(0, lockY); }
 };
 $('sheet').addEventListener('close', () => { if ($('sheet').dataset.locked) { delete $('sheet').dataset.locked; lockPage(false); } });
 new MutationObserver(() => { if ($('sheet').open && !$('sheet').dataset.locked) { $('sheet').dataset.locked = 1; lockPage(true); } }).observe($('sheet'), {attributes: true, attributeFilter: ['open']});
@@ -896,18 +1014,28 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
 // It sits in whatever space is left to the right of the heading, search and filters (up to 35% may run off-screen),
 // shrinks to fit, and is hidden when there isn't room for it to read well.
 (() => {
-  const coil = document.querySelector('.coil'), hero = document.querySelector('.hero');
+  const hero = document.querySelector('.hero');
   const fit = () => {
+    const coil = hero.querySelector('.coil.on');   // every page uses the same lockup: large, running off the right edge
     const vw = document.documentElement.clientWidth;
     let right = 0;
-    for (const el of hero.querySelectorAll('.intro h1 span, .srow > *, .frow > *, .mpill')) {
+    for (const el of hero.querySelectorAll('.intro h1 span, .ptitle h1 span, .ptitle .psub, .srow > *, .frow > *, .mpill')) {
       const r = el.getBoundingClientRect(); if (r.width) right = Math.max(right, r.right);
     }
-    const w = Math.min(500, (vw - right - 32) / 0.65);
-    coil.classList.toggle('off', w < 240);
-    coil.style.width = Math.round(w) + 'px'; coil.style.right = Math.round(-0.35 * w) + 'px';
-    coil.style.top = Math.round(64 - 0.2 * w * 1400 / 1100) + 'px';   // the render has empty space above the coil; start it just under the nav
+    // Large, like a lockup: it starts a clear gap below the nav and runs past the bottom of the header, which crops it.
+    // The image itself holds the whole shape, so nothing is cut off inside the header. On wide screens the whole
+    // width shows inside the content edge; as space runs out it slides off the right edge (up to 35% hidden), then
+    // shrinks, and hides when there isn't room for it to read well.
+    const ar = (coil.naturalWidth || +coil.getAttribute('width')) / (coil.naturalHeight || +coil.getAttribute('height'));
+    const gut = Math.max(16, 0.025 * vw), edge = Math.max(gut, (vw - 1240) / 2 + gut);
+    let w = 560 * ar, x = Math.max(vw - edge - w, right + 32);
+    if (vw - x < 0.65 * w) { w = (vw - right - 32) / 0.65; x = right + 32; }
+    coil.classList.toggle('off', w / ar < 260);
+    coil.style.width = Math.round(w) + 'px'; coil.style.right = `calc(${Math.round(vw - x - w)}px + var(--sb, 0px))`;   // --sb: room left by a hidden scrollbar
+    coil.style.top = (64 + 24) + 'px';   // a clear gap under the nav
   };
+  window.fitShape = fit;
+  hero.querySelectorAll('.coil').forEach(c => c.addEventListener('load', fit));
   new ResizeObserver(fit).observe(hero); addEventListener('resize', fit);
   new MutationObserver(fit).observe($('frow'), {childList: true});
   fit(); setTimeout(fit, 1200);   // again after the arrival animation and fonts settle
@@ -922,21 +1050,25 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   if (!gl) return;
   const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const VS = 'attribute vec2 p;varying vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}';
-  const FS = `precision mediump float;varying vec2 uv;uniform float t;uniform vec2 res;uniform sampler2D rip;uniform vec2 texel;
+  const FS = `precision mediump float;varying vec2 uv;uniform float t;uniform vec2 res;uniform sampler2D rip;uniform vec2 texel;uniform float sc;uniform vec3 c0,c1,c2,c3,c4;
   vec3 blob(vec2 q,vec2 c,float r,vec3 col){vec2 d=q-c;return col*exp(-dot(d,d)/(r*r));}
   vec3 field(vec2 q){
     float a=res.x/res.y;vec2 s=vec2(q.x*a,q.y);
-    vec3 col=mix(vec3(.13,.06,.31),vec3(.024,.012,.05),smoothstep(0.,1.,q.y));
-    col+=blob(s,vec2((.18+.10*sin(t*.11))*a,-.05+.12*sin(t*.07+1.)),.62,vec3(.42,.11,.94));
-    col+=blob(s,vec2((.92+.06*cos(t*.09))*a,-.02+.10*cos(t*.08)),.42,vec3(.94,.6,1.)*.7);
-    col+=blob(s,vec2((.96+.05*sin(t*.06+2.))*a,.95+.08*sin(t*.1)),.5,vec3(.18,.27,.84)*.6);
-    col+=blob(s,vec2((.55+.14*sin(t*.05+3.))*a,-.12+.1*sin(t*.09+2.)),.38,vec3(.64,.3,1.)*.6);
+    vec3 col=mix(c0,vec3(.024,.012,.05),smoothstep(0.,1.,q.y));
+    col+=blob(s,vec2((.18+.10*sin(t*.11))*a,-.05+.12*sin(t*.07+1.)),.62,c1);
+    col+=blob(s,vec2((.92+.06*cos(t*.09))*a,-.02+.10*cos(t*.08)),.42,c2*.7);
+    col+=blob(s,vec2((.96+.05*sin(t*.06+2.))*a,.95+.08*sin(t*.1)),.5,c3*.6);
+    col+=blob(s,vec2((.55+.14*sin(t*.05+3.))*a,-.12+.1*sin(t*.09+2.)),.38,c4*.6);
     return col;}
   void main(){
     float h=texture2D(rip,uv).r;
     vec2 n=vec2(texture2D(rip,uv+vec2(texel.x,0.)).r-texture2D(rip,uv-vec2(texel.x,0.)).r,texture2D(rip,uv+vec2(0.,texel.y)).r-texture2D(rip,uv-vec2(0.,texel.y)).r);
-    vec3 col=field(uv-n*.06);
+    vec3 col=field(uv-n*.06+vec2(0.,sc));   // sc: scroll parallax, the gradient drifts a little slower than the page
     col+=vec3(.75,.7,1.)*clamp(dot(n,vec2(-.7,.7))*1.6,0.,1.)*.18;   // a soft sheen on the ripple's lit side
+    // Accessibility: never let the background get brighter than luminance 0.11, so white text stays above 4.5:1
+    // (WCAG AA) and the tinted headings above 3:1. Colours keep their hue and just get deeper where they'd be too bright.
+    vec3 lin=pow(max(col,0.),vec3(2.2));float lum=dot(lin,vec3(.2126,.7152,.0722));
+    if(lum>.11)col=pow(lin*(.11/lum),vec3(1./2.2));
     gl_FragColor=vec4(col,1.);}`;
   const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; };
   const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
@@ -947,6 +1079,17 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   const U = n => gl.getUniformLocation(prog, n);
   const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
   for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v);
+  // Each page has its own palette: the roles page is violet; the others shift to neighbouring hues so they still feel related.
+  const THEMES = {
+    roles:    [[.13,.06,.31], [.42,.11,.94], [.94,.6,1], [.18,.27,.84], [.64,.3,1]],
+    about:    [[.03,.08,.30], [.10,.30,.98], [.45,.85,1], [.30,.20,.90], [.25,.55,1]],     // cobalt into sky blue
+    feedback: [[.20,.06,.18], [.95,.38,.20], [1,.78,.52], [.45,.16,.90], [1,.46,.40]],     // coral and peach, over violet
+    saved:    [[.20,.05,.26], [.70,.12,.80], [1,.62,.72], [.36,.16,.90], [.95,.36,.78]],   // fuchsia into rose
+  };
+  let pal = THEMES.roles.map(c => c.slice()), goal = THEMES.roles;
+  const setPal = () => pal.forEach((c, i) => gl.uniform3fv(U('c' + i), c));
+  window.heroTheme = k => { goal = THEMES[k] || THEMES.roles; if (still) { pal = goal.map(c => c.slice()); setPal(); draw(performance.now()); } else start(); };
+  setPal();
   const rc = document.createElement('canvas'), rx = rc.getContext('2d');
   const SCALE = 0.5;   // the gradient is soft, so half resolution looks the same and is much lighter
   let W = 0, H = 0, ripples = [], last = null, visible = true, t0 = performance.now(), running = false, prev = performance.now();
@@ -967,6 +1110,9 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
       rx.fillStyle = g; rx.beginPath(); rx.arc(r.x * rc.width, r.y * rc.height, rad, 0, 7); rx.fill();
     }
     gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, rc);
+    const k = 1 - Math.exp(-dt * 2.2);   // ease toward the page's palette over about a second and a half
+    pal.forEach((c, i) => c.forEach((v, j) => c[j] = v + (goal[i][j] - v) * k)); setPal();
+    gl.uniform1f(U('sc'), still ? 0 : pageY() * 0.35 / Math.max(1, hero.getBoundingClientRect().height));
     gl.uniform1f(U('t'), still ? 4 : (now - t0) / 1000);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   };
@@ -992,12 +1138,136 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   hero.addEventListener('pointerdown', e => { if (calm(e)) return; const r = hero.getBoundingClientRect(); ripples.push({x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, age: 0, life: 3.2, power: 0.55}); });
 })();
 
+
+// ---------- Gentle parallax in the header as the page scrolls ----------
+// The gradient drifts slower than the page (in the shader), the heading, search and filters rise together a little faster
+// and fade out, and the shape rises a little slower than the page. Uses the separate `translate` property so it never fights the entrance animations.
+(() => {
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const hero = document.querySelector('.hero');
+  let queued = false;
+  const apply = () => {
+    queued = false;
+    const y = pageY(), h = hero.offsetHeight;
+    if (y > h + 200) return;
+    // Heading, search and filters move as one block: a touch faster than the page (so they never slide onto the
+    // listings) and fading out over the first half of the header
+    const fade = Math.max(0, 1 - y / (h * 0.55));
+    for (const el of document.querySelectorAll('.intro, .find, .ptitle')) {
+      el.style.translate = `0 ${(-y * 0.2).toFixed(1)}px`; el.style.opacity = fade.toFixed(3);
+      el.style.pointerEvents = fade < 0.15 ? 'none' : '';
+    }
+    for (const c of document.querySelectorAll('.coil')) c.style.translate = `0 ${(-y * 0.15).toFixed(1)}px`;
+  };
+  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(apply); } }, {passive: true});
+  addEventListener('hashchange', () => requestAnimationFrame(apply));
+  apply();
+})();
+
+// ---------- Menu and pages (#/about, #/feedback, #/saved) ----------
+const PAGES = {'#/about': 'about', '#/feedback': 'feedback'};
+const route = () => {
+  const h = location.hash, page = PAGES[h], isSaved = h === '#/saved';
+  const cur = page || (isSaved ? 'saved' : 'roles'), was = route.cur;
+  document.querySelectorAll('.page').forEach(p => p.hidden = p.id !== 'page-' + page);
+  document.body.classList.toggle('on-page', !!page);
+  document.body.classList.toggle('on-saved', isSaved);
+  document.body.classList.toggle('on-title', cur !== 'roles');
+  if (isSaved) st.view = 'saved'; else if (st.view === 'saved') st.view = 'all';
+  route.cur = cur;
+  if (was !== undefined || isSaved) changed();
+  if (cur !== 'roles') { $('pt-h').innerHTML = `<span>${TITLES[cur][0]}</span>`; subtitle(cur); }
+  $('ptitle').hidden = cur === 'roles';
+  document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === cur ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  window.heroTheme?.(cur);
+  document.body.classList.remove('t-' + was); document.body.classList.add('t-' + cur);
+  document.querySelectorAll('.coil').forEach(c => { const on = c.dataset.for === cur; if (on && !c.getAttribute('src')) c.src = c.dataset.src; c.classList.toggle('on', on); });   // other pages' shapes load only when first shown
+  window.fitShape?.();
+  if (was !== undefined && was !== cur) {
+    scrollTo({top: 0, behavior: 'instant'});   // a new page starts at the top, not part-way down
+    // Replay the arrival animation for the new page
+    if (cur === 'roles') document.querySelectorAll('.intro h1 span, .find .srow, .rbar').forEach(el => { el.style.animation = 'none'; el.offsetWidth; el.style.animation = ''; });
+  }
+  if (was !== cur) {
+    const body = page ? $('page-' + page) : isSaved ? $('results') : null;
+    [$('ptitle'), $('results'), ...document.querySelectorAll('.page')].forEach(el => el.classList.remove('go', 'go-page'));
+    if (cur !== 'roles') { $('ptitle').offsetWidth; $('ptitle').classList.add('go'); body.classList.add('go-page'); }
+  }
+  route.cur = cur;
+};
+const subtitle = cur => {
+  const n = saved.size;
+  $('pt-p').textContent = cur !== 'saved' ? TITLES[cur][1] : n ? `Your shortlist of ${n} role${n === 1 ? '' : 's'}, ready when you are. They’re kept on this device, so there’s no account to set up.` : 'Your shortlist lives here. Tap the star on any role to keep it, and come back when you’re ready to apply.';
+};
+const TITLES = {
+  about: ['About DesignRoles AU', 'Every design, research and content role we can find in Australia, checked each morning and taken straight from the employers. Free, and built by a designer.'],
+  feedback: ['Feedback', 'Help shape what this board becomes. Tell us about an employer we’re missing, a role that looks wrong, or an idea that would make your search easier.'],
+  saved: ['Saved roles', ''],
+};
+addEventListener('hashchange', () => { if (!/^#role=/.test(location.hash)) route(); });
+// The curve: the panel's left edge bulges out as it slides in, then flattens (and the reverse on the way out)
+const menu = $('menu'), still = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
+let curveAnim = 0;
+const curve = (from, to, ms) => {
+  cancelAnimationFrame(curveAnim);
+  const H = innerHeight, path = $('mcurve'), t0 = performance.now();
+  path.parentNode.setAttribute('viewBox', `0 0 100 ${H}`);
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const step = now => {
+    const k = still() ? 1 : Math.min(1, (now - t0) / ms), c = from + (to - from) * ease(k);
+    path.setAttribute('d', `M100 0 L100 ${H} Q${c} ${H / 2} 100 0`);
+    if (k < 1) curveAnim = requestAnimationFrame(step);
+  };
+  curveAnim = requestAnimationFrame(step);
+};
+// Animations run with the Web Animations API so they play the same in every browser, opening and closing.
+const EASE = 'cubic-bezier(.76,0,.24,1)', panel = menu.querySelector('.mpanel'), shut = $('burger');
+let navOpen = false, navTimer = 0;
+const anim = (el, frames, ms, delay = 0) => el.animate(frames, {duration: still() ? Math.min(ms, 200) : ms, delay: still() ? 0 : delay, easing: EASE, fill: 'both'});
+const slide = still() ? 'translateX(0)' : 'translateX(calc(100% + 100px))';
+const inertAll = on => document.querySelectorAll('body > *:not(#menu):not(#burger):not(script)').forEach(el => el.inert = on);
+const openNav = () => {
+  if (navOpen) return; navOpen = true; clearTimeout(navTimer);
+  $('mfoot').innerHTML = `${J.length} roles · updated ${new Date(D.generated.split(' ')[0]).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'})} · <a href="#/feedback">Suggest an employer</a>`;
+  const sb = innerWidth - document.documentElement.clientWidth;
+  shut.classList.add('pinned'); shut.style.right = sb ? sb + 'px' : '';   // stay put (and clear of the scrollbar space) while the page is locked
+  menu.hidden = false; lockPage(true); inertAll(true);
+  shut.setAttribute('aria-expanded', 'true'); shut.setAttribute('aria-label', 'Close menu');
+  anim($('mshade'), [{opacity: 0}, {opacity: 1}], 600);
+  anim(panel, [{transform: slide, opacity: still() ? 0 : 1}, {transform: 'translateX(0)', opacity: 1}], 800);
+  if (!still()) curve(-100, 100, 1000);
+  menu.querySelectorAll('.mlist a').forEach((a, i) => anim(a, [{transform: 'translateX(80px)', opacity: 0}, {transform: 'none', opacity: 1}], 800, 100 + i * 50));
+  anim($('mfoot'), [{opacity: 0}, {opacity: 1}], 600, 350);
+  shut.classList.add('is-x');
+  menu.querySelector('.mlist a').focus({preventScroll: true});
+};
+const closeNav = () => {
+  if (!navOpen) return; navOpen = false;
+  shut.classList.remove('is-x');
+  anim($('mshade'), [{opacity: 1}, {opacity: 0}], 700);
+  anim(panel, [{transform: 'translateX(0)', opacity: 1}, {transform: slide, opacity: still() ? 0 : 1}], 800);
+  if (!still()) curve(100, -100, 800);
+  [...menu.querySelectorAll('.mlist a')].forEach((a, i) => anim(a, [{transform: 'none', opacity: 1}, {transform: 'translateX(80px)', opacity: 0}], 600, i * 40));
+  anim($('mfoot'), [{opacity: 1}, {opacity: 0}], 300);
+  navTimer = setTimeout(() => {
+    menu.hidden = true; lockPage(false); inertAll(false); shut.classList.remove('pinned'); shut.style.right = '';
+    shut.setAttribute('aria-expanded', 'false'); shut.setAttribute('aria-label', 'Open menu'); shut.focus({preventScroll: true});
+  }, still() ? 200 : 800);
+};
+shut.addEventListener('click', () => navOpen ? closeNav() : openNav());
+$('mshade').addEventListener('click', closeNav);
+menu.addEventListener('click', e => { if (e.target.closest('.mlist a, .mfoot a')) closeNav(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && navOpen) closeNav(); });
+for (const f of ['fbform']) $(f).addEventListener('submit', e => { e.preventDefault(); e.target.querySelector('.pok').hidden = false; });
+document.addEventListener('click', e => { const a = e.target.closest('a[href="#/"]'); if (a && location.hash === '#/') { e.preventDefault(); route(); } });
+
 // ---------- Start: filters from the link, else from this device ----------
 fromQuery(location.search.length > 1 ? location.search : store.get('dra-filters', ''));
 st.open = store.get('dra-filters-open', true);
 $('q').value = st.q; $('sort').value = st.sort;
 const m = location.hash.match(/role=(\w+)/);
 render();
+route();
 if (m && J.some(j => j.id === m[1])) {
   const id = m[1];
   if (!R.some(j => j.id === id)) { clearAll(); st.view = 'all'; render(); }

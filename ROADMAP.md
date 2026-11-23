@@ -29,6 +29,11 @@ What's next for DesignRoles AU. Tick items off as they ship; add new ones at the
 - [ ] AI tagging pass, with the keyword rules as a fallback
 - [ ] Test with 10–20 designers and researchers; log what they find useful
 
+## Next phase: job alerts
+- [ ] Email alerts for a saved search (keywords, location and filters), daily or weekly
+- [ ] Choose a mailing service (e.g. Buttondown, Resend or Mailchimp's free tier), with double opt-in and one-click unsubscribe
+- [ ] Bring back the Job alerts page and the "Get roles like this by email" box on each role (both designed, removed for now)
+
 ## Growth: prove the board works
 Measure success before building anything to earn money from it.
 - [ ] Add privacy-friendly visitor analytics (no cookies, no personal data)
@@ -52,3 +57,10 @@ The likely revenue approach. Recruiters pay to reach a focused design and resear
 - [x] Prototype scraper and board
 - [x] Every role links to its original ad
 - [x] Daily run on GitHub Actions, published with GitHub Pages
+
+## Sites that block GitHub (saved copies)
+Some job sites block GitHub's computers, where the daily update runs. For these, a `*_refresh.py` script saves a copy
+of the roles from a computer the site lets in, and the daily update uses that copy when the live site refuses it
+(skipping roles past their closing date). A weekly scheduled task runs every `*_refresh.py` and commits the results.
+- Victorian Government (careers.vic.gov.au): `vic_refresh.py` → `vic_cache.json`
+- To add another: write `<name>_refresh.py` and a fallback in the connector, following the Victorian one.
