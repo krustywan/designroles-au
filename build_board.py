@@ -5,8 +5,11 @@ if d["count"] < 5:
     sys.exit(f"Only {d['count']} roles found - not publishing. Check the 'Scrape the job sites' step log.")
 # Attach a logo to each role when we have one for that employer (see fetch_logos.py).
 domains = {k: v for k, v in json.load(open("employer_domains.json")).items() if not k.startswith("_")}
+GOV_FALLBACK = {"vic-gov": "vic.gov.au"}   # a Victorian department with no logo of its own shows the Victorian Government's
 for j in d["jobs"]:
     dom = domains.get(j["employer"])
+    if not (dom and any(os.path.exists(f"logos/{dom}.{e}") for e in ("png", "svg", "jpg", "ico"))):
+        dom = GOV_FALLBACK.get(j.get("source"), dom)
     j["logo"] = next((f"logos/{dom}.{ext}" for ext in ("png", "svg", "jpg", "ico") if dom and os.path.exists(f"logos/{dom}.{ext}")), "")
 
 def white_only_svg(path):
