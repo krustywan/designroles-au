@@ -43,7 +43,16 @@ button{font:inherit;color:inherit;letter-spacing:inherit}
 .layer{position:absolute;inset:0}
 .gl{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s}
 .hero.has-gl .gl{opacity:1}
-.hero:not(.has-gl) .aurora{opacity:.5}   /* without WebGL, keep the CSS fallback dark enough for the text */
+.hero:not(.has-gl) .aurora{opacity:.5}
+/* Phones and tablets: a still gradient in each page's colours, with no WebGL, blur or blending to keep animations
+   smooth. Kept dark enough for white text at WCAG AA. */
+@media (hover:none) and (pointer:coarse){
+  .aurora,.gl,.hero::after{display:none}
+  .hero{background:radial-gradient(120% 70% at 10% 0%,#6b38fb80,transparent 60%),radial-gradient(90% 60% at 95% 15%,#a63ad85c,transparent 65%),linear-gradient(180deg,#07040f 0%,#140a33 55%,#24105a 100%)}
+  body.t-about .hero{background:radial-gradient(120% 70% at 10% 0%,#2563eb80,transparent 60%),radial-gradient(90% 60% at 95% 15%,#0ea5e94d,transparent 65%),linear-gradient(180deg,#04070f 0%,#081633 55%,#0e2560 100%)}
+  body.t-feedback .hero{background:radial-gradient(120% 70% at 10% 0%,#c74b2a73,transparent 60%),radial-gradient(90% 60% at 95% 15%,#a8329f5c,transparent 65%),linear-gradient(180deg,#0d0509 0%,#260b1c 55%,#3a1030 100%)}
+  body.t-saved .hero{background:radial-gradient(120% 70% at 10% 0%,#c0267a73,transparent 60%),radial-gradient(90% 60% at 95% 15%,#7c3aed5c,transparent 65%),linear-gradient(180deg,#0c040d 0%,#230a2c 55%,#36104a 100%)}
+}   /* without WebGL, keep the CSS fallback dark enough for the text */
 .b1{width:70%;height:120%;left:-10%;bottom:-75%;background:#6a1cf0;animation:drift1 22s ease-in-out infinite alternate}
 .b2{width:45%;height:90%;right:-8%;bottom:-45%;background:#f09bff;opacity:.6!important;animation:drift2 27s ease-in-out infinite alternate}
 .b3{width:40%;height:80%;right:-12%;top:-10%;background:#2f45d6;opacity:.55!important;animation:drift3 31s ease-in-out infinite alternate}
@@ -1066,11 +1075,13 @@ $('recent').addEventListener('click', e => { const b = e.target.closest('[data-r
   fit(); setTimeout(fit, 1200);   // again after the arrival animation and fonts settle
 })();
 
+const PHONE = matchMedia('(hover: none) and (pointer: coarse)').matches;   // touch-first devices
 // ---------- Header background: a slowly morphing gradient drawn with WebGL, with ripples where the pointer moves ----------
 // Ripples are drawn as fading rings on a small offscreen canvas; the shader reads that as a height map and bends the
 // gradient through it, like a finger trailed across water. Falls back to the CSS gradient if WebGL isn't available.
 (() => {
   const hero = document.querySelector('.hero'), cv = $('gl');
+  if (PHONE) return;   // phones get a still gradient instead (see .hero CSS): the moving one competed with the menu's slide
   const gl = cv.getContext('webgl', {alpha: false, antialias: false, premultipliedAlpha: false});
   if (!gl) return;
   const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
