@@ -7,7 +7,7 @@ T = {"naa.gov.au": "National Archives of Australia", "wesfarmers.com.au": "Wesfa
      "dffh.vic.gov.au": "Department of Families, Fairness and Housing", "transport.vic.gov.au": "Department of Transport and Planning Victoria",
      "vic.gov.au": "Victorian Government"}
 def get(u):
-    return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=25).read()
+    return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=40).read()
 def to_png(b, u):
     if b[:5] == b"<?xml" or b"<svg" in b[:2000]:
         b = cairosvg.svg2png(bytestring=b, output_width=512)
@@ -37,18 +37,24 @@ for dom, name in T.items():
         if re.search(r"logo|brand|home", ctx + frag[:300], re.I) and len(frag) > 400:
             cands.append(("inline", frag))
         if i > 60: break
-    # Wikimedia Commons
+    # Wikidata logo (P154) for the organisation
     try:
-        q = urllib.parse.urlencode({"action": "query", "list": "search", "srsearch": f"{name} logo", "srnamespace": 6, "format": "json", "srlimit": 4})
-        for r in json.loads(get("https://commons.wikimedia.org/w/api.php?" + q))["query"]["search"]:
-            q2 = urllib.parse.urlencode({"action": "query", "titles": r["title"], "prop": "imageinfo", "iiprop": "url", "iiurlwidth": 512, "format": "json"})
-            for p in json.loads(get("https://commons.wikimedia.org/w/api.php?" + q2))["query"]["pages"].values():
-                ii = p.get("imageinfo", [{}])[0]
-                if ii.get("thumburl"): cands.append(("commons:" + r["title"], ii["thumburl"]))
+        q = urllib.parse.urlencode({"action": "wbsearchentities", "search": name, "language": "en", "format": "json", "limit": 3})
+        for r in json.loads(get("https://www.wikidata.org/w/api.php?" + q))["search"]:
+            ent = json.loads(get(f"https://www.wikidata.org/wiki/Special:EntityData/{r['id']}.json"))["entities"][r["id"]]
+            for c in ent.get("claims", {}).get("P154", []):
+                fn = c["mainsnak"]["datavalue"]["value"]
+                cands.append(("wikidata:" + r["id"], "https://commons.wikimedia.org/wiki/Special:FilePath/" + urllib.parse.quote(fn.replace(" ", "_")) + "?width=512"))
     except Exception as e:
-        print("ERR commons", dom, e)
+        print("ERR wikidata", dom, e)
+    for kind, u in (("touch", f"https://www.{dom}/apple-touch-icon.png"), ("favsvg", f"https://www.{dom}/favicon.svg"),
+                    ("iconhorse", f"https://icon.horse/icon/{dom}"), ("s2", f"https://www.google.com/s2/favicons?domain_url=https://www.{dom}&sz=256")):
+        cands.append((kind, u))
     seen = set()
-    for kind, u in cands[:14]:
+    import os
+    os.makedirs(f"discovery/out/{dom}", exist_ok=True)
+    n = 0
+    for kind, u in cands[:24]:
         key = u[:300]
         if key in seen: continue
         seen.add(key)
@@ -59,6 +65,9 @@ for dom, name in T.items():
             out = io.BytesIO(); im.save(out, "PNG")
             # full-resolution copy too, for the chosen one
             full = to_png(b, u); full.thumbnail((512, 512)); fo = io.BytesIO(); full.save(fo, "PNG")
-            print(f"CAND\t{dom}\t{kind}\t{u[:160] if kind!='inline' else 'inline-svg'}\t{im.size[0]}x{im.size[1]}\t{base64.b64encode(out.getvalue()).decode()}\t{base64.b64encode(fo.getvalue()).decode()}")
+            n += 1
+            full.save(f"discovery/out/{dom}/{n:02d}_{re.sub(r'[^a-z0-9]+', '-', kind.lower())[:30]}.png")
+            if kind == "inline": open(f"discovery/out/{dom}/{n:02d}_inline.svg", "wb").write(b)
+            print(f"CAND\t{dom}\t{n:02d}\t{kind}\t{u[:160] if kind!='inline' else 'inline-svg'}\t{full.size[0]}x{full.size[1]}")
         except Exception as e:
             print("ERR", dom, kind, u[:120], e)
