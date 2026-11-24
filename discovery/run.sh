@@ -1,16 +1,31 @@
 #!/usr/bin/env bash
 python3 - <<'PY'
-import re, urllib.request, html
+import re, json, urllib.request, urllib.parse, html, http.cookiejar
 UA={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131 Safari/537.36"}
-get=lambda u: urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=40).read().decode('utf8','ignore')
-b=get("https://www.iworkfor.sa.gov.au/")
-t=re.sub(r"<script.*?</script>|<style.*?</style>"," ",b,flags=re.S)
-print("SA rows", len(re.findall(r'Advert\[ID\]',b)), "jobref", len(re.findall(r'pageID=\d+[^"]*Advert',b)))
-for m in re.findall(r'href="([^"]*(?:Advert|advert|job|Job)[^"]*)"',b)[:15]: print("SA HREF", html.unescape(m)[:200])
-i=b.find('orderByCol'); print("SA AROUND", re.sub(r"\s+"," ",b[i-200:i+3500])[:3700])
-txt=re.sub(r"\s+"," ",re.sub(r"<[^>]+>"," ",t)); j=txt.find('Closing'); print("SA TEXT", txt[max(0,j-1500):j+1500])
-js=get("https://jobs.nt.gov.au/bundles/HomeSearchTS?v=4ygnzkVQjQXcFjOxcAXKBK_Pm7uQTTDe1vpXQ79j0Sk1")
-print("NT JS len", len(js))
-for m in sorted(set(re.findall(r'["\'](/[A-Za-z]+/[A-Za-z]+[^"\']{0,60})["\']',js)))[:40]: print("NT URL", m)
-for m in re.findall(r'.{0,200}(?:ajax|fetch|\$\.(?:get|post)|url\s*:).{0,250}',js)[:12]: print("NT CALL", m[:450])
+cj=http.cookiejar.CookieJar(); op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+def req(u,data=None,h=None):
+    hh=dict(UA); hh.update(h or {})
+    return op.open(urllib.request.Request(u,data=data,headers=hh),timeout=40).read().decode('utf8','ignore')
+# NT
+try:
+    req("https://jobs.nt.gov.au/Home/Search")
+    r=req("https://jobs.nt.gov.au/Home/Search", json.dumps({"Keyword":"design"}).encode(), {"Content-Type":"application/json; charset=utf-8","X-Requested-With":"XMLHttpRequest"})
+    d=json.loads(r); print("NT keys", list(d.keys())); res=d.get("data") or []
+    print("NT n", len(res)); print("NT first", json.dumps(res[0])[:1500] if res else r[:500])
+except Exception as e: print("NT ERR", e)
+# SA
+b=req("https://www.iworkfor.sa.gov.au/")
+form=re.search(r'<FORM name="mainForm".*?</FORM>',b,re.S|re.I).group(0)
+fields={}
+for m in re.finditer(r'<INPUT([^>]*)>',form,re.I):
+    a=m.group(1); n=re.search(r'name="([^"]+)"',a); v=re.search(r'value=[\'"]([^\'"]*)[\'"]',a)
+    if n: fields[n.group(1)]=v.group(1) if v else ""
+print("SA fields", {k:v[:30] for k,v in fields.items()})
+print("SA text inputs", re.findall(r'<INPUT[^>]*type="text"[^>]*>',form,re.I)[:6])
+print("SA buttons", re.findall(r'<(?:INPUT|BUTTON)[^>]*(?:submit|searchButton)[^>]*>',form,re.I)[:4])
+fields["t_67[-1]"]="designer"; fields["action"]=fields.get("action") or "search"
+r=req("https://www.iworkfor.sa.gov.au/page.php?pageID=842&windowUID=0", urllib.parse.urlencode(fields).encode(), {"Content-Type":"application/x-www-form-urlencoded"})
+print("SA result len", len(r))
+for m in re.findall(r'href="([^"]*Advert[^"]*)"[^>]*>([^<]{3,100})<',r)[:20]: print("SA JOB", html.unescape(m[0])[:200], "|", m[1].strip())
+k=r.find('esign'); print("SA ctx", re.sub(r"\s+"," ",r[max(0,k-1500):k+800]))
 PY
