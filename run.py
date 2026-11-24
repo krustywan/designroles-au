@@ -52,7 +52,7 @@ def tasks():
         t.append((f"sf-classic/{company}", sec, lambda h=host, co=company, emp=emp: C.sf_classic(h, co, emp)))
     for tenant, site, emp, sec in SRC.get("cornerstone", []):
         t.append((f"cornerstone/{tenant}", sec, lambda te=tenant, si=site, emp=emp: C.cornerstone(te, si, emp)))
-    for key, fn in (("vic_gov", C.vic_gov_or_cache), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
+    for key, fn in (("vic_gov", C.vic_gov_or_cache), ("sa_gov", C.sa_gov), ("nt_gov", C.nt_gov), ("aps_gazette", C.aps_gazette), ("qld_gov", C.qld_gov), ("wa_gov", C.wa_gov)):
         if SRC.get(key):
             t.append((key.replace("_", "-"), "Government", fn))
     if SRC.get("remotive"):
@@ -91,11 +91,11 @@ def build(raw):
         if not disc:
             continue
         # A location that is only a work mode ("Hybrid", "Remote") on an Australian employer's site.
-        if re.fullmatch(r"\s*(hybrid|remote|flexible|on-?site|multiple locations)\s*", j["location"] or "", re.I) and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr"):
+        if re.fullmatch(r"\s*(hybrid|remote|flexible|on-?site|multiple locations)\s*", j["location"] or "", re.I) and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr", "sa-gov", "nt-gov"):
             j["workplace"] = j.get("workplace") or j["location"].strip().title()
             j["location"] = ""
         # An Australian employer's own careers site with no location on the ad: assume Australia.
-        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr"):
+        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr", "sa-gov", "nt-gov"):
             j["location"] = "Australia"
         if j["source"] not in ("wa-gov", "vic-gov", "qld-gov") and not T.in_scope_location(j["location"], j.get("workplace", ""), j.get("description", "")):
             continue
