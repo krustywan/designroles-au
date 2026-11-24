@@ -2,6 +2,9 @@
 
 What's next for DesignRoles AU. Tick items off as they ship; add new ones at the bottom of their section.
 
+## First things after launch
+- [ ] **Adzuna feed** for recruiter roles and the states that block GitHub (NSW, ACT, Tasmania). Adzuna's free developer key needs the site's public web address, so sign up once the board is live at its launch address, then add the app ID and key as GitHub secrets `ADZUNA_APP_ID` and `ADZUNA_APP_KEY`. Its terms require a "Jobs by Adzuna" label on every role it supplies, with "Jobs" linking to Adzuna. Show only roles we don't already have direct from the employer, clearly marked.
+
 ## More sources
 - [ ] Connectors still needed: WA Health jobs, Dayforce (QLD Country Bank), SBS, ReadyTech (currentjobs), UKG/Workforce Ready, Airswift
 - [ ] Victorian Government jobs: blocked from GitHub's computers, needs an access request
@@ -19,6 +22,9 @@ What's next for DesignRoles AU. Tick items off as they ship; add new ones at the
 - [x] NSW Government agencies (via nswconnect, Cornerstone), ELMO Talent, WordPress/Refari recruiter boards
 - [ ] Connectors for Taleo, LiveHire, Dayforce, Teamtailor, NGA (RACQ, Healthscope, Hostplus, Sydney Water, ECU)
 - [ ] Ask the Victorian Government for access (its jobs site blocks GitHub's computers)
+- [x] South Australian and Northern Territory Government job boards
+- [x] Chemist Warehouse, EPA Victoria, DFFH's own job board, Law Institute of Victoria (BambooHR)
+- [ ] NSW (iworkfor), ACT and Tasmanian Government boards: they block GitHub and this session, so they wait on Adzuna (above)
 
 ## Board
 - [ ] Remember when each role was first seen, so "new this week" works
