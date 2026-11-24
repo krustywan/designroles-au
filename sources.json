@@ -416,7 +416,7 @@
   [
    1121,
    "cw",
-   "Lagard\u00e8re Travel Retail",
+   "Lagardère Travel Retail",
    "Retail"
   ],
   [
@@ -1340,6 +1340,18 @@
    "Fujitsu",
    "Tech",
    "en_US"
+  ],
+  [
+   "careers.chemistwarehouse.com",
+   "Chemist Warehouse",
+   "Retail",
+   "en_US"
+  ],
+  [
+   "careers.epa.vic.gov.au",
+   "Environment Protection Authority",
+   "Government",
+   "en_US"
   ]
  ],
  "radancy": [
@@ -1637,6 +1649,20 @@
    "career10.successfactors.com",
    "cpaaustral",
    "CPA Australia",
+   "Professional services"
+  ]
+ ],
+ "vic_jobtools": [
+  [
+   "14160",
+   "Department of Families, Fairness and Housing",
+   "Government"
+  ]
+ ],
+ "bamboohr": [
+  [
+   "liv",
+   "Law Institute of Victoria",
    "Professional services"
   ]
  ]

@@ -431,6 +431,74 @@ def vic_gov():
         time.sleep(DELAY)
 
 
+# ---------------- Victorian Government "jobtools" boards (jobs.careers.vic.gov.au) ----------------
+# Some departments (e.g. DFFH) run their own board on this system. Unlike careers.vic.gov.au it lets GitHub in.
+def vic_jobtools(organid, employer):
+    base = "https://jobs.careers.vic.gov.au/jobtools/"
+    page = get(f"{base}jncustomsearch.searchResults?in_organid={organid}&in_jobDate=All").decode("utf8", "ignore")
+    total = int((re.search(r"Displaying \d+ - \d+ of (\d+)", page) or [0, 0])[1])
+    offset, seen = 0, set()
+    while True:
+        for li in page.split('class="job-item"')[1:]:
+            m = re.search(r'viewFullSingle\?in_organid=\d+&amp;in_jnCounter=(\d+)"[^>]*>\s*(.*?)\s*</a>', li, re.S)
+            if not m or m.group(1) in seen:
+                continue
+            jn, title = m.group(1), strip_html(m.group(2))
+            seen.add(jn)
+            if not candidate(title):
+                continue
+            def field(label):
+                mm = re.search(r'%s</span>\s*(.*?)\s*</p>' % re.escape(label), li, re.S)
+                return strip_html(mm.group(1)) if mm else ""
+            loc = re.search(r'Location:</span>\s*(.*?)\s*</p>', li, re.S)
+            closes = ""
+            try:
+                closes = datetime.datetime.strptime(field("Closing date: "), "%d-%b-%Y").date().isoformat()
+            except Exception:
+                pass
+            url = f"{base}jncustomsearch.viewFullSingle?in_organid={organid}&in_jnCounter={jn}"
+            desc = ""
+            time.sleep(DELAY)
+            try:
+                d = re.sub(r"<script.*?</script>|<style.*?</style>", " ", get(url).decode("utf8", "ignore"), flags=re.S)
+                i = d.find(title[:40])
+                desc = strip_html(d[i if i > 0 else 0:])[:12000]
+            except Exception:
+                pass
+            yield dict(source="vic-jobtools", source_id=f"vjt-{jn}", closes=closes, employer=employer, title=title, url=url,
+                       location=((strip_html(loc.group(1)) if loc else "") + ", VIC").strip(", "), description=desc, posted="",
+                       employment_type=field("Work type: "), workplace="", salary_text="", remote_flag=None)
+        offset += 20
+        if offset >= total or offset > 400:
+            break
+        # The next page is a form post, carrying the page's hidden fields
+        form = dict(re.findall(r'<INPUT TYPE="hidden" NAME="([^"]+)" VALUE="([^"]*)"', page, re.I))
+        form.update({"in_organid": str(organid), "in_pg": str(offset), "in_nav": "next_set", "in_jobDate": "All"})
+        time.sleep(DELAY)
+        page = get(base + "jncustomsearch.searchAction", data=urllib.parse.urlencode(form).encode()).decode("utf8", "ignore")
+
+
+# ---------------- BambooHR career pages ----------------
+def bamboohr(company, employer):
+    d = get_json(f"https://{company}.bamboohr.com/careers/list")
+    for j in d.get("result", []):
+        title = (j.get("jobOpeningName") or "").strip()
+        if not candidate(title):
+            continue
+        loc = j.get("location") or {}
+        desc = ""
+        try:
+            det = get_json(f"https://{company}.bamboohr.com/careers/{j['id']}/detail")
+            desc = strip_html(((det.get("result") or {}).get("jobOpening") or {}).get("description", ""))[:12000]
+        except Exception:
+            pass
+        yield dict(source="bamboohr", source_id=f"bamboo-{company}-{j['id']}", employer=employer, title=title,
+                   url=f"https://{company}.bamboohr.com/careers/{j['id']}",
+                   location=", ".join(x for x in (loc.get("city"), loc.get("state")) if x), description=desc, posted="",
+                   employment_type=j.get("employmentStatusLabel") or "", workplace="Remote" if j.get("isRemote") else "",
+                   salary_text="", remote_flag=bool(j.get("isRemote")) or None)
+
+
 VIC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vic_cache.json")
 
 
