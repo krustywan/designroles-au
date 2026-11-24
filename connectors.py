@@ -540,19 +540,21 @@ def sa_gov():
                 d = re.sub(r"<script.*?</script>|<style.*?</style>", " ", go(url), flags=re.S)
             except Exception:
                 d = ""
-            text = strip_html(d[d.find(title[:40]) if title[:40] in d else 0:])
+            body = d[d.find('class="aBody"'):] if 'class="aBody"' in d else d
+            text = strip_html(body)
             def field(label):
-                m = re.search(label + r"\s*:?\s*(.{2,90}?)(?=\s{2,}|\s(?:Classification|Job Ref|Work Location|Location|Closing Date|Agency|Salary|Status|Position)\b|$)", text, re.I)
-                return m.group(1).strip() if m else ""
+                m = re.search(r"<b>\s*%s:?\s*</b>\s*(.*?)<br" % label, body, re.S | re.I)
+                return strip_html(m.group(1)).strip() if m else ""
+            agency = re.search(r'class="aText">\s*(?:<!--.*?-->\s*)*<b>\s*([^<:]{3,120}?)\s*</b>', body, re.S)
+            m = re.search(r"Salary Range:\s*([^\n]{3,80}?)(?:\s{2,}|Location:|$)", text)
+            salary = m.group(1).strip() if m else ""
             closes = ""
-            try:
-                closes = datetime.datetime.strptime(re.sub(r"\s+\d{1,2}:\d{2}.*", "", field("Closing Date"))[:20].strip(), "%d/%m/%Y").date().isoformat()
-            except Exception:
-                pass
-            yield dict(source="sa-gov", source_id="sa-" + url.rstrip("/").rsplit("/", 1)[-1][-40:], closes=closes,
-                       employer=field("Agency") or "South Australian Government", title=title, url=url,
-                       location=(field("Work Location") or field("Location") or "Adelaide") + ", SA", description=text[:12000],
-                       posted="", employment_type=field("Status"), workplace="", salary_text=field("Salary"), remote_flag=None)
+            ref = field("Job reference")
+            loc = re.sub(r"^\d{4}\s*-\s*", "", field("Location")).title() or "Adelaide"
+            yield dict(source="sa-gov", source_id="sa-" + (ref or url.rstrip("/").rsplit("/", 1)[-1][-40:]), closes=closes,
+                       employer=(agency.group(1).strip() if agency else "South Australian Government"), title=title, url=url,
+                       location=loc + ", SA", description=text[:12000],
+                       posted="", employment_type=field("Job status"), workplace="", salary_text=salary, remote_flag=None)
 
 
 # ---------------- Northern Territory Government (jobs.nt.gov.au) ----------------
