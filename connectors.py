@@ -540,19 +540,19 @@ def sa_gov():
                 d = re.sub(r"<script.*?</script>|<style.*?</style>", " ", go(url), flags=re.S)
             except Exception:
                 d = ""
-            body = d[d.find('class="aBody"'):] if 'class="aBody"' in d else d
+            body = d[d.find(">", d.find('class="aBody"')) + 1:] if 'class="aBody"' in d else d
             text = strip_html(body)
             def field(label):
                 m = re.search(r"<b>\s*%s:?\s*</b>\s*(.*?)<br" % label, body, re.S | re.I)
                 return strip_html(m.group(1)).strip() if m else ""
-            agency = re.search(r'class="aText">\s*(?:<!--.*?-->\s*)*<b>\s*([^<:]{3,120}?)\s*</b>', body, re.S)
+            agency = re.search(r'^\s*<div class="aText">\s*(?:<!--.*?-->\s*)*<b>\s*([^<:]{3,120}?)\s*</b>', body, re.S)
             m = re.search(r"Salary Range:\s*([^\n]{3,80}?)(?:\s{2,}|Location:|$)", text)
             salary = m.group(1).strip() if m else ""
             closes = ""
             ref = field("Job reference")
             loc = re.sub(r"^\d{4}\s*-\s*", "", field("Location")).title() or "Adelaide"
             yield dict(source="sa-gov", source_id="sa-" + (ref or url.rstrip("/").rsplit("/", 1)[-1][-40:]), closes=closes,
-                       employer=(agency.group(1).strip() if agency else "South Australian Government"), title=title, url=url,
+                       employer=(html.unescape(agency.group(1)).strip() if agency else "South Australian Government"), title=title, url=url,
                        location=loc + ", SA", description=text[:12000],
                        posted="", employment_type=field("Job status"), workplace="", salary_text=salary, remote_flag=None)
 
