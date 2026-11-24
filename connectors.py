@@ -499,6 +499,94 @@ def bamboohr(company, employer):
                    salary_text="", remote_flag=bool(j.get("isRemote")) or None)
 
 
+
+# ---------------- South Australian Government (iworkfor.sa.gov.au) ----------------
+def _session():
+    import http.cookiejar
+    op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    def go(url, data=None, headers=None):
+        h = dict(UA); h.update(headers or {})
+        return op.open(urllib.request.Request(url, data=data, headers=h), timeout=40).read().decode("utf8", "ignore")
+    return go
+
+
+def sa_gov():
+    base = "https://www.iworkfor.sa.gov.au"
+    go, seen = _session(), set()
+    for kw in KEYWORDS:
+        home = go(base + "/")
+        form = re.search(r'<FORM name="mainForm".*?</FORM>', home, re.S | re.I)
+        if not form:
+            raise RuntimeError("SA search form not found")
+        fields = []
+        for m in re.finditer(r"<INPUT([^>]*)>", form.group(0), re.I):
+            a = m.group(1)
+            n, v, t = (re.search(p, a) for p in (r'name="([^"]+)"', r"""value=['"]([^'"]*)['"]""", r'type="([^"]+)"'))
+            if n and not (t and t.group(1).lower() in ("checkbox", "button", "reset")):
+                fields.append((n.group(1), v.group(1) if v else ""))
+        fields = [(k, kw if k == "Advert[Data]" else "Search" if k == "action" else v) for k, v in fields]
+        time.sleep(DELAY)
+        res = go(base + "/page.php?pageID=842&windowUID=0", urllib.parse.urlencode(fields).encode(),
+                 {"Content-Type": "application/x-www-form-urlencoded", "Referer": base + "/"})
+        res = res[res.find('id="report"'):]
+        for link, title in re.findall(r'<a[^>]+href="((?:https://www\.iworkfor\.sa\.gov\.au)?/jb/page/[^"]+)"[^>]*>\s*([^<]{3,150}?)\s*</a>', res):
+            title = html.unescape(title).strip()
+            url = urllib.parse.urljoin(base, html.unescape(link))
+            if url in seen or not candidate(title):
+                continue
+            seen.add(url)
+            time.sleep(DELAY)
+            try:
+                d = re.sub(r"<script.*?</script>|<style.*?</style>", " ", go(url), flags=re.S)
+            except Exception:
+                d = ""
+            body = d[d.find(">", d.find('class="aBody"')) + 1:] if 'class="aBody"' in d else d
+            text = strip_html(body)
+            def field(label):
+                m = re.search(r"<b>\s*%s:?\s*</b>\s*(.*?)<br" % label, body, re.S | re.I)
+                return strip_html(m.group(1)).strip() if m else ""
+            agency = re.search(r'^\s*<div class="aText">\s*(?:<!--.*?-->\s*)*<b>\s*([^<:]{3,120}?)\s*</b>', body, re.S)
+            m = re.search(r"Salary Range:\s*([^\n]{3,80}?)(?:\s{2,}|Location:|$)", text)
+            salary = m.group(1).strip() if m else ""
+            closes = ""
+            ref = field("Job reference")
+            loc = re.sub(r"^\d{4}\s*-\s*", "", field("Location")).title() or "Adelaide"
+            yield dict(source="sa-gov", source_id="sa-" + (ref or url.rstrip("/").rsplit("/", 1)[-1][-40:]), closes=closes,
+                       employer=(html.unescape(agency.group(1)).strip() if agency else "South Australian Government"), title=title, url=url,
+                       location=loc + ", SA", description=text[:12000],
+                       posted="", employment_type=field("Job status"), workplace="", salary_text=salary, remote_flag=None)
+
+
+# ---------------- Northern Territory Government (jobs.nt.gov.au) ----------------
+def nt_gov():
+    go, seen = _session(), set()
+    go("https://jobs.nt.gov.au/Home/Search")
+    for kw in KEYWORDS:
+        time.sleep(DELAY)
+        d = json.loads(go("https://jobs.nt.gov.au/Home/Search", json.dumps({"Keyword": kw}).encode(),
+                          {"Content-Type": "application/json; charset=utf-8"}))
+        for j in d.get("data") or []:
+            title = (j.get("jobTitle") or "").strip()
+            rid = j.get("rtfId")
+            if rid in seen or not candidate(title) or j.get("isCanceled"):
+                continue
+            seen.add(rid)
+            closes = ""
+            m = re.search(r"/Date\((\d+)\)/", str(j.get("closingDateAsDateTime") or j.get("closingDate") or ""))
+            if m:
+                closes = datetime.datetime.utcfromtimestamp(int(m.group(1)) / 1000).date().isoformat()
+            posted = ""
+            m = re.search(r"/Date\((\d+)\)/", str(j.get("dateAdded") or ""))
+            if m:
+                posted = datetime.datetime.utcfromtimestamp(int(m.group(1)) / 1000).date().isoformat()
+            yield dict(source="nt-gov", source_id=f"nt-{rid}", closes=closes,
+                       employer=j.get("agency") or "Northern Territory Government", title=title,
+                       url=f"https://jobs.nt.gov.au/Home/JobDetails?rtfId={rid}",
+                       location=((j.get("locations") or "Darwin").strip() + ", NT"),
+                       description=strip_html(j.get("primaryObjective") or "")[:12000], posted=posted,
+                       employment_type=j.get("vacancyType") or "", workplace="",
+                       salary_text=(j.get("getFormattedDesignationList") or "")[:200], remote_flag=None)
+
 VIC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vic_cache.json")
 
 
