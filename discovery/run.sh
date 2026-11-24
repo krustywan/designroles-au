@@ -6,26 +6,15 @@ cj=http.cookiejar.CookieJar(); op=urllib.request.build_opener(urllib.request.HTT
 def req(u,data=None,h=None):
     hh=dict(UA); hh.update(h or {})
     return op.open(urllib.request.Request(u,data=data,headers=hh),timeout=40).read().decode('utf8','ignore')
-# NT
-try:
-    req("https://jobs.nt.gov.au/Home/Search")
-    r=req("https://jobs.nt.gov.au/Home/Search", json.dumps({"Keyword":"design"}).encode(), {"Content-Type":"application/json; charset=utf-8","X-Requested-With":"XMLHttpRequest"})
-    d=json.loads(r); print("NT keys", list(d.keys())); res=d.get("data") or []
-    print("NT n", len(res)); print("NT first", json.dumps(res[0])[:1500] if res else r[:500])
-except Exception as e: print("NT ERR", e)
-# SA
+req("https://jobs.nt.gov.au/Home/Search")
+for kw in ["designer","user experience"]:
+    d=json.loads(req("https://jobs.nt.gov.au/Home/Search", json.dumps({"Keyword":kw}).encode(), {"Content-Type":"application/json; charset=utf-8"}))
+    res=d.get("data") or []; print("NT",kw,len(res),[x["jobTitle"] for x in res][:15])
+print("NT keys", list(res[0].keys()) if res else None)
+if res: print("NT sample", {k:(str(v)[:80]) for k,v in res[0].items() if k not in ("primaryObjective",)})
+b=req("https://jobs.nt.gov.au/Home/Search")
+print("NT detail links", sorted(set(re.findall(r'["\']([^"\']*(?:JobDetail|Details|rtfId|ViewJob)[^"\']*)["\']',b+req("https://jobs.nt.gov.au/bundles/HomeSearchTS?v=4ygnzkVQjQXcFjOxcAXKBK_Pm7uQTTDe1vpXQ79j0Sk1"))))[:10])
+js=req("https://www.iworkfor.sa.gov.au/js/searchForm.js?1786450965"); print("SAJS", re.sub(r"\s+"," ",js)[:2500])
 b=req("https://www.iworkfor.sa.gov.au/")
-form=re.search(r'<FORM name="mainForm".*?</FORM>',b,re.S|re.I).group(0)
-fields={}
-for m in re.finditer(r'<INPUT([^>]*)>',form,re.I):
-    a=m.group(1); n=re.search(r'name="([^"]+)"',a); v=re.search(r'value=[\'"]([^\'"]*)[\'"]',a)
-    if n: fields[n.group(1)]=v.group(1) if v else ""
-print("SA fields", {k:v[:30] for k,v in fields.items()})
-print("SA text inputs", re.findall(r'<INPUT[^>]*type="text"[^>]*>',form,re.I)[:6])
-print("SA buttons", re.findall(r'<(?:INPUT|BUTTON)[^>]*(?:submit|searchButton)[^>]*>',form,re.I)[:4])
-fields["t_67[-1]"]="designer"; fields["action"]=fields.get("action") or "search"
-r=req("https://www.iworkfor.sa.gov.au/page.php?pageID=842&windowUID=0", urllib.parse.urlencode(fields).encode(), {"Content-Type":"application/x-www-form-urlencoded"})
-print("SA result len", len(r))
-for m in re.findall(r'href="([^"]*Advert[^"]*)"[^>]*>([^<]{3,100})<',r)[:20]: print("SA JOB", html.unescape(m[0])[:200], "|", m[1].strip())
-k=r.find('esign'); print("SA ctx", re.sub(r"\s+"," ",r[max(0,k-1500):k+800]))
+i=b.find('brsSearchBtn'); print("SABTN", re.sub(r"\s+"," ",b[i-600:i+400]))
 PY
