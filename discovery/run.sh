@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 python3 - <<'PY'
-import re, connectors as C
-C.KEYWORDS[:] = ["designer"]
-go = C._session()
-orig = C._session
-C._session = lambda: (lambda url, data=None, headers=None: (globals().__setitem__('LAST', go(url, data, headers)) or LAST))
-for j in C.sa_gov(): break
-k = LAST.find("Department of Human Services"); print("RAW", re.sub(r"\s+", " ", LAST[k-1500:k+900]))
-for m in re.finditer(r"(?i)clos(e|ing)", LAST): print("CLOSE", re.sub(r"\s+"," ",LAST[m.start()-150:m.start()+200]))
+import connectors as C, tagger as T
+for name, fn in [("sa", C.sa_gov)]:
+    js = list(fn()); print("RES", name, len(js))
+    for j in js: print("JOB", name, "|", j["title"], "|", j["employer"], "|", j["location"], "|", j["employment_type"][:30], "|", j["salary_text"][:40], "|", len(j["description"]), "|", T.discipline(j["title"], j["description"]), "|", j["source_id"], "|", j["description"][:120])
 PY
