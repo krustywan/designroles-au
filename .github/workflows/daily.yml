@@ -58,6 +58,27 @@ jobs:
         with:
           path: site
 
+      # GitHub's publishing service sometimes can't find the upload straight away ("No artifacts named
+      # github-pages"). If that happens, wait a minute and try again, up to twice, before giving up.
       - name: Publish the website
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Wait, then retry publishing (1)
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 60
+
+      - name: Publish the website (retry 1)
+        id: deployment_retry1
+        if: steps.deployment.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Wait, then retry publishing (2)
+        if: steps.deployment.outcome == 'failure' && steps.deployment_retry1.outcome == 'failure'
+        run: sleep 120
+
+      - name: Publish the website (retry 2)
+        if: steps.deployment.outcome == 'failure' && steps.deployment_retry1.outcome == 'failure'
         uses: actions/deploy-pages@v4
