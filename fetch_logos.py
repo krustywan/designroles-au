@@ -145,7 +145,11 @@ def guess_domain(name, url):
     api = "https://www.wikidata.org/w/api.php?format=json&"
     try:
         hits = json.loads(fetch(api + urllib.parse.urlencode({"action": "wbsearchentities", "search": re.sub(r"\s*\(.*?\)", "", name), "language": "en", "limit": 3})))["search"]
+        want = re.sub(r"[^a-z0-9]", "", re.sub(r"\s*\(.*?\)", "", name).lower())
         for h in hits:
+            # only an exact name match counts (a search for "SEEK" also finds unrelated things)
+            if re.sub(r"[^a-z0-9]", "", (h.get("label") or "").lower()) != want:
+                continue
             ent = json.loads(fetch(api + urllib.parse.urlencode({"action": "wbgetentities", "ids": h["id"], "props": "claims"})))["entities"][h["id"]]["claims"]
             for c in ent.get("P856", []):
                 site = urllib.parse.urlparse(str(c["mainsnak"].get("datavalue", {}).get("value", ""))).hostname
