@@ -47,7 +47,8 @@ def fetch(url):
 
 
 def header_logos(domain):
-    """Images on the home page that are marked as the logo (usually the site header wordmark)."""
+    """Images on the home page that are marked as the logo (usually the site header wordmark).
+    Social-media, payment and app-store logos (often in the footer) are skipped."""
     for home in (f"https://www.{domain}/", f"https://{domain}/"):
         try:
             page = fetch(home).decode("utf8", "ignore")[:400000]
@@ -55,7 +56,7 @@ def header_logos(domain):
             continue
         out = []
         for tag in re.findall(r"<img[^>]+>", page, re.I):
-            if "logo" not in tag.lower():
+            if "logo" not in tag.lower() or re.search(r"instagram|facebook|tiktok|pinterest|linkedin|youtube|twitter|x-logo|whatsapp|apay|gpay|apple ?pay|google ?pay|paypal|afterpay|klarna|zip ?pay|visa|mastercard|amex|app ?store|google ?play", tag, re.I):
                 continue
             src = re.search(r'\ssrc=["\']([^"\']+)', tag, re.I)
             if src and not src.group(1).startswith("data:"):
