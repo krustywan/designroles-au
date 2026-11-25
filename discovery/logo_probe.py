@@ -3,7 +3,7 @@ import re, io, json, base64, urllib.request, urllib.parse, html
 from PIL import Image
 import cairosvg
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131 Safari/537.36"}
-T = {"naa.gov.au": "National Archives of Australia", "wesfarmers.com.au": "Wesfarmers"}
+T = {"cottonon.com": "Cotton On Group"}
 def get(u):
     return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=40).read()
 def to_png(b, u):

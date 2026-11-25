@@ -1,9 +1,11 @@
+#!/usr/bin/env bash
+pip -q install pillow cairosvg
+mkdir -p discovery/out/c
+for e in png svg jpg ico; do curl -s -f "https://krustywan.github.io/designroles-au/logos/cottonon.com.$e" -o discovery/out/c/live.$e && echo "LIVE $e"; done
 python3 - <<'PY'
-import re, urllib.request, html
-UA={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131 Safari/537.36"}
-b=urllib.request.urlopen(urllib.request.Request("https://jobs.careers.vic.gov.au/jobtools/jncustomsearch.searchResults?in_organid=14160&in_jobDate=All",headers=UA),timeout=40).read().decode('utf8','ignore')
-for h in sorted(set(re.findall(r'(?:href|action)="([^"]+)"',b))):
-    if 'searchResults' in h or 'page' in h.lower() or 'skip' in h.lower(): print("LINK", html.unescape(h)[:250])
-for m in re.findall(r'[^<>]{0,60}(?:of \d+|results|jobs found|Page \d)[^<>]{0,60}',b)[:10]: print("COUNT", m.strip()[:150])
-i=b.find('viewFullSingle'); print("ROW", re.sub(r'\s+',' ',b[i-1500:i+1200]))
+import os, fetch_logos as F
+os.makedirs(F.OUT, exist_ok=True)
+print("RESULT", F.one(("Cotton On", "cottonon.com")))
 PY
+cp logos/cottonon.com.* discovery/out/c/ 2>/dev/null
+python3 discovery/logo_probe.py 2>&1 | grep -E "CAND|ERR" | cut -c1-200
