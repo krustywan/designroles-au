@@ -94,6 +94,16 @@
    "riotgames",
    "Riot Games",
    "Gaming"
+  ],
+  [
+   "dept",
+   "Dept",
+   "Consultancy"
+  ],
+  [
+   "nousgroup",
+   "Nous Group",
+   "Consultancy"
   ]
  ],
  "lever": [
@@ -217,6 +227,16 @@
   [
    "secureframe",
    "Secureframe",
+   "Tech"
+  ],
+  [
+   "dovetail",
+   "Dovetail",
+   "Tech"
+  ],
+  [
+   "mitti",
+   "SafetyCulture",
    "Tech"
   ]
  ],
@@ -909,6 +929,18 @@
    "caw",
    "ABC",
    "Media"
+  ],
+  [
+   433,
+   "caw",
+   "Country Road Group",
+   "Retail"
+  ],
+  [
+   530,
+   "caw",
+   "World Vision",
+   "Not-for-profit"
   ]
  ],
  "wa_gov": true,
@@ -1377,6 +1409,18 @@
    "Environment Protection Authority",
    "Government",
    "en_US"
+  ],
+  [
+   "jobs.thesmithfamily.com.au",
+   "The Smith Family",
+   "Not-for-profit",
+   "en_US"
+  ],
+  [
+   "jobs.deloitte.com.au",
+   "Deloitte",
+   "Consultancy",
+   "en_US"
   ]
  ],
  "radancy": [
@@ -1667,6 +1711,14 @@
    "Recruitment",
    "dfp",
    40
+  ],
+  [
+   "https://endeavourgroupcareers.com.au/jobs?page={page}",
+   "/job/[\\w-]+-jid-\\d+",
+   "Endeavour Group",
+   "Retail",
+   "endeavour",
+   10
   ]
  ],
  "sf_classic": [
@@ -1698,6 +1750,11 @@
    "careers.tyro.com",
    "Tyro",
    "Banking"
+  ],
+  [
+   "careers.mantelgroup.com.au",
+   "Mantel Group",
+   "Consultancy"
   ]
  ],
  "taleo": [
@@ -1708,5 +1765,13 @@
    "RACQ",
    "Insurance"
   ]
- ]
+ ],
+ "workable": [
+  [
+   "rokt",
+   "Rokt",
+   "Tech"
+  ]
+ ],
+ "atlassian": true
 }
