@@ -4,48 +4,44 @@ import re, json, urllib.request, urllib.parse, concurrent.futures as cf
 UA={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131 Safari/537.36","Accept":"text/html,application/xhtml+xml,application/json","Accept-Language":"en-AU,en;q=0.9"}
 def get(u):
     r=urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=25); return r.geturl(), r.read().decode("utf8","ignore")
-ATS=r'(?:[a-z0-9-]+\.)?(?:myworkdayjobs\.com/[A-Za-z0-9_-]+|wd\d+\.myworkdaysite\.com/[^"\'\s]+|livehire\.com/careers/[a-z0-9-]+|teamtailor\.com|boards\.greenhouse\.io/[a-z0-9]+|job-boards\.greenhouse\.io/[a-z0-9]+|greenhouse\.io/embed/job_board\?for=[a-z0-9]+|jobs\.lever\.co/[a-z0-9-]+|jobs\.ashbyhq\.com/[A-Za-z0-9-]+|smartrecruiters\.com/[A-Za-z0-9-]+|pageuppeople\.com/(?:\d+|apply/\d+)|nga\.net\.au|taleo\.net|dayforcehcm\.com/[^"\'\s]*|apply\.workable\.com/[a-z0-9-]+|jobadder\.com|employmenthero\.com/[^"\'\s]{0,40}|successfactors\.(?:com|eu)[^"\'\s]{0,40}|bamboohr\.com|recruitee\.com|elmotalent\.com\.au|oraclecloud\.com[^"\'\s]{0,60}|avature\.net|jobvite\.com/[a-z0-9-]+|icims\.com|adlogic\.com\.au|applynow\.net\.au|humanforce|scouttalent|martianlogic|myrecruitmentplus|cvmail|mercury\.com\.au|eightfold\.ai|phenompeople|careers-page\.com|rippling|personio|breezy\.hr|bigredsky|seek\.com\.au/[^"\'\s]{0,40}|expr3ss|vacancyfiller|livevacancies|pinpointhq\.com|gethired|cornerstoneondemand|csod\.com)'
-E=[
-("Atlassian","https://www.atlassian.com/company/careers/all-jobs"),("WiseTech Global","https://www.wisetechglobal.com/careers/"),("SafetyCulture","https://safetyculture.com/careers/"),("Rokt","https://www.rokt.com/careers"),("Linktree","https://linktr.ee/about/careers"),("Dovetail","https://dovetail.com/careers/"),("Employment Hero","https://employmenthero.com/careers/"),("Domain","https://www.domain.com.au/group/careers/"),("Finder","https://www.finder.com.au/careers"),
-("Endeavour Group","https://www.endeavourgroup.com.au/careers"),("David Jones","https://www.davidjones.com/careers"),("Country Road Group","https://www.countryroadgroup.com.au/careers"),("Officeworks","https://careers.officeworks.com.au/"),("Temple & Webster","https://www.templeandwebster.com.au/careers"),("Aesop","https://www.aesop.com/au/r/careers"),
-("UniSuper","https://www.unisuper.com.au/about-us/careers"),("Aware Super","https://aware.com.au/careers"),("Rest","https://rest.com.au/about-rest/careers"),("Cbus","https://www.cbussuper.com.au/about-us/careers"),("ING","https://www.ing.com.au/careers.html"),("Bendigo","https://www.bendigoadelaide.com.au/careers/"),("Allianz","https://www.allianz.com.au/about-us/careers.html"),
-("Beyond Blue","https://www.beyondblue.org.au/about/careers"),("Black Dog Institute","https://www.blackdoginstitute.org.au/about/careers/"),("Orygen","https://www.orygen.org.au/About/Careers"),("headspace","https://headspace.org.au/our-organisation/careers/"),("Cancer Council NSW","https://www.cancercouncil.com.au/careers/"),("Cancer Council Vic","https://www.cancervic.org.au/about/careers"),("The Smith Family","https://www.thesmithfamily.com.au/about-us/careers"),("World Vision","https://www.worldvision.com.au/about-us/careers"),("Red Cross","https://www.redcross.org.au/careers/"),("WA Health","https://www.health.wa.gov.au/Careers"),("Silver Chain","https://www.silverchain.org.au/careers/"),
-("Deloitte","https://www.deloitte.com/au/en/careers.html"),("Mantel Group","https://mantelgroup.com.au/careers/"),("Slalom","https://www.slalom.com/au/en/careers"),("Nous Group","https://nousgroup.com/careers"),("Paper Giant","https://papergiant.net/careers"),("ThinkPlace","https://www.thinkplaceglobal.com/careers"),("Liquid Interactive","https://www.liquidinteractive.com.au/careers"),("Dept","https://www.deptagency.com/careers/"),("IBM","https://www.ibm.com/careers/search?field_keyword_05[0]=Australia"),("Publicis Sapient","https://careers.publicissapient.com/"),("Humaan","https://humaan.com/careers/"),
-("SBS","https://careers.sbs.com.au/"),("UTS","https://www.uts.edu.au/about/careers"),("UTS jobs","https://jobs.uts.edu.au/"),("QUT","https://www.qut.edu.au/about/careers"),("Curtin","https://staff.curtin.edu.au/job-vacancies/"),
-]
-def probe(n,u):
+def show(n,u,pat=None,ctx=0):
     try:
-        fu,b=get(u)
-    except Exception as e:
-        return f"{n} | ERR {str(e)[:60]}"
-    hits=set(m.lower() for m in re.findall(ATS,b))
-    sub=[]
-    if not hits:
-        host=urllib.parse.urlparse(fu).hostname
-        cands=[l for l in re.findall(r'href=["\']([^"\'#]+)["\']',b) if re.search(r'job|career|vacanc|opportunit|position|join',l,re.I)]
-        cands=[urllib.parse.urljoin(fu,l) for l in cands]
-        cands=[l for l in dict.fromkeys(cands) if l.rstrip('/')!=fu.rstrip('/') and not re.search(r'facebook|linkedin|twitter|instagram|youtube|\.pdf',l)][:4]
-        for c in cands:
-            try:
-                f2,b2=get(c); h2=set(m.lower() for m in re.findall(ATS,b2))
-                if h2: sub.append(f"{c[:70]} -> {sorted(h2)[:3]}"); hits|=h2; break
-                if urllib.parse.urlparse(f2).hostname!=host: sub.append(f"->{f2[:80]}")
-            except Exception: pass
-    return f"{n} | {fu[:70]} | {sorted(hits)[:4]} {sub[:2]}"
+        fu,b=get(u); t=re.search(r"<title>(.*?)</title>",b,re.S)
+        ext=sorted(set(urllib.parse.urlparse(l).hostname for l in re.findall(r'(?:href|src|action|data-url)=["\'](https?://[^"\']+)',b)))
+        ext=[h for h in ext if h and not re.search(r'facebook|instagram|linkedin|twitter|youtube|google|fonts|cdn|gstatic|doubleclick|tiktok|apple|vimeo|cloudfront|hotjar|onetrust|cookie|segment|optimizely|typekit|jsdelivr|unpkg|akamai|adobe|demdex|newrelic|sentry|clarity|bing|pinterest|cloudflare|recaptcha|wistia|hubspot|gravatar|w3\.org|schema\.org|x\.com',h)]
+        out=f"{n} | {fu[:80]} | {t.group(1).strip()[:50] if t else ''} | len {len(b)} | ext {ext[:14]}"
+        if pat: out+=" | M "+str(sorted(set(re.findall(pat,b)))[:8])
+        if ctx and pat:
+            m=re.search(pat,b); out+=" | C "+(re.sub(r"\s+"," ",b[max(0,m.start()-ctx):m.end()+ctx]) if m else "")
+        return out
+    except Exception as e: return f"{n} | {u} | ERR {str(e)[:70]}"
+J=[
+("Atlassian API","https://www.atlassian.com/endpoint/careers/listings",r'"title":"[^"]{0,60}"'),
+("Endeavour","https://endeavourgroupcareers.com.au/",None),("Endeavour jobs","https://endeavourgroupcareers.com.au/jobs",r'(?:myworkdayjobs|successfactors|pageup|smartrecruiters|livehire|workday)[^"\']{0,60}'),
+("Silver Chain","https://careers.silverchain.org.au/",r'(?:myworkdayjobs|successfactors|pageup|smartrecruiters|livehire|elmotalent|bigredsky|applynow|nga\.net)[^"\']{0,60}'),
+("Mitti","https://mitti.com/",None),("SafetyCulture","https://safetyculture.com/",r'mitti[^"\']{0,40}'),
+("Rest SR","https://rest.com.au/why-rest/about-rest/careers/open-opportunities",r'data-company[^>]{0,80}|company["\']?\s*[:=]\s*["\'][A-Za-z0-9_-]+'),
+("Smith Family","https://jobs.thesmithfamily.com.au/search",r'company=[A-Za-z0-9_]+'),
+("Smith Family rss","https://jobs.thesmithfamily.com.au/services/rss/job/?locale=en_GB&keywords=",r'<title>[^<]{0,60}'),
+("Mantel tt","https://careers.mantelgroup.com.au/jobs.rss",r'<title>[^<]{0,60}'),
+("WA Health","https://www.health.wa.gov.au/Careers/Search-our-jobs",r'https?://[a-z0-9.-]*bigredsky[^"\']{0,80}'),
+("Officeworks","https://www.officeworks.com.au/campaigns/careers",None),("Officeworks2","https://careers.officeworks.com.au/jobs",None),
+("Aware","https://aware.com.au/about-us/careers",None),("Linktree","https://linktr.ee/about/careers",r'(?:ashby|greenhouse|lever|workable)[^"\']{0,60}'),
+("David Jones","https://www.davidjones.com/careers",r'(?:careers|jobs)\.[a-z0-9.-]+'),("UniSuper","https://www.unisuper.com.au/about-us/careers",r'(?:careers|jobs|apply)[a-z0-9.-]*\.[a-z0-9.-]+/[^"\']{0,40}'),
+("Cbus","https://www.cbussuper.com.au/about-us/careers",r'(?:careers|jobs)[a-z0-9.-]*\.[a-z0-9.-]+[^"\']{0,40}'),("ING","https://www.ing.com.au/careers.html",r'(?:careers|jobs)[a-z0-9.-]*\.[a-z0-9.-]+[^"\']{0,40}'),
+("Bendigo","https://www.bendigoadelaide.com.au/careers/",r'href="[^"]*(?:job|vacanc|opportun)[^"]*"'),("Black Dog","https://www.blackdoginstitute.org.au/about/working-with-us/",r'href="[^"]*(?:job|vacanc|position|career)[^"]*"'),
+("Deloitte","https://www.deloitte.com/au/en/careers/job-search.html",r'(?:myworkdayjobs|avature|successfactors|jobs2web|apply\.deloitte)[^"\']{0,60}'),
+("Deloitte api","https://apply.deloitte.com.au/",None),("Slalom","https://www.slalom.com/au/en/careers",r'(?:myworkdayjobs|jobs\.slalom|greenhouse|lever|icims)[^"\']{0,60}'),
+("SBS adlogic","https://sbs.clients3.adlogic.com.au/",None),("SBS","https://careers.sbs.com.au/",r'adlogic[^"\']{0,80}'),
+("Curtin jobadder","https://staff.curtin.edu.au/job-vacancies/",r'data-[a-z-]*key="[^"]+"|jobadder[^"\']{0,80}'),
+("Cancer Vic","https://cancer-council-vic.applynow.net.au/",r'href="[^"]*/jobs/[^"]*"'),
+("IBM avature","https://ibmglobal.avature.net/en_US/careers/SearchJobs?jobRecordsPerPage=6&location=Australia",r'/careers/JobDetail/[^"]{0,60}'),
+("Atlassian icims","https://careers-apac-atlassian.icims.com/jobs/search?ss=1&in_iframe=1",r'/jobs/\d+/[^"]{0,50}'),
+("Dept gh AU","https://boards-api.greenhouse.io/v1/boards/dept/jobs",r'"name":"[^"]*(?:Australia|Sydney|Melbourne)[^"]*"'),
+("Nous gh","https://boards-api.greenhouse.io/v1/boards/nousgroup/jobs",r'"name":"[^"]{0,40}"'),
+("Rokt wk","https://apply.workable.com/api/v1/widget/accounts/rokt",r'"(?:title|city|country)":"[^"]{0,40}"'),
+("Paper Giant","https://papergiant.net/careers",r'href="[^"]*(?:job|role|position|apply)[^"]*"'),("ThinkPlace","https://www.thinkplaceglobal.com/careers/",r'href="[^"]*(?:job|role|position|apply)[^"]*"'),("Humaan","https://www.humaan.com/careers",r'href="[^"]*(?:job|role|position|apply)[^"]*"'),
+]
 with cf.ThreadPoolExecutor(10) as ex:
-    for r in ex.map(lambda x: probe(*x), E): print("P", r[:400])
-# Direct API guesses for tech/studios
-slugs=["atlassian","wisetechglobal","wisetech","safetyculture","rokt","linktree","dovetail","employmenthero","domain","domaingroup","finder","mantelgroup","mantel","dept","deptagency","slalom","papergiant","thinkplace","humaan","temple-webster","templeandwebster","finderau","nousgroup","aesop"]
-def api(s):
-    out=[]
-    for name,u in [("gh",f"https://boards-api.greenhouse.io/v1/boards/{s}/jobs"),("lever",f"https://api.lever.co/v0/postings/{s}?mode=json"),("ashby",f"https://api.ashbyhq.com/posting-api/job-board/{s}"),("sr",f"https://api.smartrecruiters.com/v1/companies/{s}/postings?limit=1"),("workable",f"https://apply.workable.com/api/v1/widget/accounts/{s}")]:
-        try:
-            _,b=get(u); d=json.loads(b)
-            c=len(d.get("jobs",[])) if isinstance(d,dict) and "jobs" in d else (len(d) if isinstance(d,list) else d.get("totalFound", "?"))
-            if c not in (0,"0"): out.append(f"{name}:{c}")
-        except Exception: pass
-    return s, out
-with cf.ThreadPoolExecutor(8) as ex:
-    for s,o in ex.map(api, slugs):
-        if o: print("API", s, o)
+    for r in ex.map(lambda x: show(*x, ctx=0), J): print("Q", r[:700])
 PY
