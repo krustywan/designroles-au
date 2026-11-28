@@ -587,6 +587,56 @@ def nt_gov():
                        employment_type=j.get("vacancyType") or "", workplace="",
                        salary_text=(j.get("getFormattedDesignationList") or "")[:200], remote_flag=None)
 
+
+# ---------------- Teamtailor career sites (an RSS feed of every open job) ----------------
+def teamtailor(host, employer):
+    x = get(f"https://{host}/jobs.rss").decode("utf8", "ignore")
+    for item in re.findall(r"<item>(.*?)</item>", x, re.S):
+        def tag(t):
+            m = re.search(r"<%s>(.*?)</%s>" % (t, t), item, re.S)
+            return html.unescape(re.sub(r"^<!\[CDATA\[|\]\]>$", "", m.group(1).strip())) if m else ""
+        title = tag("title")
+        if not candidate(title):
+            continue
+        city = ", ".join(c for c in re.findall(r"<tt:city>(.*?)</tt:city>", item) if c) or tag("tt:city")
+        yield dict(source="teamtailor", source_id="tt-" + tag("guid")[-60:], employer=employer, title=title, url=tag("link"),
+                   location=city, description=strip_html(tag("description"))[:12000], posted=tag("pubDate"),
+                   employment_type="", workplace=tag("remoteStatus"), salary_text="", remote_flag=None)
+
+
+# ---------------- Oracle Taleo career sections ----------------
+def taleo(host, section, portal, employer):
+    url = f"https://{host}/careersection/rest/jobboard/searchjobs?lang=en&portal={portal}"
+    body = {"multilineEnabled": False, "sortingSelection": {"sortBySelectionParam": "3", "ascendingSortingOrder": "false"},
+            "fieldData": {"fields": {"KEYWORD": "", "LOCATION": ""}, "valid": True}, "filterSelectionParam": {"searchFilterSelections": []},
+            "advancedSearchFiltersSelectionParam": {"searchFilterSelections": []}, "pageNo": 1}
+    seen, ids = 0, set()
+    while True:
+        d = json.loads(get(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json", "tz": "GMT+08:00",
+                                                                        "tzname": "Australia/Perth"}))
+        reqs = d.get("requisitionList") or []
+        for r in reqs:
+            cols = r.get("column") or []
+            title = (cols[0] if cols else "").strip()
+            if not candidate(title):
+                continue
+            jid = r.get("contestNo") or r.get("jobId")
+            if jid in ids:
+                continue
+            ids.add(jid)
+            loc = cols[1] if len(cols) > 1 else ""
+            loc = ", ".join(json.loads(loc)) if loc.startswith("[") else loc
+            yield dict(source="taleo", source_id=f"taleo-{host.split('.')[0]}-{jid}", employer=employer, title=title,
+                       url=f"https://{host}/careersection/{section}/jobdetail.ftl?job={jid}&lang=en", location=loc, description="",
+                       posted=cols[2] if len(cols) > 2 else "", employment_type="", workplace="", salary_text="", remote_flag=None)
+        seen += len(reqs)
+        total = (d.get("pagingData") or {}).get("totalCount", 0)
+        if not reqs or seen >= total or body["pageNo"] >= 30:
+            break
+        body["pageNo"] += 1
+        time.sleep(DELAY)
+
+
 VIC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vic_cache.json")
 
 

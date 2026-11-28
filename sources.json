@@ -290,6 +290,11 @@
    "mynrma",
    "NRMA",
    "Insurance"
+  ],
+  [
+   "JBHi-FiTheGoodGuys1",
+   "JB Hi-Fi",
+   "Retail"
   ]
  ],
  "pageup": [
@@ -898,6 +903,12 @@
    "caw",
    "Myer",
    "Retail"
+  ],
+  [
+   516,
+   "caw",
+   "ABC",
+   "Media"
   ]
  ],
  "wa_gov": true,
@@ -1147,6 +1158,13 @@
    "UoM_External_Career",
    "University of Melbourne",
    "Education"
+  ],
+  [
+   "mecca.wd3.myworkdayjobs.com",
+   "mecca",
+   "careers",
+   "Mecca",
+   "Retail"
   ]
  ],
  "successfactors": [
@@ -1674,5 +1692,21 @@
   ]
  ],
  "sa_gov": true,
- "nt_gov": true
+ "nt_gov": true,
+ "teamtailor": [
+  [
+   "careers.tyro.com",
+   "Tyro",
+   "Banking"
+  ]
+ ],
+ "taleo": [
+  [
+   "racq.taleo.net",
+   "RACQ_External",
+   "10100010479",
+   "RACQ",
+   "Insurance"
+  ]
+ ]
 }
