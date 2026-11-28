@@ -637,36 +637,6 @@ def taleo(host, section, portal, employer):
         time.sleep(DELAY)
 
 
-# ---------------- Dayforce candidate portals ----------------
-def dayforce(tenant, employer):
-    page = get(f"https://jobs.dayforcehcm.com/en-AU/{tenant}/candidateportal").decode("utf8", "ignore")
-    m = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', page, re.S)
-    if not m:
-        raise RuntimeError("Dayforce page data not found")
-    found = []
-    def walk(o):
-        if isinstance(o, dict):
-            if ("jobTitle" in o or "jobPostingTitle" in o) and ("jobPostingId" in o or "jobReqId" in o):
-                found.append(o)
-            for v in o.values():
-                walk(v)
-        elif isinstance(o, list):
-            for v in o:
-                walk(v)
-    walk(json.loads(m.group(1)))
-    for j in found:
-        title = (j.get("jobTitle") or j.get("jobPostingTitle") or "").strip()
-        if not candidate(title):
-            continue
-        jid = j.get("jobPostingId") or j.get("jobReqId")
-        loc = j.get("postingLocations") or j.get("locations") or ""
-        if isinstance(loc, list):
-            loc = ", ".join(str(x.get("cityName") or x.get("formattedAddress") or x) if isinstance(x, dict) else str(x) for x in loc)
-        yield dict(source="dayforce", source_id=f"df-{tenant}-{jid}", employer=employer, title=title,
-                   url=f"https://jobs.dayforcehcm.com/en-AU/{tenant}/candidateportal/jobs/{jid}", location=str(loc),
-                   description=strip_html(str(j.get("jobPostingContent") or j.get("description") or ""))[:12000],
-                   posted=str(j.get("postingStartTimestampUTC") or ""), employment_type="", workplace="", salary_text="", remote_flag=None)
-
 VIC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vic_cache.json")
 
 
