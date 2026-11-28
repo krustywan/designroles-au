@@ -610,7 +610,7 @@ def taleo(host, section, portal, employer):
     body = {"multilineEnabled": False, "sortingSelection": {"sortBySelectionParam": "3", "ascendingSortingOrder": "false"},
             "fieldData": {"fields": {"KEYWORD": "", "LOCATION": ""}, "valid": True}, "filterSelectionParam": {"searchFilterSelections": []},
             "advancedSearchFiltersSelectionParam": {"searchFilterSelections": []}, "pageNo": 1}
-    seen = 0
+    seen, ids = 0, set()
     while True:
         d = json.loads(get(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json", "tz": "GMT+08:00",
                                                                         "tzname": "Australia/Perth"}))
@@ -621,6 +621,9 @@ def taleo(host, section, portal, employer):
             if not candidate(title):
                 continue
             jid = r.get("contestNo") or r.get("jobId")
+            if jid in ids:
+                continue
+            ids.add(jid)
             loc = cols[1] if len(cols) > 1 else ""
             loc = ", ".join(json.loads(loc)) if loc.startswith("[") else loc
             yield dict(source="taleo", source_id=f"taleo-{host.split('.')[0]}-{jid}", employer=employer, title=title,
