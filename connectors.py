@@ -637,6 +637,37 @@ def taleo(host, section, portal, employer):
         time.sleep(DELAY)
 
 
+
+# ---------------- Atlassian's own careers feed ----------------
+def atlassian():
+    for j in get_json("https://www.atlassian.com/endpoint/careers/listings"):
+        title = (j.get("title") or "").strip()
+        locs = j.get("locations") or []
+        if isinstance(locs, str):
+            locs = [locs]
+        au = [l for l in locs if "Australia" in l]
+        if not au or not candidate(title):
+            continue
+        desc = " ".join(strip_html(j.get(k) or "") for k in ("overview", "responsibilities", "qualifications"))
+        yield dict(source="atlassian", source_id=f"atlassian-{j.get('id')}", employer="Atlassian", title=title,
+                   url=f"https://www.atlassian.com/company/careers/details/{j.get('id')}", apply_url=j.get("applyUrl", ""),
+                   location="; ".join(au), description=desc[:12000], posted="", employment_type=j.get("type", ""),
+                   workplace="", salary_text="", remote_flag=None)
+
+
+# ---------------- Workable job boards ----------------
+def workable(account, employer):
+    d = get_json(f"https://apply.workable.com/api/v1/widget/accounts/{account}")
+    for j in d.get("jobs", []):
+        title = (j.get("title") or "").strip()
+        if not candidate(title):
+            continue
+        loc = ", ".join(x for x in (j.get("city"), j.get("state"), j.get("country")) if x)
+        yield dict(source="workable", source_id=f"wk-{account}-{j.get('shortcode')}", employer=employer, title=title,
+                   url=j.get("url") or j.get("shortlink"), location=loc, description="", posted=j.get("published_on", ""),
+                   employment_type=j.get("employment_type", ""), workplace="Remote" if str(j.get("telecommuting")) == "True" else "",
+                   salary_text="", remote_flag=None)
+
 VIC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vic_cache.json")
 
 

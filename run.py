@@ -30,6 +30,10 @@ def tasks():
         t.append((f"oracle/{host.split('.')[0]}/{emp}", sec, lambda h=host, si=site, emp=emp: C.oracle(h, si, emp)))
     for org, emp, sec in SRC.get("vic_jobtools", []):
         t.append((f"vic-jobtools/{org}", sec, lambda o=org, emp=emp: C.vic_jobtools(o, emp)))
+    for acct, emp, sec in SRC.get("workable", []):
+        t.append((f"workable/{acct}", sec, lambda a=acct, emp=emp: C.workable(a, emp)))
+    if SRC.get("atlassian"):
+        t.append(("atlassian", "Tech", C.atlassian))
     for host, emp, sec in SRC.get("teamtailor", []):
         t.append((f"teamtailor/{host}", sec, lambda h=host, emp=emp: C.teamtailor(h, emp)))
     for host, section, portal, emp, sec in SRC.get("taleo", []):
@@ -95,11 +99,11 @@ def build(raw):
         if not disc:
             continue
         # A location that is only a work mode ("Hybrid", "Remote") on an Australian employer's site.
-        if re.fullmatch(r"\s*(hybrid|remote|flexible|on-?site|multiple locations)\s*", j["location"] or "", re.I) and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr", "sa-gov", "nt-gov", "teamtailor", "taleo"):
+        if re.fullmatch(r"\s*(hybrid|remote|flexible|on-?site|multiple locations)\s*", j["location"] or "", re.I) and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr", "sa-gov", "nt-gov", "teamtailor", "taleo", "workable", "atlassian"):
             j["workplace"] = j.get("workplace") or j["location"].strip().title()
             j["location"] = ""
         # An Australian employer's own careers site with no location on the ad: assume Australia.
-        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr", "sa-gov", "nt-gov", "teamtailor", "taleo"):
+        if not (j["location"] or "").strip() and j["source"] in ("workday", "oracle", "successfactors", "pageup", "pageup-site", "avature", "radancy", "phenom", "livehire", "sf-classic", "vic-jobtools", "bamboohr", "sa-gov", "nt-gov", "teamtailor", "taleo", "workable", "atlassian"):
             j["location"] = "Australia"
         if j["source"] not in ("wa-gov", "vic-gov", "qld-gov") and not T.in_scope_location(j["location"], j.get("workplace", ""), j.get("description", "")):
             continue
